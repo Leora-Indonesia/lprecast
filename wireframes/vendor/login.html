@@ -14,6 +14,21 @@
     class="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-700 via-indigo-600 to-purple-700 p-4"
   >
     <div class="w-full max-w-md">
+      <div
+        id="successBanner"
+        class="mb-4 hidden rounded-lg bg-green-50 p-4 text-green-700"
+      >
+        <div class="flex items-start gap-3">
+          <i class="fa-solid fa-circle-check mt-1"></i>
+          <div>
+            <p class="font-semibold">Pendaftaran berhasil!</p>
+            <p class="text-sm">
+              Silakan cek email Anda untuk verifikasi akun sebelum login.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div class="rounded-2xl bg-white p-8 shadow-2xl">
         <div class="mb-8 text-center">
           <div
@@ -96,5 +111,22 @@
         Akses terenkripsi & secure
       </p>
     </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get("registered") === "true") {
+          const banner = document.getElementById("successBanner")
+          banner.classList.remove("hidden")
+
+          // Remove query param for clean URL
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          )
+        }
+      })
+    </script>
   </body>
 </html>
