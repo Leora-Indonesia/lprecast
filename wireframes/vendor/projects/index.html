@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects - LPrecast Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="../dashboard.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-building text-2xl"></i>
+            </a>
+            <span class="text-xl font-bold">LPrecast Vendor</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm">Projects</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-6xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Proyek Saya</h1>
+        <p class="text-gray-500">Kelola proyek dan upload progres harian</p>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="mb-6 inline-flex rounded-xl bg-white p-1 shadow-sm">
+        <button
+          class="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-medium text-white"
+        >
+          Semua
+        </button>
+        <button
+          class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+        >
+          Berlangsung
+        </button>
+        <button
+          class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+        >
+          Selesai
+        </button>
+        <button
+          class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+        >
+          Ditunda
+        </button>
+      </div>
+
+      <!-- Projects List -->
+      <div class="space-y-4">
+        <!-- Project Card -->
+        <div
+          class="cursor-pointer rounded-xl bg-white shadow-sm transition hover:shadow-md"
+          onclick="window.location.href = 'detail.html'"
+        >
+          <div class="p-6">
+            <div class="mb-4 flex items-start justify-between">
+              <div>
+                <span
+                  class="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700"
+                  >On Track</span
+                >
+                <span
+                  class="ml-2 rounded bg-blue-100 px-2 py-1 text-xs text-blue-700"
+                  >#SPK-2026-001</span
+                >
+              </div>
+              <span class="text-sm text-gray-500">Mulai: 1 Mar 2026</span>
+            </div>
+
+            <h2 class="mb-2 text-lg font-semibold text-gray-800">
+              Gedung Perkantoran Bandung
+            </h2>
+            <p class="mb-4 text-sm text-gray-600">
+              Konstruksi gedung perkantoran 5 lantai dengan sistem precast di
+              kawasan Bandung.
+            </p>
+
+            <div class="mb-4">
+              <div class="mb-1 flex justify-between text-sm">
+                <span class="text-gray-600">Progress Keseluruhan</span>
+                <span class="font-medium text-indigo-600">45%</span>
+              </div>
+              <div class="h-3 w-full rounded-full bg-gray-200">
+                <div
+                  class="h-3 rounded-full bg-green-500 transition-all"
+                  style="width: 45%"
+                ></div>
+              </div>
+            </div>
+
+            <div class="mb-4 grid gap-4 md:grid-cols-4">
+              <div>
+                <p class="text-xs text-gray-500">Nilai SPK</p>
+                <p class="font-semibold text-gray-800">Rp 500.000.000</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Deadline</p>
+                <p class="font-semibold text-gray-800">30 Mei 2026</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Milestone</p>
+                <p class="font-semibold text-gray-800">3/6 Selesai</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">KPI Score</p>
+                <p class="font-semibold text-green-600">87</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center justify-between border-t border-gray-100 pt-4"
+            >
+              <div class="text-sm text-gray-500">
+                <i class="fa-solid fa-clock mr-1"></i>
+                56 hari tersisa
+              </div>
+              <div class="flex items-center space-x-2">
+                <a
+                  href="progress.html"
+                  class="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-800"
+                >
+                  Upload Progress
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Card 2 -->
+        <div
+          class="cursor-pointer rounded-xl bg-white shadow-sm transition hover:shadow-md"
+        >
+          <div class="p-6">
+            <div class="mb-4 flex items-start justify-between">
+              <div>
+                <span
+                  class="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700"
+                  >At Risk</span
+                >
+                <span
+                  class="ml-2 rounded bg-blue-100 px-2 py-1 text-xs text-blue-700"
+                  >#SPK-2026-002</span
+                >
+              </div>
+              <span class="text-sm text-gray-500">Mulai: 15 Mar 2026</span>
+            </div>
+
+            <h2 class="mb-2 text-lg font-semibold text-gray-800">
+              Pabrik Karawang
+            </h2>
+            <p class="mb-4 text-sm text-gray-600">
+              Konstruksi pabrik dengan sistem precast di kawasan industri
+              Karawang.
+            </p>
+
+            <div class="mb-4">
+              <div class="mb-1 flex justify-between text-sm">
+                <span class="text-gray-600">Progress Keseluruhan</span>
+                <span class="font-medium text-amber-600">20%</span>
+              </div>
+              <div class="h-3 w-full rounded-full bg-gray-200">
+                <div
+                  class="h-3 rounded-full bg-amber-500 transition-all"
+                  style="width: 20%"
+                ></div>
+              </div>
+            </div>
+
+            <div class="mb-4 grid gap-4 md:grid-cols-4">
+              <div>
+                <p class="text-xs text-gray-500">Nilai SPK</p>
+                <p class="font-semibold text-gray-800">Rp 750.000.000</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Deadline</p>
+                <p class="font-semibold text-gray-800">15 Jun 2026</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Milestone</p>
+                <p class="font-semibold text-gray-800">1/4 Selesai</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">KPI Score</p>
+                <p class="font-semibold text-amber-600">72</p>
+              </div>
+            </div>
+
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
+              <p class="text-sm text-red-700">
+                <i class="fa-solid fa-exclamation-triangle mr-1"></i>
+                Upload progres terakhir 3 hari yang lalu. Deadline: besok 09.00
+                WIB
+              </p>
+            </div>
+
+            <div
+              class="flex items-center justify-between border-t border-gray-100 pt-4"
+            >
+              <div class="text-sm text-amber-600">
+                <i class="fa-solid fa-clock mr-1"></i>
+                72 hari tersisa
+              </div>
+              <div class="flex items-center space-x-2">
+                <a
+                  href="progress.html"
+                  class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-700"
+                >
+                  Upload Progress
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completed Project -->
+        <div class="rounded-xl bg-white opacity-75 shadow-sm">
+          <div class="p-6">
+            <div class="mb-4 flex items-start justify-between">
+              <div>
+                <span
+                  class="rounded bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600"
+                  >Completed</span
+                >
+                <span
+                  class="ml-2 rounded bg-blue-100 px-2 py-1 text-xs text-blue-700"
+                  >#SPK-2025-015</span
+                >
+              </div>
+              <span class="text-sm text-gray-500">Selesai: 15 Feb 2026</span>
+            </div>
+
+            <h2 class="mb-2 text-lg font-semibold text-gray-800">
+              Gudang Logistik Bekasi
+            </h2>
+            <p class="mb-4 text-sm text-gray-600">
+              Konstruksi gudang logistik dengan sistem precast di kawasan
+              Bekasi.
+            </p>
+
+            <div class="mb-4">
+              <div class="mb-1 flex justify-between text-sm">
+                <span class="text-gray-600">Progress Keseluruhan</span>
+                <span class="font-medium text-green-600">100%</span>
+              </div>
+              <div class="h-3 w-full rounded-full bg-gray-200">
+                <div
+                  class="h-3 rounded-full bg-green-500"
+                  style="width: 100%"
+                ></div>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center justify-between border-t border-gray-100 pt-4"
+            >
+              <div class="text-sm text-green-600">
+                <i class="fa-solid fa-check-circle mr-1"></i>
+                Selesai tepat waktu
+              </div>
+              <button
+                class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                <i class="fa-solid fa-eye mr-1"></i>Lihat Detail
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

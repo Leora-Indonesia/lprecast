@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - LPrecast Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="../dashboard.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-building text-2xl"></i>
+            </a>
+            <span class="text-xl font-bold">LPrecast Vendor</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="../dashboard.html" class="text-sm hover:text-indigo-200">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-5xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-6 rounded-xl bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div
+              class="mr-6 flex h-20 w-20 items-center justify-center rounded-full bg-indigo-100"
+            >
+              <span class="text-3xl font-bold text-indigo-700">KM</span>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-800">
+                PT Konstruksi Maju
+              </h1>
+              <p class="text-gray-500">vendor@konstruksimaju.co.id</p>
+              <div class="mt-2 flex items-center">
+                <span
+                  class="mr-2 rounded bg-green-100 px-2 py-1 text-xs text-green-700"
+                  >Terverifikasi</span
+                >
+                <span class="text-sm text-gray-400"
+                  >Terdaftar: 1 Maret 2026</span
+                >
+              </div>
+            </div>
+          </div>
+          <a
+            href="edit.html"
+            class="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-800"
+          >
+            <i class="fa-solid fa-edit mr-2"></i>Edit Profil
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="mb-6 grid gap-4 md:grid-cols-4">
+        <div class="rounded-xl bg-white p-5 text-center shadow-sm">
+          <p class="mb-1 text-sm text-gray-500">Tender Diikuti</p>
+          <p class="text-2xl font-bold text-gray-800">5</p>
+        </div>
+        <div class="rounded-xl bg-white p-5 text-center shadow-sm">
+          <p class="mb-1 text-sm text-gray-500">Proyek Selesai</p>
+          <p class="text-2xl font-bold text-gray-800">12</p>
+        </div>
+        <div class="rounded-xl bg-white p-5 text-center shadow-sm">
+          <p class="mb-1 text-sm text-gray-500">Skor KPI</p>
+          <p class="text-2xl font-bold text-gray-800">87</p>
+        </div>
+        <div class="rounded-xl bg-white p-5 text-center shadow-sm">
+          <p class="mb-1 text-sm text-gray-500">Total Nilai SPK</p>
+          <p class="text-2xl font-bold text-gray-800">Rp 2.5M</p>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="rounded-xl bg-white shadow-sm">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex">
+            <a
+              href="#"
+              class="border-b-2 border-indigo-500 px-6 py-4 text-sm font-medium text-indigo-600"
+              >Informasi</a
+            >
+            <a
+              href="documents.html"
+              class="border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+              >Dokumen</a
+            >
+            <a
+              href="#"
+              class="border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+              >Produk</a
+            >
+          </nav>
+        </div>
+
+        <!-- Company Info -->
+        <div class="p-6">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Informasi Perusahaan
+          </h2>
+          <div class="grid gap-6 md:grid-cols-2">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >Nama PT</label
+              >
+              <p class="text-gray-800">PT Konstruksi Maju</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >NPWP</label
+              >
+              <p class="text-gray-800">02.123.456.7-123.456</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >SIUP</label
+              >
+              <p class="text-gray-800">1234/2026/SIUP</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >TDP</label
+              >
+              <p class="text-gray-800">1234/2026/TDP</p>
+            </div>
+            <div class="md:col-span-2">
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >Alamat</label
+              >
+              <p class="text-gray-800">
+                Jl. Raya Konstruksi No. 123, RT 001/RW 002, Kel. Sukamaju, Kec.
+                Cilandak, Jakarta Selatan 12430
+              </p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >No. Telepon</label
+              >
+              <p class="text-gray-800">+62 21 7654321</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >Email</label
+              >
+              <p class="text-gray-800">vendor@konstruksimaju.co.id</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >PIC Nama</label
+              >
+              <p class="text-gray-800">Budi Santoso</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >PIC Jabatan</label
+              >
+              <p class="text-gray-800">Project Manager</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >PIC Telepon</label
+              >
+              <p class="text-gray-800">+62 8123456789</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-500"
+                >Rekening Bank</label
+              >
+              <p class="text-gray-800">BCA - 1234567890 (PT Konstruksi Maju)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit Penawaran - LPrecast Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="../dashboard.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-building text-2xl"></i>
+            </a>
+            <span class="text-xl font-bold">LPrecast Vendor</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="detail.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-4xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Submit Penawaran</h1>
+        <p class="text-gray-500">
+          Tender: Proyek Gedung Perkantoran Jakarta (#TND-2026-003)
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form class="space-y-6">
+        <!-- Price Breakdown -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Rincian Harga Penawaran
+          </h2>
+
+          <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p class="text-sm text-blue-700">
+              <i class="fa-solid fa-calculator mr-1"></i>
+              <strong>Formula:</strong> Nilai SPK = Tender Price × Quantity
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="grid gap-4 md:grid-cols-3">
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700"
+                  >Harga per Unit (Rp)</label
+                >
+                <input
+                  type="text"
+                  value="4.166.667"
+                  class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-right focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                />
+                <p class="mt-1 text-xs text-gray-500">Per unit item</p>
+              </div>
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700"
+                  >Quantity</label
+                >
+                <input
+                  type="text"
+                  value="120"
+                  disabled
+                  class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-right"
+                />
+              </div>
+              <div>
+                <label class="mb-1 block text-sm font-medium text-gray-700"
+                  >Subtotal (Rp)</label
+                >
+                <input
+                  type="text"
+                  value="500.000.040"
+                  disabled
+                  class="w-full rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-right font-bold text-indigo-700"
+                />
+              </div>
+            </div>
+
+            <div class="mt-4 border-t border-gray-200 pt-4">
+              <div class="flex items-center justify-between text-lg">
+                <span class="font-medium text-gray-700">Total Penawaran</span>
+                <span class="text-2xl font-bold text-indigo-700"
+                  >Rp 500.000.040</span
+                >
+              </div>
+              <p class="mt-1 text-right text-sm text-gray-500">
+                Termasuk PPN 11%
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scope Items -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Harga per Item
+          </h2>
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-2 text-left text-gray-600">Item</th>
+                <th class="px-4 py-2 text-center text-gray-600">Qty</th>
+                <th class="px-4 py-2 text-right text-gray-600">Harga Unit</th>
+                <th class="px-4 py-2 text-right text-gray-600">Total</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr>
+                <td class="px-4 py-2 text-gray-800">Kolom Pracetak</td>
+                <td class="px-4 py-2 text-center">120</td>
+                <td class="px-4 py-2 text-right">
+                  <input
+                    type="text"
+                    value="4.166.667"
+                    class="w-full rounded border border-gray-200 px-2 py-1 text-right"
+                  />
+                </td>
+                <td class="px-4 py-2 text-right font-medium">500.000.040</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2 text-gray-800">Balok Pracetak</td>
+                <td class="px-4 py-2 text-center">200</td>
+                <td class="px-4 py-2 text-right">
+                  <input
+                    type="text"
+                    value="-"
+                    class="w-full rounded border border-gray-200 px-2 py-1 text-right"
+                  />
+                </td>
+                <td class="px-4 py-2 text-right text-gray-400">-</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2 text-gray-800">Panel Dinding</td>
+                <td class="px-4 py-2 text-center">500</td>
+                <td class="px-4 py-2 text-right">
+                  <input
+                    type="text"
+                    value="-"
+                    class="w-full rounded border border-gray-200 px-2 py-1 text-right"
+                  />
+                </td>
+                <td class="px-4 py-2 text-right text-gray-400">-</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2 text-gray-800">Hollow Core Slab</td>
+                <td class="px-4 py-2 text-center">1000</td>
+                <td class="px-4 py-2 text-right">
+                  <input
+                    type="text"
+                    value="-"
+                    class="w-full rounded border border-gray-200 px-2 py-1 text-right"
+                  />
+                </td>
+                <td class="px-4 py-2 text-right text-gray-400">-</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="mt-3 text-xs text-amber-600">
+            <i class="fa-solid fa-exclamation-triangle mr-1"></i>
+            Isi "-" jika tidak bisa mengerjakan item tersebut
+          </p>
+        </div>
+
+        <!-- Documents -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Dokumen Pendukung
+          </h2>
+          <div class="space-y-4">
+            <div
+              class="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-4 transition hover:border-indigo-400"
+            >
+              <div class="flex items-center justify-center py-4">
+                <div class="text-center">
+                  <i
+                    class="fa-solid fa-cloud-upload-alt mb-2 text-3xl text-gray-400"
+                  ></i>
+                  <p class="font-medium text-gray-700">
+                    Upload Dokumen Penawaran
+                  </p>
+                  <p class="text-sm text-gray-500">Klik untuk upload file</p>
+                  <p class="mt-1 text-xs text-gray-400">PDF - maks 10MB</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Catatan (opsional)</label
+              >
+              <textarea
+                rows="3"
+                placeholder="Tambahkan catatan atau informasi tambahan..."
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Syarat & Ketentuan
+          </h2>
+          <div class="space-y-3">
+            <label class="flex items-start">
+              <input
+                type="checkbox"
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="ml-3 text-sm text-gray-600">
+                Saya menyatakan bahwa harga yang ditawarkan sudah termasuk PPN
+                dan dalam mata uang Rupiah.
+              </span>
+            </label>
+            <label class="flex items-start">
+              <input
+                type="checkbox"
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="ml-3 text-sm text-gray-600">
+                Saya menjamin ketersediaan material dan tenaga kerja sesuai
+                timeline yang ditentukan.
+              </span>
+            </label>
+            <label class="flex items-start">
+              <input
+                type="checkbox"
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="ml-3 text-sm text-gray-600">
+                Saya siap untuk presentasi dan field visit sesuai jadwal yang
+                ditentukan oleh Admin.
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-between">
+          <a href="detail.html" class="text-gray-600 hover:text-gray-800">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
+          </a>
+          <div class="flex space-x-3">
+            <button
+              type="button"
+              class="rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              Simpan Draft
+            </button>
+            <button
+              type="submit"
+              class="rounded-lg bg-indigo-700 px-6 py-2.5 font-medium text-white transition hover:bg-indigo-800"
+            >
+              <i class="fa-solid fa-paper-plane mr-2"></i>Submit Penawaran
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

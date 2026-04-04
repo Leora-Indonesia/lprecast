@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tenders - LPrecast Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="../dashboard.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-building text-2xl"></i>
+            </a>
+            <span class="text-xl font-bold">LPrecast Vendor</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm">Tenders</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-6xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Tender Available</h1>
+        <p class="text-gray-500">
+          Browse dan submit penawaran untuk proyek yang tersedia
+        </p>
+      </div>
+
+      <!-- Filters -->
+      <div class="mb-6 rounded-xl bg-white p-4 shadow-sm">
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="min-w-[200px] flex-1">
+            <div class="relative">
+              <i
+                class="fa-solid fa-search absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+              ></i>
+              <input
+                type="text"
+                placeholder="Cari tender..."
+                class="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+          <select
+            class="rounded-lg border border-gray-300 px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+          >
+            <option>Semua Status</option>
+            <option>Open</option>
+            <option>Menunggu</option>
+            <option>Closed</option>
+          </select>
+          <select
+            class="rounded-lg border border-gray-300 px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+          >
+            <option>Semua Kategori</option>
+            <option>Gedung</option>
+            <option>Infrastructure</option>
+            <option>Renovasi</option>
+          </select>
+          <select
+            class="rounded-lg border border-gray-300 px-4 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+          >
+            <option>Terbaru</option>
+            <option>Deadline Terdekat</option>
+            <option>Nilai Tertinggi</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tender List -->
+      <div class="space-y-4">
+        <!-- Tender Card -->
+        <div
+          class="cursor-pointer rounded-xl bg-white shadow-sm transition hover:shadow-md"
+          onclick="window.location.href = 'detail.html'"
+        >
+          <div class="p-6">
+            <div class="mb-4 flex items-start justify-between">
+              <div>
+                <span
+                  class="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700"
+                  >Open</span
+                >
+                <span
+                  class="ml-2 rounded bg-gray-100 px-2 py-1 text-xs text-gray-600"
+                  >Gedung</span
+                >
+              </div>
+              <span class="text-sm text-gray-500">Posted: 1 Apr 2026</span>
+            </div>
+            <h2 class="mb-2 text-lg font-semibold text-gray-800">
+              Proyek Gedung Perkantoran Jakarta
+            </h2>
+            <p class="mb-4 text-sm text-gray-600">
+              Konstruksi gedung perkantoran 10 lantai dengan sistem precast di
+              kawasan Sudirman, Jakarta Selatan.
+            </p>
+
+            <div class="mb-4 grid gap-4 md:grid-cols-4">
+              <div>
+                <p class="text-xs text-gray-500">Nilai Tender</p>
+                <p class="font-semibold text-gray-800">Rp 500.000.000</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Deadline</p>
+                <p class="font-semibold text-gray-800">15 Apr 2026</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Peserta</p>
+                <p class="font-semibold text-gray-800">5 Vendor</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Lokasi</p>
+                <p class="font-semibold text-gray-800">Jakarta</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center justify-between border-t border-gray-100 pt-4"
+            >
+              <div class="text-sm text-gray-500">
+                <i class="fa-solid fa-clock mr-1"></i>
+                11 hari tersisa
+              </div>
+              <button
+                class="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-800"
+              >
+                Lihat Detail
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tender Card -->
+        <div
+          class="cursor-pointer rounded-xl bg-white shadow-sm transition hover:shadow-md"
+        >
+          <div class="p-6">
+            <div class="mb-4 flex items-start justify-between">
+              <div>
+                <span
+                  class="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700"
+                  >Menunggu</span
+                >
+                <span
+                  class="ml-2 rounded bg-gray-100 px-2 py-1 text-xs text-gray-600"
+                  >Renovasi</span
+                >
+              </div>
+              <span class="text-sm text-gray-500">Posted: 28 Mar 2026</span>
+            </div>
+            <h2 class="mb-2 text-lg font-semibold text-gray-800">
+              Renovasi Mall Surabaya
+            </h2>
+            <p class="mb-4 text-sm text-gray-600">
+              Renovasi interior mall dengan komponen precast untuk area atrium
+              dan koridor utama.
+            </p>
+
+            <div class="mb-4 grid gap-4 md:grid-cols-4">
+              <div>
+                <p class="text-xs text-gray-500">Nilai Tender</p>
+                <p class="font-semibold text-gray-800">Rp 750.000.000</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Deadline</p>
+                <p class="font-semibold text-gray-800">20 Apr 2026</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Peserta</p>
+                <p class="font-semibold text-gray-800">3 Vendor</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Lokasi</p>
+                <p class="font-semibold text-gray-800">Surabaya</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center justify-between border-t border-gray-100 pt-4"
+            >
+              <div class="text-sm text-amber-600">
+                <i class="fa-solid fa-clock mr-1"></i>
+                Min. 2 vendor belum tercapai
+              </div>
+              <button
+                class="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-800"
+              >
+                Lihat Detail
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tender Card -->
+        <div
+          class="cursor-pointer rounded-xl bg-white opacity-75 shadow-sm transition hover:shadow-md"
+        >
+          <div class="p-6">
+            <div class="mb-4 flex items-start justify-between">
+              <div>
+                <span
+                  class="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700"
+                  >Closed</span
+                >
+                <span
+                  class="ml-2 rounded bg-gray-100 px-2 py-1 text-xs text-gray-600"
+                  >Infrastructure</span
+                >
+              </div>
+              <span class="text-sm text-gray-500">Posted: 20 Mar 2026</span>
+            </div>
+            <h2 class="mb-2 text-lg font-semibold text-gray-800">
+              Jembatan Senayan
+            </h2>
+            <p class="mb-4 text-sm text-gray-600">
+              Konstruksi jembatan pedestrian dengan komponen precast di kawasan
+              Senayan.
+            </p>
+
+            <div class="mb-4 grid gap-4 md:grid-cols-4">
+              <div>
+                <p class="text-xs text-gray-500">Nilai Tender</p>
+                <p class="font-semibold text-gray-800">Rp 1.200.000.000</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Deadline</p>
+                <p class="font-semibold text-gray-800">1 Apr 2026</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Pemenang</p>
+                <p class="font-semibold text-green-600">PT Bangun Jaya</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500">Lokasi</p>
+                <p class="font-semibold text-gray-800">Jakarta</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center justify-between border-t border-gray-100 pt-4"
+            >
+              <div class="text-sm text-gray-500">
+                <i class="fa-solid fa-trophy mr-1 text-amber-500"></i>
+                Tender sudah selesai
+              </div>
+              <button
+                class="cursor-not-allowed rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium text-gray-600"
+              >
+                Ditutup
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

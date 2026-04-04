@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile - LPrecast Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="../dashboard.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-building text-2xl"></i>
+            </a>
+            <span class="text-xl font-bold">LPrecast Vendor</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-4xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Edit Profil</h1>
+          <p class="text-gray-500">Lengkapi 11 data wajib dalam 3×24 jam</p>
+        </div>
+        <div
+          class="rounded-lg bg-amber-100 px-4 py-2 text-sm font-medium text-amber-700"
+        >
+          <i class="fa-solid fa-clock mr-2"></i>Sisa: 2×24 jam
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="mb-6 rounded-xl bg-white p-5 shadow-sm">
+        <div class="mb-2 flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-700"
+            >Kelengkapan Profil</span
+          >
+          <span class="text-sm font-bold text-indigo-600">7/11 Data</span>
+        </div>
+        <div class="h-3 w-full rounded-full bg-gray-200">
+          <div
+            class="h-3 rounded-full bg-indigo-600 transition-all"
+            style="width: 64%"
+          ></div>
+        </div>
+        <div class="mt-2 flex items-center justify-between text-sm">
+          <span class="text-gray-500">4 data belum diisi</span>
+          <span class="text-green-600"
+            ><i class="fa-solid fa-check mr-1"></i>Data valid</span
+          >
+        </div>
+      </div>
+
+      <form class="space-y-6">
+        <!-- Company Info -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Informasi Perusahaan
+          </h2>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Nama PT *</label
+              >
+              <input
+                type="text"
+                value="PT Konstruksi Maju"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >NPWP *</label
+              >
+              <input
+                type="text"
+                value="02.123.456.7-123.456"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >SIUP *</label
+              >
+              <input
+                type="text"
+                value="1234/2026/SIUP"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >TDP *</label
+              >
+              <input
+                type="text"
+                value="1234/2026/TDP"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div class="md:col-span-2">
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Alamat *</label
+              >
+              <textarea
+                rows="2"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              >
+Jl. Raya Konstruksi No. 123, RT 001/RW 002, Kel. Sukamaju, Kec. Cilandak, Jakarta Selatan 12430</textarea
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Informasi Kontak
+          </h2>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >No. Telepon *</label
+              >
+              <input
+                type="tel"
+                value="+62 21 7654321"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Email *</label
+              >
+              <input
+                type="email"
+                value="vendor@konstruksimaju.co.id"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- PIC Info -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Penanggung Jawab (PIC)
+          </h2>
+          <div class="grid gap-4 md:grid-cols-3">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Nama PIC *</label
+              >
+              <input
+                type="text"
+                value="Budi Santoso"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Jabatan *</label
+              >
+              <input
+                type="text"
+                value="Project Manager"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >No. HP PIC *</label
+              >
+              <input
+                type="tel"
+                value="+62 8123456789"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Bank Info -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Informasi Bank
+          </h2>
+          <div class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p class="text-sm text-blue-700">
+              <i class="fa-solid fa-info-circle mr-1"></i>
+              Pembayaran hanya dilakukan ke rekening atas nama PT yang
+              terdaftar.
+            </p>
+          </div>
+          <div class="grid gap-4 md:grid-cols-3">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Nama Bank *</label
+              >
+              <input
+                type="text"
+                value="BCA"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >No. Rekening *</label
+              >
+              <input
+                type="text"
+                value="1234567890"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Atas Nama *</label
+              >
+              <input
+                type="text"
+                value="PT Konstruksi Maju"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-between">
+          <a href="index.html" class="text-gray-600 hover:text-gray-800">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
+          </a>
+          <div class="flex space-x-3">
+            <button
+              type="button"
+              class="rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              Simpan Draft
+            </button>
+            <button
+              type="submit"
+              class="rounded-lg bg-indigo-700 px-6 py-2.5 font-medium text-white transition hover:bg-indigo-800"
+            >
+              Simpan & Lanjut
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

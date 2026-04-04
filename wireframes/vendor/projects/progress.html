@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Progress - LPrecast Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="../dashboard.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-building text-2xl"></i>
+            </a>
+            <span class="text-xl font-bold">LPrecast Vendor</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="detail.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-4xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Upload Progress Harian</h1>
+        <p class="text-gray-500">
+          Proyek: Gedung Perkantoran Bandung (#SPK-2026-001)
+        </p>
+      </div>
+
+      <!-- Deadline Alert -->
+      <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <i class="fa-solid fa-clock mr-3 text-xl text-amber-600"></i>
+            <div>
+              <p class="font-medium text-amber-800">
+                Deadline: Hari ini, 09.00 WIB
+              </p>
+              <p class="text-sm text-amber-700">
+                Upload progress sebelum deadline untuk menjaga skor KPI
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form class="space-y-6">
+        <!-- Date Selection -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Tanggal Progress
+          </h2>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <i
+                class="fa-solid fa-calendar absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+              ></i>
+              <input
+                type="date"
+                value="2026-04-15"
+                class="rounded-lg border border-gray-300 py-2.5 pr-4 pl-10 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <span class="text-gray-500"
+              >Pastikan tanggal sesuai dengan progres yang dilaporkan</span
+            >
+          </div>
+        </div>
+
+        <!-- Milestone Selection -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Milestone</h2>
+          <select
+            class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+          >
+            <option>4. pasang Panel Dinding (60%)</option>
+            <option>5. Finishing & QC (0%)</option>
+          </select>
+        </div>
+
+        <!-- Progress Details -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Detail Progress
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Persentase Progress (%) *</label
+              >
+              <div class="flex items-center space-x-4">
+                <input
+                  type="number"
+                  value="65"
+                  min="0"
+                  max="100"
+                  class="w-32 rounded-lg border border-gray-300 px-4 py-2.5 text-center focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                />
+                <div class="h-3 flex-1 rounded-full bg-gray-200">
+                  <div
+                    class="h-3 rounded-full bg-indigo-600"
+                    style="width: 65%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Deskripsi Progress *</label
+              >
+              <textarea
+                rows="4"
+                placeholder="Jelaskan progress yang telah diselesaikan hari ini..."
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              >
+Pemasangan panel dinding lantai 4 mencapai 90%. Sisa 10% untuk sisi timur gedung. Panel dinding lantai 5 sudah dimulai dengan progress 30%.</textarea
+              >
+              <p class="mt-1 text-xs text-gray-500">Minimal 50 karakter</p>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700"
+                >Kendala (opsional)</label
+              >
+              <textarea
+                rows="2"
+                placeholder="Sebutkan kendala jika ada..."
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo Upload -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Foto Progress
+          </h2>
+          <div class="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p class="text-sm text-blue-700">
+              <i class="fa-solid fa-info-circle mr-1"></i>
+              Upload minimal 1 foto untuk validasi progress. Maks 5 foto.
+            </p>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-3">
+            <!-- Uploaded Photo 1 -->
+            <div class="relative">
+              <div
+                class="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed bg-gray-200"
+              >
+                <div class="text-center">
+                  <i class="fa-solid fa-image text-4xl text-gray-400"></i>
+                  <p class="mt-1 text-xs text-gray-500">photo_001.jpg</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white"
+              >
+                <i class="fa-solid fa-times text-xs"></i>
+              </button>
+              <span
+                class="absolute bottom-2 left-2 rounded bg-green-500 px-2 py-0.5 text-xs text-white"
+                >Uploaded</span
+              >
+            </div>
+
+            <!-- Upload Zone -->
+            <div
+              class="flex aspect-square cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 transition hover:border-indigo-400"
+            >
+              <div class="text-center">
+                <i class="fa-solid fa-plus text-2xl text-gray-400"></i>
+                <p class="mt-1 text-sm text-gray-500">Tambah Foto</p>
+              </div>
+            </div>
+
+            <!-- Upload Zone -->
+            <div
+              class="flex aspect-square cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 transition hover:border-indigo-400"
+            >
+              <div class="text-center">
+                <i class="fa-solid fa-plus text-2xl text-gray-400"></i>
+                <p class="mt-1 text-sm text-gray-500">Tambah Foto</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Lokasi</h2>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <i
+                class="fa-solid fa-location-dot mr-3 text-xl text-green-600"
+              ></i>
+              <div>
+                <p class="font-medium text-gray-800">-6.917464, 107.619123</p>
+                <p class="text-sm text-gray-500">Bandung, Jawa Barat</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+            >
+              <i class="fa-solid fa-refresh mr-1"></i>Update Lokasi
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirmation -->
+        <div class="rounded-xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">Konfirmasi</h2>
+          <div class="space-y-3">
+            <label class="flex items-start">
+              <input
+                type="checkbox"
+                checked
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="ml-3 text-sm text-gray-600">
+                Saya menyatakan bahwa progress yang dilaporkan adalah akurat dan
+                sesuai dengan kondisi di lapangan.
+              </span>
+            </label>
+            <label class="flex items-start">
+              <input
+                type="checkbox"
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span class="ml-3 text-sm text-gray-600">
+                Saya memahami bahwa keterlambatan upload akan mempengaruhi skor
+                KPI saya.
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-between">
+          <a href="detail.html" class="text-gray-600 hover:text-gray-800">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Kembali
+          </a>
+          <div class="flex space-x-3">
+            <button
+              type="button"
+              class="rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              Simpan Draft
+            </button>
+            <button
+              type="submit"
+              class="rounded-lg bg-indigo-700 px-6 py-2.5 font-medium text-white transition hover:bg-indigo-800"
+            >
+              <i class="fa-solid fa-paper-plane mr-2"></i>Submit Progress
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

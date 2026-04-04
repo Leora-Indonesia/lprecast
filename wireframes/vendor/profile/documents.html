@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documents - LPrecast Vendor Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="../dashboard.html" class="hover:text-indigo-200">
+              <i class="fa-solid fa-building text-2xl"></i>
+            </a>
+            <span class="text-xl font-bold">LPrecast Vendor</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-5xl px-4 py-6">
+      <!-- Header -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+              Dokumen Persyaratan
+            </h1>
+            <p class="text-gray-500">
+              Upload dokumen yang diperlukan untuk verifikasi vendor
+            </p>
+          </div>
+          <a href="edit.html" class="text-indigo-600 hover:underline">
+            <i class="fa-solid fa-edit mr-1"></i>Edit Profil
+          </a>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="mb-6 rounded-xl bg-white shadow-sm">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex">
+            <a
+              href="index.html"
+              class="border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+              >Informasi</a
+            >
+            <a
+              href="#"
+              class="border-b-2 border-indigo-500 px-6 py-4 text-sm font-medium text-indigo-600"
+              >Dokumen</a
+            >
+            <a
+              href="#"
+              class="border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+              >Produk</a
+            >
+          </nav>
+        </div>
+      </div>
+
+      <!-- Document List -->
+      <div class="rounded-xl bg-white shadow-sm">
+        <div class="p-6">
+          <h2 class="mb-4 text-lg font-semibold text-gray-800">
+            Dokumen Wajib
+          </h2>
+          <div class="space-y-4">
+            <!-- Document Item -->
+            <div
+              class="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition hover:border-indigo-300"
+            >
+              <div class="flex items-center">
+                <div
+                  class="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100"
+                >
+                  <i class="fa-solid fa-file-pdf text-xl text-green-600"></i>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-800">Akta Pendirian</p>
+                  <p class="text-sm text-gray-500">PDF, maks 10MB</p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <span class="mr-4 text-sm text-green-600">
+                  <i class="fa-solid fa-check-circle mr-1"></i>Uploaded
+                </span>
+                <button
+                  class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                >
+                  <i class="fa-solid fa-eye mr-1"></i>Lihat
+                </button>
+              </div>
+            </div>
+
+            <!-- Document Item -->
+            <div
+              class="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition hover:border-indigo-300"
+            >
+              <div class="flex items-center">
+                <div
+                  class="mr-4 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100"
+                >
+                  <i class="fa-solid fa-file-pdf text-xl text-green-600"></i>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-800">NPWP Perusahaan</p>
+                  <p class="text-sm text-gray-500">PDF, maks 5MB</p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <span class="mr-4 text-sm text-green-600">
+                  <i class="fa-solid fa-check-circle mr-1"></i>Verified
+                </span>
+                <button
+                  class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                >
+                  <i class="fa-solid fa-eye mr-1"></i>Lihat
+                </button>
+              </div>
+            </div>
+
+            <!-- Document Item - Upload Zone -->
+            <div
+              class="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-4 transition hover:border-indigo-400"
+              onclick="document.getElementById('upload-akta').click()"
+            >
+              <div class="flex items-center justify-center py-4">
+                <div class="text-center">
+                  <i
+                    class="fa-solid fa-cloud-upload-alt mb-2 text-4xl text-gray-400"
+                  ></i>
+                  <p class="font-medium text-gray-700">Akta Pendirian</p>
+                  <p class="text-sm text-gray-500">
+                    Klik untuk upload atau drag file ke sini
+                  </p>
+                  <p class="mt-1 text-xs text-gray-400">
+                    PDF, JPG, PNG - maks 10MB
+                  </p>
+                </div>
+              </div>
+              <input
+                type="file"
+                id="upload-akta"
+                class="hidden"
+                accept=".pdf,.jpg,.jpeg,.png"
+              />
+            </div>
+
+            <!-- Document Item - Upload Zone -->
+            <div
+              class="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-4 transition hover:border-indigo-400"
+            >
+              <div class="flex items-center justify-center py-4">
+                <div class="text-center">
+                  <i
+                    class="fa-solid fa-cloud-upload-alt mb-2 text-4xl text-gray-400"
+                  ></i>
+                  <p class="font-medium text-gray-700">Referensi Bank</p>
+                  <p class="text-sm text-gray-500">
+                    Klik untuk upload atau drag file ke sini
+                  </p>
+                  <p class="mt-1 text-xs text-gray-400">PDF - maks 5MB</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Item - Upload Zone -->
+            <div
+              class="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-4 transition hover:border-indigo-400"
+            >
+              <div class="flex items-center justify-center py-4">
+                <div class="text-center">
+                  <i
+                    class="fa-solid fa-cloud-upload-alt mb-2 text-4xl text-gray-400"
+                  ></i>
+                  <p class="font-medium text-gray-700">Portofolio Proyek</p>
+                  <p class="text-sm text-gray-500">
+                    Klik untuk upload atau drag file ke sini
+                  </p>
+                  <p class="mt-1 text-xs text-gray-400">PDF - maks 20MB</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="rounded-b-xl border-t border-gray-200 bg-gray-50 p-6">
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-500">
+              <i class="fa-solid fa-info-circle mr-1"></i>
+              2 dari 5 dokumen terupload
+            </div>
+            <button
+              class="rounded-lg bg-indigo-700 px-6 py-2.5 font-medium text-white transition hover:bg-indigo-800"
+            >
+              <i class="fa-solid fa-save mr-2"></i>Simpan Perubahan
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
