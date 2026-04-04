@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pendaftaran Berhasil - LPrecast Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-building text-2xl"></i>
+            <span class="text-xl font-bold">LPrecast Vendor Portal</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-lg px-4 py-12">
+      <div class="rounded-xl bg-white p-8 text-center shadow-sm">
+        <div class="mb-6">
+          <i class="fa-solid fa-circle-check text-6xl text-green-500"></i>
+        </div>
+
+        <h1 class="mb-2 text-2xl font-bold text-gray-800">
+          Pendaftaran Berhasil!
+        </h1>
+        <p class="mb-6 text-gray-600">
+          Data vendor Anda telah kami terima dan sedang direview oleh tim
+          administrator.
+        </p>
+
+        <div
+          class="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-left"
+        >
+          <div class="mb-3 flex items-center gap-2">
+            <span
+              class="rounded-full bg-yellow-200 px-3 py-1 text-xs font-bold text-yellow-800"
+            >
+              <i class="fa-solid fa-clock mr-1"></i>Menunggu Verifikasi Email
+            </span>
+          </div>
+          <p class="text-sm text-yellow-800">
+            <strong>Langkah selanjutnya:</strong> Cek inbox email Anda untuk
+            verifikasi akun. Setelah verifikasi berhasil, admin akan mereview
+            data Anda (1-2 hari kerja).
+          </p>
+        </div>
+
+        <div class="mb-6 rounded-lg bg-indigo-50 p-4 text-left">
+          <h3 class="mb-3 text-sm font-bold text-indigo-700 uppercase">
+            <i class="fa-solid fa-list-ol mr-2"></i>Langkah Selanjutnya
+          </h3>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check-circle mt-0.5 text-green-500"></i>
+              <span>Data terkirim ✓</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-envelope mt-0.5 text-indigo-500"></i>
+              <span
+                >Cek inbox email untuk verifikasi akun (cek spam juga) →
+                <strong class="text-indigo-700">Wajib!</strong></span
+              >
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-user-check mt-0.5 text-gray-400"></i>
+              <span>Setelah verifikasi, data akan direview oleh admin</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-toggle-on mt-0.5 text-gray-400"></i>
+              <span>Akun aktif & bisa login ke portal</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <a
+            href="login.html?registered=true"
+            class="rounded-lg bg-indigo-600 px-6 py-3 font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700"
+          >
+            <i class="fa-solid fa-arrow-right mr-2"></i>Ke Halaman Login
+          </a>
+          <a
+            href="index.html"
+            class="rounded-lg border border-gray-300 px-6 py-3 font-bold text-gray-600 transition-all hover:bg-gray-50"
+          >
+            <i class="fa-solid fa-house mr-2"></i>Kembali ke Beranda
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-lg bg-blue-50 p-4 text-blue-700">
+        <div class="flex items-start gap-3">
+          <i class="fa-solid fa-circle-info mt-1"></i>
+          <div>
+            <p class="font-semibold">Butuh bantuan?</p>
+            <p class="text-sm">
+              Hubungi administrator jika ada pertanyaan mengenai proses
+              verifikasi.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
