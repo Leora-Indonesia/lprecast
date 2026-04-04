@@ -3,960 +3,1356 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Vendor - LPrecast Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Vendor Registration - LPrecast Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <style>
-      .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-      }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+      .tab-active { border-b-2 border-indigo-600 color: indigo-700; }
     </style>
   </head>
-  <body class="bg-slate-100 font-sans">
-    <div
-      id="onboardingModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
-    >
-      <div class="flex h-screen w-full flex-col overflow-hidden bg-white">
-        <header
-          class="flex items-center justify-between border-b border-slate-700 bg-slate-900 p-5 text-white"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-xl font-bold uppercase"
-            >
-              L
-            </div>
-            <div>
-              <h1 class="text-lg leading-none font-bold italic">
-                LEORA
-                <span class="font-light text-slate-400">Construction</span>
-              </h1>
-              <p class="mt-1 text-xs tracking-widest text-slate-400 uppercase">
-                Vendor Registration
-              </p>
-            </div>
+  <body class="min-h-screen bg-gray-100">
+    <nav class="bg-indigo-700 text-white shadow-lg">
+      <div class="mx-auto max-w-7xl px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-building text-2xl"></i>
+            <span class="text-xl font-bold">LPrecast Vendor Portal</span>
           </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-indigo-200">Sudah punya akun?</span>
+            <a
+              href="login.html"
+              class="rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-indigo-700 hover:bg-indigo-50"
+              >Login</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="mx-auto max-w-6xl px-4 py-8">
+      <div class="mb-8 text-center">
+        <h1 class="mb-2 text-3xl font-bold text-gray-800">
+          Daftar Vendor Baru
+        </h1>
+        <p class="text-gray-600">
+          Lengkapi data perusahaan Anda untuk bergabung sebagai vendor
+        </p>
+      </div>
+
+      <!-- Tab Navigation - Card Style with Arrows -->
+      <div class="mb-6 overflow-x-auto">
+        <div class="flex min-w-[600px] items-center justify-between">
+          <!-- Step 1: Informasi Perusahaan -->
           <div
-            class="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-2 text-right"
+            onclick="switchTab(0)"
+            class="step-card group flex-1 cursor-pointer"
+            data-step="0"
           >
-            <p
-              class="text-[10px] leading-none font-bold text-red-400 uppercase"
-            >
-              Lengkapi sebelum diarsip:
-            </p>
-            <p class="font-mono text-lg font-bold text-red-100 uppercase">
-              2d 14j 32m
-            </p>
-          </div>
-        </header>
-
-        <div class="flex flex-1 overflow-hidden">
-          <aside
-            class="custom-scrollbar w-72 overflow-y-auto border-r border-slate-200 bg-slate-50 p-4"
-          >
-            <nav id="stepperNav" class="space-y-1"></nav>
-          </aside>
-
-          <main class="flex-1 overflow-y-auto bg-white p-10">
-            <div class="mx-auto max-w-2xl">
-              <div id="stepTitleArea" class="mb-8">
-                <h2
-                  id="currentStepTitle"
-                  class="text-2xl font-bold text-slate-800"
-                ></h2>
-                <p id="currentStepDesc" class="mt-1 text-sm text-slate-500"></p>
-              </div>
-
-              <div id="dynamicFields" class="mb-8 grid grid-cols-2 gap-4"></div>
-
-              <div id="uploadContainer">
-                <label
-                  class="mb-3 block text-sm font-bold tracking-tight text-slate-700 uppercase"
-                  >Dokumen Pendukung (PDF/JPG)</label
-                >
-                <div
-                  class="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 transition-all hover:border-blue-400 hover:bg-blue-50"
-                >
-                  <svg
-                    class="mb-2 h-8 w-8 text-slate-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    ></path>
-                  </svg>
-                  <p class="text-xs font-semibold text-slate-600">
-                    Klik atau Drag file untuk upload
-                  </p>
-                </div>
-
-                <div
-                  id="filePreview"
-                  class="mt-4 flex items-center justify-between rounded-lg border border-slate-100 p-3"
-                >
-                  <div class="flex items-center">
-                    <div
-                      class="mr-3 flex h-8 w-8 items-center justify-center rounded bg-slate-100 text-[10px] font-bold italic"
-                    >
-                      DOC
-                    </div>
-                    <span class="text-sm text-slate-600 italic"
-                      >Belum ada file dipilih...</span
-                    >
-                  </div>
-                  <span
-                    class="rounded bg-slate-100 px-2 py-1 text-[9px] font-bold tracking-widest text-slate-400 uppercase"
-                    >Waiting</span
-                  >
-                </div>
-              </div>
-
+            <div class="flex flex-col items-center">
               <div
-                id="finalReview"
-                class="mt-8 hidden rounded-xl border border-blue-100 bg-blue-50 p-4"
+                id="stepIcon0"
+                class="step-icon flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-200 transition-all group-hover:scale-110"
               >
-                <label class="flex cursor-pointer items-start gap-3">
-                  <input
-                    type="checkbox"
-                    class="mt-1 h-4 w-4 rounded text-blue-600"
-                  />
-                  <span
-                    class="text-sm leading-relaxed font-medium text-slate-700"
-                    >Saya menyatakan bahwa seluruh data perusahaan dan dokumen
-                    yang diunggah adalah sah, benar, dan dapat
-                    dipertanggungjawabkan di mata hukum.</span
-                  >
-                </label>
+                <i class="fa-solid fa-check text-xl"></i>
+              </div>
+              <div class="mt-3 text-center">
+                <span
+                  id="stepNum0"
+                  class="text-xs font-bold tracking-wider text-indigo-600 uppercase"
+                  >Step 1</span
+                >
+                <p
+                  id="stepTitle0"
+                  class="mt-1 text-sm font-bold text-indigo-700"
+                >
+                  Informasi<br />Perusahaan
+                </p>
               </div>
             </div>
-          </main>
+          </div>
+
+          <!-- Arrow 1 -->
+          <div class="mx-2 flex flex-col items-center">
+            <i class="fa-solid fa-arrow-right text-2xl text-gray-300"></i>
+          </div>
+
+          <!-- Step 2: Dokumen Legal -->
+          <div
+            onclick="switchTab(1)"
+            class="step-card group flex-1 cursor-pointer"
+            data-step="1"
+          >
+            <div class="flex flex-col items-center">
+              <div
+                id="stepIcon1"
+                class="step-icon flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-gray-400 transition-all group-hover:scale-110"
+              >
+                <span class="text-xl font-bold">2</span>
+              </div>
+              <div class="mt-3 text-center">
+                <span
+                  id="stepNum1"
+                  class="text-xs font-bold tracking-wider text-gray-400 uppercase"
+                  >Step 2</span
+                >
+                <p id="stepTitle1" class="mt-1 text-sm font-bold text-gray-500">
+                  Dokumen<br />Legal
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrow 2 -->
+          <div class="mx-2 flex flex-col items-center">
+            <i class="fa-solid fa-arrow-right text-2xl text-gray-300"></i>
+          </div>
+
+          <!-- Step 3: Operasional -->
+          <div
+            onclick="switchTab(2)"
+            class="step-card group flex-1 cursor-pointer"
+            data-step="2"
+          >
+            <div class="flex flex-col items-center">
+              <div
+                id="stepIcon2"
+                class="step-icon flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-gray-400 transition-all group-hover:scale-110"
+              >
+                <span class="text-xl font-bold">3</span>
+              </div>
+              <div class="mt-3 text-center">
+                <span
+                  id="stepNum2"
+                  class="text-xs font-bold tracking-wider text-gray-400 uppercase"
+                  >Step 3</span
+                >
+                <p id="stepTitle2" class="mt-1 text-sm font-bold text-gray-500">
+                  Operasional
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrow 3 -->
+          <div class="mx-2 flex flex-col items-center">
+            <i class="fa-solid fa-arrow-right text-2xl text-gray-300"></i>
+          </div>
+
+          <!-- Step 4: Review & Submit -->
+          <div
+            onclick="switchTab(3)"
+            class="step-card group flex-1 cursor-pointer"
+            data-step="3"
+          >
+            <div class="flex flex-col items-center">
+              <div
+                id="stepIcon3"
+                class="step-icon flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-gray-400 transition-all group-hover:scale-110"
+              >
+                <span class="text-xl font-bold">4</span>
+              </div>
+              <div class="mt-3 text-center">
+                <span
+                  id="stepNum3"
+                  class="text-xs font-bold tracking-wider text-gray-400 uppercase"
+                  >Step 4</span
+                >
+                <p id="stepTitle3" class="mt-1 text-sm font-bold text-gray-500">
+                  Review &<br />Submit
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="rounded-b-xl bg-white p-6 shadow-sm">
+        <!-- Tab 1: Informasi Perusahaan -->
+        <div id="tabContent0" class="tab-content">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-800">
+              Informasi Perusahaan
+            </h2>
+            <p class="text-sm text-gray-500">
+              Data dasar perusahaan dan kontak
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <h3 class="border-b pb-2 font-semibold text-gray-700">
+                Data Perusahaan
+              </h3>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nama Perusahaan*</label
+                >
+                <input
+                  type="text"
+                  id="namaPerusahaan"
+                  placeholder="PT. Maju Jaya"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Email Perusahaan*</label
+                >
+                <input
+                  type="email"
+                  id="emailPerusahaan"
+                  placeholder="vendor@perusahaan.com"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="border-b pb-2 font-semibold text-gray-700">
+                Penanggung Jawab (PIC)
+              </h3>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nama PIC*</label
+                >
+                <input
+                  type="text"
+                  id="namaPIC"
+                  placeholder="Budi Santoso"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Kontak PIC*</label
+                >
+                <input
+                  type="text"
+                  id="kontakPIC"
+                  placeholder="081234567890"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 space-y-4">
+            <h3 class="border-b pb-2 font-semibold text-gray-700">
+              Kontak Alternatif
+            </h3>
+            <p class="text-sm text-gray-500">
+              Minimal 2 kontak (PIC aktif + backup)
+            </p>
+
+            <div
+              class="grid grid-cols-3 gap-4 border-b pb-2 text-xs font-bold text-gray-500 uppercase"
+            >
+              <span>No. HP</span>
+              <span>Nama</span>
+              <span>Jabatan</span>
+            </div>
+
+            <!-- Kontak 1 -->
+            <div class="grid grid-cols-3 gap-4">
+              <input
+                type="text"
+                id="kontak1_no"
+                placeholder="081234567890"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                id="kontak1_nama"
+                placeholder="Budi Santoso"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                id="kontak1_jabatan"
+                placeholder="Direktur"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+            </div>
+
+            <!-- Kontak 2 -->
+            <div class="grid grid-cols-3 gap-4">
+              <input
+                type="text"
+                id="kontak2_no"
+                placeholder="081234567891"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                id="kontak2_nama"
+                placeholder="Joko Wijaya"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                id="kontak2_jabatan"
+                placeholder="Manager"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+            </div>
+
+            <!-- Kontak 3 (Optional) -->
+            <div class="grid grid-cols-3 gap-4">
+              <input
+                type="text"
+                id="kontak3_no"
+                placeholder="Opsional"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                id="kontak3_nama"
+                placeholder="Opsional"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                id="kontak3_jabatan"
+                placeholder="Opsional"
+                class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
         </div>
 
-        <footer
-          class="flex items-center justify-between border-t border-slate-200 bg-slate-50 p-4 px-10"
+        <!-- Tab 2: Dokumen Legal -->
+        <div id="tabContent1" class="tab-content hidden">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-800">Dokumen Legal</h2>
+            <p class="text-sm text-gray-500">
+              Unggah dokumen legalitas perusahaan (PDF/JPG, max 10MB per file)
+            </p>
+          </div>
+
+          <!-- NPWP -->
+          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
+            <div
+              onclick="toggleDocSection(this)"
+              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-invoice text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">NPWP</span>
+                <span class="text-xs text-gray-500"
+                  >Nomor Pokok Wajib Pajak*</span
+                >
+              </div>
+              <span class="text-gray-400">▼</span>
+            </div>
+            <div class="doc-section bg-white p-4">
+              <div class="mb-3">
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nomor NPWP*</label
+                >
+                <input
+                  type="text"
+                  id="npwp_nomor"
+                  placeholder="00.000.000.0-000.000"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload NPWP (PDF/JPG)*</label
+                >
+                <input
+                  type="file"
+                  id="npwp_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- NIB -->
+          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
+            <div
+              onclick="toggleDocSection(this)"
+              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-code text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">NIB</span>
+                <span class="text-xs text-gray-500">Nomor Induk Berusaha*</span>
+              </div>
+              <span class="text-gray-400">▼</span>
+            </div>
+            <div class="doc-section bg-white p-4">
+              <div class="mb-3">
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nomor NIB*</label
+                >
+                <input
+                  type="text"
+                  id="nib_nomor"
+                  placeholder="1234567890123"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload NIB (PDF/JPG)*</label
+                >
+                <input
+                  type="file"
+                  id="nib_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- SIUP/SBU -->
+          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
+            <div
+              onclick="toggleDocSection(this)"
+              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-contract text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">SIUP/SBU</span>
+                <span class="text-xs text-gray-500">Izin Usaha*</span>
+              </div>
+              <span class="text-gray-400">▼</span>
+            </div>
+            <div class="doc-section bg-white p-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload SIUP/SBU (PDF/JPG)*</label
+                >
+                <input
+                  type="file"
+                  id="siup_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- KTP -->
+          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
+            <div
+              onclick="toggleDocSection(this)"
+              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-id-card text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">KTP</span>
+                <span class="text-xs text-gray-500">KTP Penanggung Jawab*</span>
+              </div>
+              <span class="text-gray-400">▼</span>
+            </div>
+            <div class="doc-section bg-white p-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload KTP (PDF/JPG)*</label
+                >
+                <input
+                  type="file"
+                  id="ktp_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Company Profile -->
+          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
+            <div
+              onclick="toggleDocSection(this)"
+              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-briefcase text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">Company Profile</span>
+                <span class="text-xs text-gray-500">Profil Perusahaan*</span>
+              </div>
+              <span class="text-gray-400">▼</span>
+            </div>
+            <div class="doc-section bg-white p-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload Company Profile (PDF)*</label
+                >
+                <input
+                  type="file"
+                  id="compro_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Operasional -->
+        <div id="tabContent2" class="tab-content hidden">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-800">
+              Informasi Operasional
+            </h2>
+            <p class="text-sm text-gray-500">
+              Data bank, alamat pabrik, dan daftar produk
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6">
+            <!-- Bank Info -->
+            <div class="space-y-4">
+              <h3 class="border-b pb-2 font-semibold text-gray-700">
+                Informasi Rekening
+              </h3>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nama Bank*</label
+                >
+                <input
+                  type="text"
+                  id="bank_nama"
+                  placeholder="Mandiri / BCA / BRI"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nomor Rekening*</label
+                >
+                <input
+                  type="text"
+                  id="bank_nomor"
+                  placeholder="000-000-0000"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Atas Nama*</label
+                >
+                <input
+                  type="text"
+                  id="bank_atasNama"
+                  placeholder="PT. Maju Jaya"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+            </div>
+
+            <!-- Alamat Pabrik -->
+            <div class="space-y-4">
+              <h3 class="border-b pb-2 font-semibold text-gray-700">
+                Alamat Pabrik
+              </h3>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Alamat Pabrik*</label
+                >
+                <textarea
+                  id="alamatPabrik"
+                  placeholder="Jl. Industri No. 123, Kawasan Industri Jababeka, Cikarang, Bekasi 17530"
+                  class="h-32 w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products - Table View -->
+          <div class="mt-8">
+            <div class="mb-4 flex items-center justify-between">
+              <h3 class="border-b pb-2 font-semibold text-gray-700">
+                Daftar Harga Produk
+              </h3>
+              <button
+                type="button"
+                onclick="openProductModal()"
+                class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700"
+              >
+                <i class="fa-solid fa-plus mr-2"></i>Tambah Produk
+              </button>
+            </div>
+
+            <!-- Product Table -->
+            <div class="overflow-x-auto rounded-xl border border-gray-200">
+              <table class="w-full text-sm">
+                <thead
+                  class="bg-gray-50 text-xs font-bold text-gray-500 uppercase"
+                >
+                  <tr>
+                    <th class="px-4 py-3 text-center">#</th>
+                    <th class="px-4 py-3 text-left">Nama Item</th>
+                    <th class="px-4 py-3 text-center">Satuan</th>
+                    <th class="px-4 py-3 text-right">Harga (Rp)</th>
+                    <th class="px-4 py-3 text-center">Lead Time</th>
+                    <th class="px-4 py-3 text-center">MOQ</th>
+                    <th class="px-4 py-3 text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="productTableBody">
+                  <tr id="emptyProductRow" class="border-b border-gray-100">
+                    <td colspan="7" class="py-8 text-center text-gray-400">
+                      <i class="fa-solid fa-box-open mb-2 text-4xl"></i>
+                      <p>Belum ada produk ditambahkan</p>
+                      <p class="text-xs">Klik "Tambah Produk" untuk memulai</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="mt-2 text-xs text-gray-500">
+              <i class="fa-solid fa-circle-info mr-1"></i>Klik "Detail" untuk
+              tambah informasi spesifikasi, logistik, dan metadata
+            </p>
+          </div>
+        </div>
+
+        <!-- Tab 4: Review & Submit -->
+        <div id="tabContent3" class="tab-content hidden">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-800">Review & Submit</h2>
+            <p class="text-sm text-gray-500">
+              Periksa kembali semua data sebelum kirim
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            <!-- Tab 1 Summary -->
+            <div class="overflow-hidden rounded-lg border border-gray-200">
+              <div
+                onclick="toggleDocSection(this)"
+                class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+              >
+                <span class="font-semibold text-gray-700"
+                  ><i class="fa-solid fa-building mr-2"></i>Informasi
+                  Perusahaan</span
+                >
+                <span class="text-gray-400">▼</span>
+              </div>
+              <div class="doc-section space-y-2 bg-white p-4 text-sm">
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Nama Perusahaan:</span>
+                  <span id="review_namaPerusahaan" class="text-gray-800"
+                    >-</span
+                  >
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Email:</span>
+                  <span id="review_email" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Nama PIC:</span>
+                  <span id="review_namaPIC" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Kontak PIC:</span>
+                  <span id="review_kontakPIC" class="text-gray-800">-</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2 Summary -->
+            <div class="overflow-hidden rounded-lg border border-gray-200">
+              <div
+                onclick="toggleDocSection(this)"
+                class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+              >
+                <span class="font-semibold text-gray-700"
+                  ><i class="fa-solid fa-file-contract mr-2"></i>Dokumen
+                  Legal</span
+                >
+                <span class="text-gray-400">▼</span>
+              </div>
+              <div class="doc-section space-y-2 bg-white p-4 text-sm">
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">NPWP:</span>
+                  <span id="review_npwp" class="font-mono text-gray-800"
+                    >-</span
+                  >
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">NIB:</span>
+                  <span id="review_nib" class="font-mono text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Dokumen:</span>
+                  <span id="review_docs" class="text-gray-800"
+                    >Silakan upload dokumen</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 3 Summary -->
+            <div class="overflow-hidden rounded-lg border border-gray-200">
+              <div
+                onclick="toggleDocSection(this)"
+                class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+              >
+                <span class="font-semibold text-gray-700"
+                  ><i class="fa-solid fa-gear mr-2"></i>Informasi
+                  Operasional</span
+                >
+                <span class="text-gray-400">▼</span>
+              </div>
+              <div class="doc-section space-y-2 bg-white p-4 text-sm">
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Bank:</span>
+                  <span id="review_bank" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Alamat Pabrik:</span>
+                  <span id="review_alamat" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Jumlah Produk:</span>
+                  <span id="review_products" class="text-gray-800">0 item</span>
+                </div>
+                <div id="review_product_list" class="mt-2 space-y-1"></div>
+              </div>
+            </div>
+
+            <!-- Legal Checkbox -->
+            <div class="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+              <label class="flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="legalCheckbox"
+                  class="mt-1 h-4 w-4 rounded text-indigo-600"
+                />
+                <span class="text-sm leading-relaxed font-medium text-gray-700">
+                  Saya menyatakan bahwa seluruh data perusahaan dan dokumen yang
+                  diunggah adalah sah, benar, dan dapat dipertanggungjawabkan di
+                  mata hukum.
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div
+          class="mt-8 flex items-center justify-between border-t border-gray-200 pt-6"
         >
           <button
-            class="text-sm font-bold tracking-tighter text-slate-400 uppercase transition hover:text-slate-600"
+            type="button"
+            onclick="prevTab()"
+            id="prevBtn"
+            class="rounded-lg border border-gray-300 px-6 py-2.5 text-sm font-bold text-gray-600 hover:bg-white disabled:opacity-30"
           >
-            Draft Tersimpan Auto
+            <i class="fa-solid fa-arrow-left mr-2"></i>SEBELUMNYA
           </button>
-          <div class="flex gap-4">
+
+          <span class="text-sm text-gray-400">Draft Tersimpan Auto</span>
+
+          <button
+            type="button"
+            onclick="nextTab()"
+            id="nextBtn"
+            class="rounded-lg bg-indigo-600 px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700"
+          >
+            SELANJUTNYA<i class="fa-solid fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Help Card -->
+      <div class="mt-6 rounded-xl bg-blue-50 p-4 text-blue-700">
+        <div class="flex items-start gap-3">
+          <i class="fa-solid fa-circle-info mt-1"></i>
+          <div>
+            <p class="font-semibold">Butuh bantuan?</p>
+            <p class="text-sm">
+              Hubungi administrator jika mengalami kendala dalam proses
+              pendaftaran.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div
+      id="productModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm"
+    >
+      <div
+        class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-2xl"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-200 bg-indigo-600 px-6 py-4"
+        >
+          <h3 class="text-lg font-bold text-white">
+            <i class="fa-solid fa-box mr-2"></i>
+            <span id="modalTitle">Tambah Produk</span>
+          </h3>
+          <button
+            onclick="closeProductModal()"
+            class="text-white hover:text-gray-200"
+          >
+            <i class="fa-solid fa-xmark text-2xl"></i>
+          </button>
+        </div>
+
+        <div class="max-h-[70vh] overflow-y-auto p-6">
+          <!-- Tab dalam Modal -->
+          <div class="mb-4 flex gap-2 border-b border-gray-200">
             <button
-              id="prevBtn"
-              onclick="changeStep(-1)"
-              class="rounded-lg border border-slate-300 px-8 py-2.5 text-sm font-bold text-slate-600 hover:bg-white disabled:opacity-30"
+              onclick="switchProductTab('core')"
+              id="prodTabCore"
+              class="prod-tab-btn border-b-2 border-indigo-600 px-4 py-2 text-sm font-bold text-indigo-600"
             >
-              BACK
+              Core Info
             </button>
             <button
-              id="nextBtn"
-              onclick="changeStep(1)"
-              class="rounded-lg bg-slate-900 px-8 py-2.5 text-sm font-bold text-white shadow-xl shadow-slate-200 transition-all hover:bg-blue-700"
+              onclick="switchProductTab('specs')"
+              id="prodTabSpecs"
+              class="prod-tab-btn px-4 py-2 text-sm font-bold text-gray-500 hover:text-indigo-600"
             >
-              NEXT STEP
+              Spesifikasi
+            </button>
+            <button
+              onclick="switchProductTab('logistik')"
+              id="prodTabLogistik"
+              class="prod-tab-btn px-4 py-2 text-sm font-bold text-gray-500 hover:text-indigo-600"
+            >
+              Logistik
+            </button>
+            <button
+              onclick="switchProductTab('biaya')"
+              id="prodTabBiaya"
+              class="prod-tab-btn px-4 py-2 text-sm font-bold text-gray-500 hover:text-indigo-600"
+            >
+              Biaya
+            </button>
+            <button
+              onclick="switchProductTab('meta')"
+              id="prodTabMeta"
+              class="prod-tab-btn px-4 py-2 text-sm font-bold text-gray-500 hover:text-indigo-600"
+            >
+              Metadata
             </button>
           </div>
-        </footer>
+
+          <!-- Core Info Tab -->
+          <div id="prodContentCore" class="prod-content">
+            <div class="grid grid-cols-3 gap-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nama Item*</label
+                >
+                <input
+                  type="text"
+                  id="prod_nama"
+                  placeholder="Pagar Precast 5 susun"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Satuan*</label
+                >
+                <select
+                  id="prod_satuan"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                >
+                  <option value="">Pilih...</option>
+                  <option value="meter">meter</option>
+                  <option value="lembar">lembar</option>
+                  <option value="m³">m³</option>
+                  <option value="unit">unit</option>
+                  <option value="paket">paket</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Harga (Rp)*</label
+                >
+                <input
+                  type="number"
+                  id="prod_harga"
+                  placeholder="370000"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Spesifikasi Tab -->
+          <div id="prodContentSpecs" class="prod-content hidden">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Dimensi</label
+                >
+                <input
+                  type="text"
+                  id="prod_dimensi"
+                  placeholder="200cm × 150cm × 10cm"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Material / Ketebalan</label
+                >
+                <input
+                  type="text"
+                  id="prod_material"
+                  placeholder="Beton K-300, besi Ø10mm"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Finishing / Warna</label
+                >
+                <select
+                  id="prod_finishing"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                >
+                  <option value="">Pilih...</option>
+                  <option value="Natural">Natural</option>
+                  <option value="Cat">Cat</option>
+                  <option value="Acian">Acian</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Berat per Unit (kg)</label
+                >
+                <input
+                  type="number"
+                  id="prod_berat"
+                  placeholder="45"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Logistik Tab -->
+          <div id="prodContentLogistik" class="prod-content hidden">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Lead Time (hari)</label
+                >
+                <input
+                  type="number"
+                  id="prod_leadtime"
+                  placeholder="14"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >MOQ</label
+                >
+                <input
+                  type="number"
+                  id="prod_moq"
+                  placeholder="10"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+            <div class="mt-4">
+              <label
+                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
+                >Area Pengiriman</label
+              >
+              <div class="flex flex-wrap gap-3">
+                <label class="flex items-center gap-2 text-sm"
+                  ><input
+                    type="checkbox"
+                    id="area_jabodetabek"
+                    class="rounded text-indigo-600"
+                  />
+                  Jabodetabek</label
+                >
+                <label class="flex items-center gap-2 text-sm"
+                  ><input
+                    type="checkbox"
+                    id="area_jawabarat"
+                    class="rounded text-indigo-600"
+                  />
+                  Jawa Barat</label
+                >
+                <label class="flex items-center gap-2 text-sm"
+                  ><input
+                    type="checkbox"
+                    id="area_jawatengah"
+                    class="rounded text-indigo-600"
+                  />
+                  Jawa Tengah</label
+                >
+                <label class="flex items-center gap-2 text-sm"
+                  ><input
+                    type="checkbox"
+                    id="area_jawatimur"
+                    class="rounded text-indigo-600"
+                  />
+                  Jawa Timur</label
+                >
+                <label class="flex items-center gap-2 text-sm"
+                  ><input
+                    type="checkbox"
+                    id="area_sumatera"
+                    class="rounded text-indigo-600"
+                  />
+                  Sumatera</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Biaya Tab -->
+          <div id="prodContentBiaya" class="prod-content hidden">
+            <div class="mb-4">
+              <label
+                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
+                >Checklist Inklusi Biaya</label
+              >
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_mobilisasi"
+                    class="rounded text-indigo-600"
+                  />
+                  Mobilisasi & demobilisasi tukang</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_penginapan"
+                    class="rounded text-indigo-600"
+                  />
+                  Penginapan tukang</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_pengiriman"
+                    class="rounded text-indigo-600"
+                  />
+                  Biaya pengiriman</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_langsir"
+                    class="rounded text-indigo-600"
+                  />
+                  Biaya langsir/bongkar muat</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_instalasi"
+                    class="rounded text-indigo-600"
+                  />
+                  Instalasi/pemasangan</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_ppn"
+                    class="rounded text-indigo-600"
+                  />
+                  PPN 11%</label
+                >
+              </div>
+            </div>
+
+            <div>
+              <label
+                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
+                >Biaya Tambahan Lain</label
+              >
+              <table class="w-full text-sm">
+                <thead class="text-xs text-gray-500 uppercase">
+                  <tr class="border-b">
+                    <th class="py-2 text-left">Keterangan</th>
+                    <th class="w-32 py-2 text-right">Nilai (Rp)</th>
+                    <th class="w-24 py-2 text-right">Satuan</th>
+                    <th class="w-8 py-2"></th>
+                  </tr>
+                </thead>
+                <tbody id="biayaTableBody">
+                  <tr class="border-b">
+                    <td class="py-1">
+                      <input
+                        type="text"
+                        placeholder="[Vendor/Admin isi]"
+                        class="w-full rounded border border-gray-200 px-2 py-1 text-sm"
+                      />
+                    </td>
+                    <td class="py-1">
+                      <input
+                        type="number"
+                        placeholder="0"
+                        class="w-full rounded border border-gray-200 px-2 py-1 text-right text-sm"
+                      />
+                    </td>
+                    <td class="py-1">
+                      <input
+                        type="text"
+                        placeholder="unit"
+                        class="w-full rounded border border-gray-200 px-2 py-1 text-right text-sm"
+                      />
+                    </td>
+                    <td class="py-1 text-center">
+                      <button
+                        type="button"
+                        class="text-red-400 hover:text-red-600"
+                        onclick="this.closest('tr').remove()"
+                      >
+                        ×
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button
+                type="button"
+                onclick="addBiayaRow()"
+                class="mt-2 text-xs font-bold text-indigo-600 uppercase"
+              >
+                + Tambah Biaya
+              </button>
+            </div>
+          </div>
+
+          <!-- Metadata Tab -->
+          <div id="prodContentMeta" class="prod-content hidden">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Kategori Produk</label
+                >
+                <select
+                  id="prod_kategori"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                >
+                  <option value="">Pilih...</option>
+                  <option value="Pagar">Pagar</option>
+                  <option value="Panel">Panel</option>
+                  <option value="Pondasi">Pondasi</option>
+                  <option value="Aksesoris">Aksesoris</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Status Ketersediaan</label
+                >
+                <select
+                  id="prod_status"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                >
+                  <option value="Available">Available</option>
+                  <option value="Made to Order">Made to Order</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Lampiran Foto</label
+                >
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="w-full text-sm text-gray-500"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Catatan Tambahan</label
+                >
+                <textarea
+                  id="prod_catatan"
+                  placeholder="Keterangan khusus..."
+                  class="h-20 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="flex items-center justify-end gap-3 border-t border-gray-200 px-6 py-4"
+        >
+          <button
+            onclick="closeProductModal()"
+            class="rounded-lg border border-gray-300 px-6 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50"
+          >
+            Batal
+          </button>
+          <button
+            onclick="saveProduct()"
+            class="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-indigo-700"
+          >
+            <i class="fa-solid fa-check mr-2"></i>Simpan Produk
+          </button>
+        </div>
       </div>
     </div>
 
     <script>
-      // Global form data storage
-      let formData = {
-        step1: { namaPerusahaan: "" },
-        step2: { kontak1: "", kontak2: "", kontak3: "" },
-        step3: { namaPIC: "", kontakPIC: "" },
-        step4: { compro: null },
-        step5: { npwp: "", npwpFile: null },
-        step6: { nib: "", nibFile: null },
-        step7: { siupFile: null },
-        step8: { ktpFile: null },
-        step9: { namaBank: "", nomorRekening: "", atasNama: "" },
-        step10: { products: [] },
-        step11: { alamatPabrik: "" },
-        uploadedFiles: [],
-      }
+      // Variabel global - dideklarasikan di atas semua fungsi
+      let currentTab = 0
+      const totalTabs = 4
+      let products = []
+      let editingProductIndex = -1
 
-      const stepData = [
-        {
-          title: "Nama Perusahaan",
-          desc: "Informasi dasar identitas vendor.",
-          fields: [{ l: "Nama Perusahaan*", p: "PT. Maju Jaya" }],
-        },
-        {
-          title: "No. Kontak",
-          desc: "Min. 2, Max. 3 nomor (PIC aktif + backup).",
-          fields: [
-            { l: "No. Kontak 1*", p: "081234567890" },
-            { l: "No. Kontak 2*", p: "081234567891" },
-            { l: "No. Kontak 3", p: "Opsional" },
-          ],
-        },
-        {
-          title: "Owner/PIC & CP",
-          desc: "Nama PIC wajib = nama di KTP (validasi hukum).",
-          fields: [
-            { l: "Nama PIC*", p: "Budi Santoso" },
-            { l: "Kontak PIC*", p: "081234567890" },
-          ],
-        },
-        {
-          title: "Compro",
-          desc: "Company Profile, max 10MB.",
-          fields: [],
-        },
-        {
-          title: "NPWP",
-          desc: "Format 15/16 digit, valid.",
-          fields: [{ l: "Nomor NPWP*", p: "00.000.000.0-000.000" }],
-        },
-        {
-          title: "NIB",
-          desc: "Nomor Induk Berusaha, wajib unik.",
-          fields: [{ l: "Nomor NIB*", p: "1234567890123" }],
-        },
-        {
-          title: "SIUP/SBU",
-          desc: "Izin usaha sesuai bidang konstruksi.",
-          fields: [],
-        },
-        {
-          title: "KTP",
-          desc: "KTP Penanggung Jawab, jelas & tidak kadaluarsa.",
-          fields: [],
-        },
-        {
-          title: "Norek",
-          desc: "Rekening atas nama PT, sesuai nama perusahaan.",
-          fields: [
-            { l: "Nama Bank*", p: "Mandiri / BCA / BNI" },
-            { l: "Nomor Rekening*", p: "000-000-0000" },
-            { l: "Atas Nama*", p: "PT. Maju Jaya" },
-          ],
-        },
-        {
-          title: "Daftar Harga Produk",
-          desc: "Base Price per item (format dinamis).",
-          fields: [],
-        },
-        {
-          title: "Alamat Pabrik",
-          desc: "Lokasi workshop/vendor, lengkap (jalan, kota, kode pos).",
-          fields: [
-            {
-              l: "Alamat Pabrik*",
-              p: "Jl. Industri No. 123, Kawasan Industri Jababeka, Cikarang, Bekasi 17530",
-              type: "textarea",
-            },
-          ],
-        },
-        {
-          title: "Review & Submit",
-          desc: "Periksa kembali semua data sebelum kirim.",
-          fields: [],
-        },
-      ]
-
-      let currentStep = 0
-
-      // File input handler for conditional preview
-      function setupFileInputHandler() {
-        const fileInputs = document.querySelectorAll('input[type="file"]')
-        fileInputs.forEach((input) => {
-          input.addEventListener("change", function () {
-            const preview = document.getElementById("filePreview")
-            const fileNameSpan = preview.querySelector("span")
-            const statusSpan = preview.querySelector("span:last-child")
-
-            if (this.files.length > 0) {
-              const file = this.files[0]
-              fileNameSpan.textContent = file.name
-              statusSpan.textContent = "UPLOADED"
-              statusSpan.className =
-                "rounded bg-green-100 px-2 py-1 text-[9px] font-bold tracking-widest text-green-600 uppercase"
-              preview.style.display = "flex"
-            } else {
-              preview.style.display = "none"
-            }
-          })
+      function switchTab(tabIndex) {
+        // Update tab content
+        document.querySelectorAll(".tab-content").forEach((content, i) => {
+          content.classList.toggle("hidden", i !== tabIndex)
         })
-      }
 
-      function saveStepData() {
-        const inputs = document.querySelectorAll("#dynamicFields input")
-        const textareas = document.querySelectorAll("#dynamicFields textarea")
-        const currentStepData = stepData[currentStep]
+        currentTab = tabIndex
+        updateStepperUI()
+        updateNavigation()
 
-        if (currentStep === 0) {
-          // Step 1: Nama Perusahaan
-          formData.step1.namaPerusahaan = inputs[0]?.value || ""
-        } else if (currentStep === 1) {
-          // Step 2: No. Kontak (3 fields)
-          formData.step2.kontak1 = inputs[0]?.value || ""
-          formData.step2.kontak2 = inputs[1]?.value || ""
-          formData.step2.kontak3 = inputs[2]?.value || ""
-        } else if (currentStep === 2) {
-          // Step 3: Owner/PIC & CP
-          formData.step3.namaPIC = inputs[0]?.value || ""
-          formData.step3.kontakPIC = inputs[1]?.value || ""
-        } else if (currentStep === 3) {
-          // Step 4: Compro (upload only - handled separately)
-        } else if (currentStep === 4) {
-          // Step 5: NPWP (input + upload)
-          formData.step5.npwp = inputs[0]?.value || ""
-        } else if (currentStep === 5) {
-          // Step 6: NIB (input + upload)
-          formData.step6.nib = inputs[0]?.value || ""
-        } else if (currentStep === 6) {
-          // Step 7: SIUP/SBU (upload only - handled separately)
-        } else if (currentStep === 7) {
-          // Step 8: KTP (upload only - handled separately)
-        } else if (currentStep === 8) {
-          // Step 9: Norek
-          formData.step9.namaBank = inputs[0]?.value || ""
-          formData.step9.nomorRekening = inputs[1]?.value || ""
-          formData.step9.atasNama = inputs[2]?.value || ""
-        } else if (currentStep === 9) {
-          // Step 10: Daftar Harga Produk (dynamic cards)
-          const productCards = document.querySelectorAll(".product-card")
-          formData.step10.products = []
-          productCards.forEach((card) => {
-            const nama = card.querySelector('input[type="text"]')?.value || ""
-            const selects = card.querySelectorAll("select")
-            const satuan = selects[0]?.value || ""
-            const hargaInputs = card.querySelectorAll('input[type="number"]')
-            const harga = hargaInputs[0]?.value || ""
-
-            const specsInputs = card.querySelectorAll(
-              ".specs-section input, .specs-section select"
-            )
-            const logistikInputs = card.querySelectorAll(
-              ".logistik-section input"
-            )
-            const checkboxes = card.querySelectorAll(
-              ".checklist-section input[type=checkbox]"
-            )
-            const biayaRows = card.querySelectorAll(".biaya-row")
-            const metadataInputs = card.querySelectorAll(
-              ".metadata-section input, .metadata-section select, .metadata-section textarea"
-            )
-
-            const biayaLain = []
-            biayaRows.forEach((row) => {
-              const inputs = row.querySelectorAll("input")
-              if (inputs.length >= 3) {
-                biayaLain.push({
-                  keterangan: inputs[0]?.value || "",
-                  nilai: inputs[1]?.value || "",
-                  satuan: inputs[2]?.value || "",
-                })
-              }
-            })
-
-            const checklist = []
-            if (checkboxes[0]?.checked)
-              checklist.push("Mobilisasi & demobilisasi tukang")
-            if (checkboxes[1]?.checked) checklist.push("Penginapan tukang")
-            if (checkboxes[2]?.checked) checklist.push("Biaya pengiriman")
-            if (checkboxes[3]?.checked)
-              checklist.push("Biaya langsir/bongkar muat")
-            if (checkboxes[4]?.checked) checklist.push("Instalasi/pemasangan")
-            if (checkboxes[5]?.checked) checklist.push("PPN 11%")
-
-            formData.step10.products.push({
-              nama: nama,
-              satuan: satuan,
-              harga: harga,
-              spesifikasi: {
-                dimensi: specsInputs[0]?.value || "",
-                material: specsInputs[1]?.value || "",
-                finishing: specsInputs[2]?.value || "",
-                berat: specsInputs[3]?.value || "",
-              },
-              logistik: {
-                leadTime: logistikInputs[0]?.value || "",
-                moq: logistikInputs[1]?.value || "",
-              },
-              checklistInklusi: checklist,
-              biayaLain: biayaLain,
-              metadata: {
-                kategori: metadataInputs[0]?.value || "",
-                status: metadataInputs[1]?.value || "",
-                foto: metadataInputs[2]?.files?.[0]?.name || "",
-                catatan: metadataInputs[3]?.value || "",
-              },
-            })
-          })
-        } else if (currentStep === 10) {
-          // Step 11: Alamat Pabrik
-          formData.step11.alamatPabrik = textareas[0]?.value || ""
+        // Update review if on last tab
+        if (currentTab === 3) {
+          updateReview()
         }
-        // Step 11 (index 11) is Review & Submit - no data to save
       }
 
-      function renderReviewData() {
-        return `
-                <div class="space-y-6">
-                    <!-- Step 1: Nama Perusahaan -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">1</span>
-                            Nama Perusahaan
-                        </h3>
-                        <div class="bg-slate-50 p-3 rounded text-sm">
-                            <span class="text-slate-500 font-medium">Nama Perusahaan:</span>
-                            <div class="text-slate-800 mt-1">${formData.step1.namaPerusahaan || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                        </div>
-                    </div>
+      function updateStepperUI() {
+        for (let i = 0; i < totalTabs; i++) {
+          const stepIcon = document.getElementById(`stepIcon${i}`)
+          const stepNum = document.getElementById(`stepNum${i}`)
+          const stepTitle = document.getElementById(`stepTitle${i}`)
 
-                    <!-- Step 2: No. Kontak -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">2</span>
-                            No. Kontak
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">No. Kontak 1:</span>
-                                <div class="text-slate-800 mt-1">${formData.step2.kontak1 || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">No. Kontak 2:</span>
-                                <div class="text-slate-800 mt-1">${formData.step2.kontak2 || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">No. Kontak 3:</span>
-                                <div class="text-slate-800 mt-1">${formData.step2.kontak3 || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Owner/PIC & CP -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">3</span>
-                            Owner/PIC & CP
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Nama PIC:</span>
-                                <div class="text-slate-800 mt-1">${formData.step3.namaPIC || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Kontak PIC:</span>
-                                <div class="text-slate-800 mt-1">${formData.step3.kontakPIC || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Compro -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">4</span>
-                            Compro
-                        </h3>
-                        <div class="bg-slate-50 p-3 rounded text-sm">
-                            <span class="text-slate-500 font-medium">Company Profile:</span>
-                            <div class="text-slate-800 mt-1">${formData.step4.compro ? formData.step4.compro.name : '<span class="text-slate-400 italic">Belum diupload</span>'}</div>
-                        </div>
-                    </div>
-
-                    <!-- Step 5: NPWP -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">5</span>
-                            NPWP
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Nomor NPWP:</span>
-                                <div class="text-slate-800 mt-1 font-mono">${formData.step5.npwp || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Scan NPWP:</span>
-                                <div class="text-slate-800 mt-1">${formData.step5.npwpFile ? formData.step5.npwpFile.name : '<span class="text-slate-400 italic">Belum diupload</span>'}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 6: NIB -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">6</span>
-                            NIB
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Nomor NIB:</span>
-                                <div class="text-slate-800 mt-1 font-mono">${formData.step6.nib || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Scan NIB:</span>
-                                <div class="text-slate-800 mt-1">${formData.step6.nibFile ? formData.step6.nibFile.name : '<span class="text-slate-400 italic">Belum diupload</span>'}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 7: SIUP/SBU -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">7</span>
-                            SIUP/SBU
-                        </h3>
-                        <div class="bg-slate-50 p-3 rounded text-sm">
-                            <span class="text-slate-500 font-medium">Dokumen SIUP/SBU:</span>
-                            <div class="text-slate-800 mt-1">${formData.step7.siupFile ? formData.step7.siupFile.name : '<span class="text-slate-400 italic">Belum diupload</span>'}</div>
-                        </div>
-                    </div>
-
-                    <!-- Step 8: KTP -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">8</span>
-                            KTP
-                        </h3>
-                        <div class="bg-slate-50 p-3 rounded text-sm">
-                            <span class="text-slate-500 font-medium">Foto KTP:</span>
-                            <div class="text-slate-800 mt-1">${formData.step8.ktpFile ? formData.step8.ktpFile.name : '<span class="text-slate-400 italic">Belum diupload</span>'}</div>
-                        </div>
-                    </div>
-
-                    <!-- Step 9: Norek -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">9</span>
-                            Norek
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Nama Bank:</span>
-                                <div class="text-slate-800 mt-1">${formData.step9.namaBank || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Nomor Rekening:</span>
-                                <div class="text-slate-800 mt-1 font-mono">${formData.step9.nomorRekening || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded">
-                                <span class="text-slate-500 font-medium">Atas Nama:</span>
-                                <div class="text-slate-800 mt-1">${formData.step9.atasNama || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 10: Daftar Harga Produk -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">10</span>
-                            Daftar Harga Produk
-                        </h3>
-                        <div class="bg-slate-50 p-3 rounded">
-                            <span class="text-slate-500 font-medium block mb-2">Daftar Produk/Base Price:</span>
-                            ${
-                              formData.step10.products.length > 0
-                                ? formData.step10.products
-                                    .map(
-                                      (p, i) => `
-                                    <div class="border border-slate-200 rounded-lg mb-4 bg-white overflow-hidden">
-                                        <div class="bg-blue-50 px-3 py-2 border-b border-slate-200">
-                                            <span class="font-bold text-blue-700 text-sm">Item #${i + 1}: ${p.nama || "-"}</span>
-                                        </div>
-                                        <div class="p-3 text-sm space-y-2">
-                                            <div class="grid grid-cols-3 gap-2">
-                                                <div><span class="text-slate-500 text-xs">Nama Item:</span><div class="font-medium">${p.nama || "-"}</div></div>
-                                                <div><span class="text-slate-500 text-xs">Satuan:</span><div class="font-medium">${p.satuan || "-"}</div></div>
-                                                <div><span class="text-slate-500 text-xs">Harga (Rp):</span><div class="font-medium">${p.harga ? Number(p.harga).toLocaleString("id-ID") : "-"}</div></div>
-                                            </div>
-                                            ${
-                                              p.spesifikasi?.dimensi ||
-                                              p.spesifikasi?.material
-                                                ? `
-                                            <div class="mt-2 pt-2 border-t border-slate-100">
-                                                <span class="text-slate-500 text-xs uppercase font-bold">Spesifikasi:</span>
-                                                <div class="grid grid-cols-4 gap-2 mt-1">
-                                                    <div><span class="text-slate-400 text-xs">Dimensi:</span><div>${p.spesifikasi.dimensi || "-"}</div></div>
-                                                    <div><span class="text-slate-400 text-xs">Material:</span><div>${p.spesifikasi.material || "-"}</div></div>
-                                                    <div><span class="text-slate-400 text-xs">Finishing:</span><div>${p.spesifikasi.finishing || "-"}</div></div>
-                                                    <div><span class="text-slate-400 text-xs">Berat:</span><div>${p.spesifikasi.berat ? p.spesifikasi.berat + " kg" : "-"}</div></div>
-                                                </div>
-                                            </div>
-                                            `
-                                                : ""
-                                            }
-                                            ${
-                                              p.logistik?.leadTime ||
-                                              p.logistik?.moq
-                                                ? `
-                                            <div class="mt-2 pt-2 border-t border-slate-100">
-                                                <span class="text-slate-500 text-xs uppercase font-bold">Logistik:</span>
-                                                <div class="grid grid-cols-2 gap-2 mt-1">
-                                                    <div><span class="text-slate-400 text-xs">Lead Time:</span><div>${p.logistik.leadTime ? p.logistik.leadTime + " hari" : "-"}</div></div>
-                                                    <div><span class="text-slate-400 text-xs">MOQ:</span><div>${p.logistik.moq || "-"}</div></div>
-                                                </div>
-                                            </div>
-                                            `
-                                                : ""
-                                            }
-                                            ${
-                                              p.checklistInklusi?.length > 0
-                                                ? `
-                                            <div class="mt-2 pt-2 border-t border-slate-100">
-                                                <span class="text-slate-500 text-xs uppercase font-bold">Checklist Inklusi:</span>
-                                                <div class="flex flex-wrap gap-1 mt-1">
-                                                    ${p.checklistInklusi.map((c) => `<span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded">✓ ${c}</span>`).join("")}
-                                                </div>
-                                            </div>
-                                            `
-                                                : ""
-                                            }
-                                            ${
-                                              p.biayaLain?.length > 0
-                                                ? `
-                                            <div class="mt-2 pt-2 border-t border-slate-100">
-                                                <span class="text-slate-500 text-xs uppercase font-bold">Tambahan Biaya:</span>
-                                                <table class="w-full mt-1 text-xs">
-                                                    <thead><tr class="text-slate-400 border-b"><th class="text-left py-1">Keterangan</th><th class="text-right py-1">Nilai</th><th class="text-right py-1">Satuan</th></tr></thead>
-                                                    <tbody>
-                                                        ${p.biayaLain
-                                                          .map(
-                                                            (b) => `
-                                                            <tr class="border-b border-slate-100">
-                                                                <td class="py-1">${b.keterangan || "-"}</td>
-                                                                <td class="py-1 text-right">${b.nilai ? Number(b.nilai).toLocaleString("id-ID") : "-"}</td>
-                                                                <td class="py-1 text-right">${b.satuan || "-"}</td>
-                                                            </tr>
-                                                        `
-                                                          )
-                                                          .join("")}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            `
-                                                : ""
-                                            }
-                                            ${
-                                              p.metadata?.kategori ||
-                                              p.metadata?.status
-                                                ? `
-                                            <div class="mt-2 pt-2 border-t border-slate-100">
-                                                <span class="text-slate-500 text-xs uppercase font-bold">Metadata:</span>
-                                                <div class="grid grid-cols-2 gap-2 mt-1">
-                                                    <div><span class="text-slate-400 text-xs">Kategori:</span><div>${p.metadata.kategori || "-"}</div></div>
-                                                    <div><span class="text-slate-400 text-xs">Status:</span><div>${p.metadata.status || "-"}</div></div>
-                                                </div>
-                                            </div>
-                                            `
-                                                : ""
-                                            }
-                                        </div>
-                                    </div>
-                                `
-                                    )
-                                    .join("")
-                                : '<span class="text-slate-400 italic">Belum ada produk ditambahkan</span>'
-                            }
-                        </div>
-                    </div>
-
-                    <!-- Step 11: Alamat Pabrik -->
-                    <div class="border-b border-slate-200 pb-4">
-                        <h3 class="font-bold text-slate-700 mb-3 flex items-center">
-                            <span class="w-6 h-6 rounded bg-slate-600 text-white text-xs flex items-center justify-center mr-2">11</span>
-                            Alamat Pabrik
-                        </h3>
-                        <div class="bg-slate-50 p-3 rounded text-sm">
-                            <span class="text-slate-500 font-medium">Alamat Pabrik:</span>
-                            <div class="text-slate-800 mt-1 whitespace-pre-line">${formData.step11.alamatPabrik || '<span class="text-slate-400 italic">Belum diisi</span>'}</div>
-                        </div>
-                    </div>
-                </div>
-            `
+          if (i < currentTab) {
+            // Completed steps
+            stepIcon.className =
+              "step-icon flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg shadow-green-200 transition-all group-hover:scale-110"
+            stepIcon.innerHTML = '<i class="fa-solid fa-check text-xl"></i>'
+            stepNum.className =
+              "text-xs font-bold uppercase tracking-wider text-green-600"
+            stepTitle.className = "mt-1 text-sm font-bold text-green-600"
+          } else if (i === currentTab) {
+            // Active step
+            stepIcon.className =
+              "step-icon flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-200 transition-all group-hover:scale-110 ring-4 ring-indigo-100"
+            stepIcon.innerHTML = `<span class="text-xl font-bold">${i + 1}</span>`
+            stepNum.className =
+              "text-xs font-bold uppercase tracking-wider text-indigo-600"
+            stepTitle.className = "mt-1 text-sm font-bold text-indigo-700"
+          } else {
+            // Future steps
+            stepIcon.className =
+              "step-icon flex h-14 w-14 items-center justify-center rounded-full bg-gray-200 text-gray-400 transition-all group-hover:scale-110"
+            stepIcon.innerHTML = `<span class="text-xl font-bold">${i + 1}</span>`
+            stepNum.className =
+              "text-xs font-bold uppercase tracking-wider text-gray-400"
+            stepTitle.className = "mt-1 text-sm font-bold text-gray-500"
+          }
+        }
       }
 
-      function renderStepper() {
-        const nav = document.getElementById("stepperNav")
-        nav.innerHTML = stepData
-          .map(
-            (s, i) => `
-                <div onclick="goToStep(${i})" class="flex items-center p-3 rounded-xl cursor-pointer transition-all ${i === currentStep ? "bg-white shadow-sm border border-slate-200 text-blue-600 font-bold" : "text-slate-400 hover:bg-slate-200/50"}">
-                    <span class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] mr-3 ${i === currentStep ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-500"}">${i + 1}</span>
-                    <span class="text-[11px] uppercase tracking-tighter">${s.title}</span>
-                </div>
-            `
-          )
-          .join("")
+      function updateNavigation() {
+        document.getElementById("prevBtn").disabled = currentTab === 0
 
-        const content = stepData[currentStep]
-        document.getElementById("currentStepTitle").innerText = content.title
-        document.getElementById("currentStepDesc").innerText = content.desc
+        const nextBtn = document.getElementById("nextBtn")
+        if (currentTab === totalTabs - 1) {
+          nextBtn.innerHTML =
+            'KIRIM DATA<i class="fa-solid fa-paper-plane ml-2"></i>'
+          nextBtn.classList.add("bg-green-600", "hover:bg-green-700")
+        } else {
+          nextBtn.innerHTML =
+            'SELANJUTNYA<i class="fa-solid fa-arrow-right ml-2"></i>'
+          nextBtn.classList.remove("bg-green-600", "hover:bg-green-700")
+        }
+      }
 
-        const fieldsArea = document.getElementById("dynamicFields")
-        fieldsArea.innerHTML = content.fields
-          .map((f) => {
-            if (f.type === "textarea") {
-              return `
-                <div class="col-span-2">
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">${f.l}</label>
-                    <textarea placeholder="${f.p}" class="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition h-24 resize-none"></textarea>
-                </div>
-            `
-            }
-            return `
-                <div class="col-span-1">
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">${f.l}</label>
-                    <input type="text" placeholder="${f.p}" class="w-full border border-slate-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
-                </div>
-            `
-          })
-          .join("")
+      function prevTab() {
+        if (currentTab > 0) {
+          switchTab(currentTab - 1)
+        }
+      }
 
-        // Add Product List for Step 10 (Daftar Harga Produk - index 9)
-        if (currentStep === 9) {
-          const productTable = document.createElement("div")
-          productTable.className = "col-span-2 mt-6"
-          productTable.innerHTML = `
-            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-3">📦 FORMAT DINAMIS: DAFTAR HARGA PRODUK</label>
-            <div id="productContainer" class="space-y-6">
-              <!-- Sample Product Card 1 -->
-              <div class="product-card border border-slate-200 rounded-xl bg-white overflow-hidden">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-                  <span class="font-bold text-slate-700 text-sm">Item #1</span>
-                  <button onclick="removeProductRow(this)" class="text-red-400 hover:text-red-600 text-lg">×</button>
-                </div>
-                <div class="p-4 space-y-4">
-                  <!-- Core Fields -->
-                  <div class="grid grid-cols-3 gap-4">
-                    <div>
-                      <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Item*</label>
-                      <input type="text" value="Pagar Precast 5 susun" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    </div>
-                    <div>
-                      <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Satuan*</label>
-                      <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="meter" selected>meter</option>
-                        <option value="lembar">lembar</option>
-                        <option value="m³">m³</option>
-                        <option value="unit">unit</option>
-                        <option value="paket">paket</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Harga* (Rp)</label>
-                      <input type="number" value="370000" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="0">
-                    </div>
-                  </div>
-                  
-                  <!-- Spesifikasi Teknis Collapsible -->
-                  <div class="specs-section border border-slate-200 rounded-lg overflow-hidden">
-                    <div onclick="toggleSection(this)" class="cursor-pointer bg-blue-50 px-4 py-2 flex items-center justify-between">
-                      <span class="text-xs font-bold text-blue-700 uppercase">📐 Spesifikasi Teknis</span>
-                      <span class="text-blue-500">▼</span>
-                    </div>
-                    <div class="specs-content hidden p-4 bg-slate-50">
-                      <div class="grid grid-cols-2 gap-4">
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Dimensi</label>
-                          <input type="text" placeholder="200cm × 150cm × 10cm" class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Material / Ketebalan</label>
-                          <input type="text" placeholder="Beton K-300, besi Ø10mm" class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Finishing / Warna</label>
-                          <select class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                            <option value="">Pilih...</option>
-                            <option value="Natural" selected>Natural</option>
-                            <option value="Cat">Cat</option>
-                            <option value="Acian">Acian</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Berat per Unit (kg)</label>
-                          <input type="number" placeholder="45" class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Logistik & Produksi Collapsible -->
-                  <div class="logistik-section border border-slate-200 rounded-lg overflow-hidden">
-                    <div onclick="toggleSection(this)" class="cursor-pointer bg-purple-50 px-4 py-2 flex items-center justify-between">
-                      <span class="text-xs font-bold text-purple-700 uppercase">🚚 Logistik & Produksi</span>
-                      <span class="text-purple-500">▼</span>
-                    </div>
-                    <div class="logistik-content hidden p-4 bg-slate-50">
-                      <div class="grid grid-cols-3 gap-4">
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Lead Time (hari)</label>
-                          <input type="number" placeholder="14" class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">MOQ</label>
-                          <input type="number" placeholder="10" class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Area Pengiriman</label>
-                          <div class="flex flex-wrap gap-2 mt-1">
-                            <label class="flex items-center gap-1 text-xs"><input type="checkbox" class="rounded"> Jabodetabek</label>
-                            <label class="flex items-center gap-1 text-xs"><input type="checkbox" class="rounded"> Jawa Barat</label>
-                            <label class="flex items-center gap-1 text-xs"><input type="checkbox" class="rounded"> Jawa Tengah</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Checklist Inklusi Biaya -->
-                  <div class="checklist-section border border-slate-200 rounded-lg overflow-hidden">
-                    <div onclick="toggleSection(this)" class="cursor-pointer bg-green-50 px-4 py-2 flex items-center justify-between">
-                      <span class="text-xs font-bold text-green-700 uppercase">✅ Checklist Inklusi Biaya</span>
-                      <span class="text-green-500">▼</span>
-                    </div>
-                    <div class="checklist-content hidden p-4 bg-slate-50">
-                      <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" checked class="rounded text-blue-600"> Sudah termasuk mobilisasi & demobilisasi tukang</label>
-                        <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" checked class="rounded text-blue-600"> Sudah termasuk penginapan tukang</label>
-                        <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk biaya pengiriman (radius ___ km)</label>
-                        <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk biaya langsir / bongkar muat</label>
-                        <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" checked class="rounded text-blue-600"> Sudah termasuk instalasi / pemasangan</label>
-                        <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" checked class="rounded text-blue-600"> Sudah termasuk PPN 11%</label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Tambahan Biaya Lain -->
-                  <div class="biaya-section border border-slate-200 rounded-lg overflow-hidden">
-                    <div onclick="toggleSection(this)" class="cursor-pointer bg-orange-50 px-4 py-2 flex items-center justify-between">
-                      <span class="text-xs font-bold text-orange-700 uppercase">💰 Tambahan Biaya Lain</span>
-                      <span class="text-orange-500">▼</span>
-                    </div>
-                    <div class="biaya-content hidden p-4 bg-slate-50">
-                      <table class="w-full text-sm">
-                        <thead>
-                          <tr class="text-slate-500 border-b text-[10px] uppercase">
-                            <th class="text-left py-1">Keterangan Biaya</th>
-                            <th class="text-left py-1 w-32">Nilai (Rp)</th>
-                            <th class="text-left py-1 w-24">Satuan</th>
-                            <th class="w-8"></th>
-                          </tr>
-                        </thead>
-                        <tbody class="biaya-rows">
-                          <tr class="biaya-row">
-                            <td class="py-1"><input type="text" placeholder="[Vendor/Admin isi]" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td>
-                            <td class="py-1"><input type="number" placeholder="0" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td>
-                            <td class="py-1"><input type="text" placeholder="unit" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td>
-                            <td class="py-1"><button onclick="removeBiayaRow(this)" class="text-red-400 hover:text-red-600">×</button></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <button onclick="addBiayaRow(this)" class="mt-2 text-xs text-blue-600 font-bold uppercase">+ Tambah Biaya</button>
-                    </div>
-                  </div>
-
-                  <!-- Metadata Collapsible -->
-                  <div class="metadata-section border border-slate-200 rounded-lg overflow-hidden">
-                    <div onclick="toggleSection(this)" class="cursor-pointer bg-slate-100 px-4 py-2 flex items-center justify-between">
-                      <span class="text-xs font-bold text-slate-700 uppercase">🗂️ Metadata</span>
-                      <span class="text-slate-500">▼</span>
-                    </div>
-                    <div class="metadata-content hidden p-4 bg-slate-50">
-                      <div class="grid grid-cols-2 gap-4">
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Kategori Produk</label>
-                          <select class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                            <option value="">Pilih...</option>
-                            <option value="Pagar" selected>Pagar</option>
-                            <option value="Panel">Panel</option>
-                            <option value="Pondasi">Pondasi</option>
-                            <option value="Aksesoris">Aksesoris</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status Ketersediaan</label>
-                          <select class="w-full border border-slate-200 rounded px-3 py-2 text-sm">
-                            <option value="Available" selected>Available</option>
-                            <option value="Made to Order">Made to Order</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Lampiran Foto</label>
-                          <input type="file" accept="image/*" class="w-full text-xs text-slate-500">
-                        </div>
-                        <div>
-                          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Catatan Tambahan</label>
-                          <textarea placeholder="Keterangan khusus..." class="w-full border border-slate-200 rounded px-3 py-2 text-sm h-20 resize-none"></textarea>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-            <button onclick="addProductRow()" class="mt-4 w-full py-3 border-2 border-dashed border-blue-300 text-blue-600 font-bold text-sm uppercase rounded-xl hover:border-blue-500 hover:bg-blue-50 transition">
-              + Tambah Produk
-            </button>
-          `
-          fieldsArea.appendChild(productTable)
+      function nextTab() {
+        // Validate current tab before moving
+        if (!validateTab(currentTab)) {
+          return
         }
 
-        // Hide file preview by default (Enhancement #5)
-        document.getElementById("filePreview").style.display = "none"
-
-        // Special logic for Step 11
-        const isLast = currentStep === stepData.length - 1
-        document.getElementById("uploadContainer").style.display = isLast
-          ? "none"
-          : "block"
-
-        if (isLast) {
-          // Enhancement #6: Show all user input data in review
-          document.getElementById("finalReview").innerHTML = `
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Review Data Vendor</h3>
-            ${renderReviewData()}
-            <div class="mt-6 pt-4 border-t border-slate-200">
-              <label class="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" class="mt-1 h-4 w-4 rounded text-blue-600" />
-                <span class="text-sm leading-relaxed font-medium text-slate-700">Saya menyatakan bahwa seluruh data perusahaan dan dokumen yang diunggah adalah sah, benar, dan dapat dipertanggungjawabkan di mata hukum.</span>
-              </label>
-            </div>
-          `
+        if (currentTab < totalTabs - 1) {
+          switchTab(currentTab + 1)
+        } else {
+          submitRegistration()
         }
-
-        document
-          .getElementById("finalReview")
-          .classList.toggle("hidden", !isLast)
-        document.getElementById("nextBtn").innerText = isLast
-          ? "SUBMIT DATA"
-          : "NEXT STEP"
-        document
-          .getElementById("nextBtn")
-          .classList.toggle("bg-green-600", isLast)
-        document.getElementById("prevBtn").disabled = currentStep === 0
       }
 
-      function changeStep(n) {
-        // Save current step data before moving
-        saveStepData()
-
-        currentStep += n
-        renderStepper()
+      function validateTab(tabIndex) {
+        if (tabIndex === 0) {
+          const nama = document.getElementById("namaPerusahaan").value
+          const email = document.getElementById("emailPerusahaan").value
+          if (!nama || !email) {
+            alert("Silakan isi Nama Perusahaan dan Email terlebih dahulu")
+            return false
+          }
+          if (!email.includes("@")) {
+            alert("Format email tidak valid")
+            return false
+          }
+        }
+        return true
       }
-      function goToStep(n) {
-        // Save current step data before jumping
-        saveStepData()
 
-        currentStep = n
-        renderStepper()
-      }
-
-      function toggleSection(header) {
+      function toggleDocSection(header) {
         const content = header.nextElementSibling
         const arrow = header.querySelector("span:last-child")
         if (content.classList.contains("hidden")) {
@@ -968,156 +1364,270 @@
         }
       }
 
-      function addProductRow() {
-        const container = document.getElementById("productContainer")
-        const cardCount = container.querySelectorAll(".product-card").length + 1
-        const newCard = document.createElement("div")
-        newCard.className =
-          "product-card border border-slate-200 rounded-xl bg-white overflow-hidden"
-        newCard.innerHTML = `
-          <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-            <span class="font-bold text-slate-700 text-sm">Item #${cardCount}</span>
-            <button onclick="removeProductRow(this)" class="text-red-400 hover:text-red-600 text-lg">×</button>
-          </div>
-          <div class="p-4 space-y-4">
-            <div class="grid grid-cols-3 gap-4">
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Item*</label>
-                <input type="text" placeholder="Nama produk..." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Satuan*</label>
-                <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                  <option value="">Pilih...</option>
-                  <option value="meter">meter</option>
-                  <option value="lembar">lembar</option>
-                  <option value="m³">m³</option>
-                  <option value="unit">unit</option>
-                  <option value="paket">paket</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Harga* (Rp)</label>
-                <input type="number" placeholder="0" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              </div>
-            </div>
-            
-            <div class="specs-section border border-slate-200 rounded-lg overflow-hidden">
-              <div onclick="toggleSection(this)" class="cursor-pointer bg-blue-50 px-4 py-2 flex items-center justify-between">
-                <span class="text-xs font-bold text-blue-700 uppercase">📐 Spesifikasi Teknis</span>
-                <span class="text-blue-500">▼</span>
-              </div>
-              <div class="specs-content hidden p-4 bg-slate-50">
-                <div class="grid grid-cols-2 gap-4">
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Dimensi</label><input type="text" placeholder="200cm × 150cm × 10cm" class="w-full border border-slate-200 rounded px-3 py-2 text-sm"></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Material / Ketebalan</label><input type="text" placeholder="Beton K-300, besi Ø10mm" class="w-full border border-slate-200 rounded px-3 py-2 text-sm"></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Finishing / Warna</label><select class="w-full border border-slate-200 rounded px-3 py-2 text-sm"><option value="">Pilih...</option><option value="Natural">Natural</option><option value="Cat">Cat</option><option value="Acian">Acian</option></select></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Berat per Unit (kg)</label><input type="number" placeholder="0" class="w-full border border-slate-200 rounded px-3 py-2 text-sm"></div>
-                </div>
-              </div>
-            </div>
+      function updateReview() {
+        // Tab 1
+        document.getElementById("review_namaPerusahaan").textContent =
+          document.getElementById("namaPerusahaan").value || "-"
+        document.getElementById("review_email").textContent =
+          document.getElementById("emailPerusahaan").value || "-"
+        document.getElementById("review_namaPIC").textContent =
+          document.getElementById("namaPIC").value || "-"
+        document.getElementById("review_kontakPIC").textContent =
+          document.getElementById("kontakPIC").value || "-"
 
-            <div class="logistik-section border border-slate-200 rounded-lg overflow-hidden">
-              <div onclick="toggleSection(this)" class="cursor-pointer bg-purple-50 px-4 py-2 flex items-center justify-between">
-                <span class="text-xs font-bold text-purple-700 uppercase">🚚 Logistik & Produksi</span>
-                <span class="text-purple-500">▼</span>
-              </div>
-              <div class="logistik-content hidden p-4 bg-slate-50">
-                <div class="grid grid-cols-3 gap-4">
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Lead Time (hari)</label><input type="number" placeholder="0" class="w-full border border-slate-200 rounded px-3 py-2 text-sm"></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">MOQ</label><input type="number" placeholder="0" class="w-full border border-slate-200 rounded px-3 py-2 text-sm"></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Area Pengiriman</label><div class="flex flex-wrap gap-2 mt-1"><label class="flex items-center gap-1 text-xs"><input type="checkbox" class="rounded"> Jabodetabek</label><label class="flex items-center gap-1 text-xs"><input type="checkbox" class="rounded"> Jawa Barat</label><label class="flex items-center gap-1 text-xs"><input type="checkbox" class="rounded"> Jawa Tengah</label></div></div>
-                </div>
-              </div>
-            </div>
+        // Tab 2
+        document.getElementById("review_npwp").textContent =
+          document.getElementById("npwp_nomor").value || "-"
+        document.getElementById("review_nib").textContent =
+          document.getElementById("nib_nomor").value || "-"
 
-            <div class="checklist-section border border-slate-200 rounded-lg overflow-hidden">
-              <div onclick="toggleSection(this)" class="cursor-pointer bg-green-50 px-4 py-2 flex items-center justify-between">
-                <span class="text-xs font-bold text-green-700 uppercase">✅ Checklist Inklusi Biaya</span>
-                <span class="text-green-500">▼</span>
-              </div>
-              <div class="checklist-content hidden p-4 bg-slate-50">
-                <div class="grid grid-cols-2 gap-2">
-                  <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk mobilisasi & demobilisasi tukang</label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk penginapan tukang</label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk biaya pengiriman (radius ___ km)</label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk biaya langsir / bongkar muat</label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk instalasi / pemasangan</label>
-                  <label class="flex items-center gap-2 text-sm text-slate-700"><input type="checkbox" class="rounded text-blue-600"> Sudah termasuk PPN 11%</label>
-                </div>
-              </div>
-            </div>
+        // Tab 3
+        const bankNama = document.getElementById("bank_nama").value || "-"
+        const bankNomor = document.getElementById("bank_nomor").value || "-"
+        document.getElementById("review_bank").textContent =
+          `${bankNama} - ${bankNomor}`
+        document.getElementById("review_alamat").textContent =
+          document.getElementById("alamatPabrik").value || "-"
 
-            <div class="biaya-section border border-slate-200 rounded-lg overflow-hidden">
-              <div onclick="toggleSection(this)" class="cursor-pointer bg-orange-50 px-4 py-2 flex items-center justify-between">
-                <span class="text-xs font-bold text-orange-700 uppercase">💰 Tambahan Biaya Lain</span>
-                <span class="text-orange-500">▼</span>
-              </div>
-              <div class="biaya-content hidden p-4 bg-slate-50">
-                <table class="w-full text-sm">
-                  <thead><tr class="text-slate-500 border-b text-[10px] uppercase"><th class="text-left py-1">Keterangan Biaya</th><th class="text-left py-1 w-32">Nilai (Rp)</th><th class="text-left py-1 w-24">Satuan</th><th class="w-8"></th></tr></thead>
-                  <tbody class="biaya-rows">
-                    <tr class="biaya-row"><td class="py-1"><input type="text" placeholder="[Vendor/Admin isi]" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td><td class="py-1"><input type="number" placeholder="0" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td><td class="py-1"><input type="text" placeholder="unit" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td><td class="py-1"><button onclick="removeBiayaRow(this)" class="text-red-400 hover:text-red-600">×</button></td></tr>
-                  </tbody>
-                </table>
-                <button onclick="addBiayaRow(this)" class="mt-2 text-xs text-blue-600 font-bold uppercase">+ Tambah Biaya</button>
-              </div>
-            </div>
+        const productCount = products.length
+        document.getElementById("review_products").textContent =
+          `${productCount} item`
 
-            <div class="metadata-section border border-slate-200 rounded-lg overflow-hidden">
-              <div onclick="toggleSection(this)" class="cursor-pointer bg-slate-100 px-4 py-2 flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-700 uppercase">🗂️ Metadata</span>
-                <span class="text-slate-500">▼</span>
-              </div>
-              <div class="metadata-content hidden p-4 bg-slate-50">
-                <div class="grid grid-cols-2 gap-4">
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Kategori Produk</label><select class="w-full border border-slate-200 rounded px-3 py-2 text-sm"><option value="">Pilih...</option><option value="Pagar">Pagar</option><option value="Panel">Panel</option><option value="Pondasi">Pondasi</option><option value="Aksesoris">Aksesoris</option></select></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status Ketersediaan</label><select class="w-full border border-slate-200 rounded px-3 py-2 text-sm"><option value="Available">Available</option><option value="Made to Order">Made to Order</option></select></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Lampiran Foto</label><input type="file" accept="image/*" class="w-full text-xs text-slate-500"></div>
-                  <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Catatan Tambahan</label><textarea placeholder="Keterangan khusus..." class="w-full border border-slate-200 rounded px-3 py-2 text-sm h-20 resize-none"></textarea></div>
-                </div>
-              </div>
+        // Show product list in review
+        const productListEl = document.getElementById("review_product_list")
+        if (products.length > 0) {
+          productListEl.innerHTML = products
+            .map(
+              (p) => `
+            <div class="flex justify-between text-sm bg-gray-50 p-2 rounded">
+              <span class="text-gray-600">• ${p.nama}</span>
+              <span class="text-gray-800 font-medium">${p.satuan} @ Rp ${p.harga}</span>
             </div>
-          </div>
-        `
-        container.appendChild(newCard)
-        updateCardNumbers()
+          `
+            )
+            .join("")
+        } else {
+          productListEl.innerHTML = ""
+        }
       }
 
-      function removeProductRow(button) {
-        const card = button.closest(".product-card")
-        card.remove()
-        updateCardNumbers()
+      async function submitRegistration() {
+        const checkbox = document.getElementById("legalCheckbox")
+        if (!checkbox.checked) {
+          alert("Silakan centang pernyataan legal terlebih dahulu")
+          return
+        }
+
+        const btn = document.getElementById("nextBtn")
+        btn.innerHTML =
+          '<i class="fa-solid fa-spinner fa-spin mr-2"></i>MENGIRIM...'
+        btn.disabled = true
+
+        try {
+          // TODO: Integrate with Supabase
+          // const { data, error } = await supabase.auth.signUp({
+          //   email: document.getElementById('emailPerusahaan').value,
+          //   password: generatedPassword,
+          //   options: {
+          //     data: {
+          //       nama_perusahaan: document.getElementById('namaPerusahaan').value
+          //     }
+          //   }
+          // })
+
+          // Simulate API call
+          await new Promise((resolve) => setTimeout(resolve, 1500))
+
+          window.location.href = "success.html"
+        } catch (error) {
+          console.error("Error submitting registration:", error)
+          alert("Terjadi kesalahan. Silakan coba lagi.")
+          btn.innerHTML =
+            'KIRIM DATA<i class="fa-solid fa-paper-plane ml-2"></i>'
+          btn.disabled = false
+        }
       }
 
-      function updateCardNumbers() {
-        const cards = document.querySelectorAll(".product-card")
-        cards.forEach((card, index) => {
-          card.querySelector(".bg-slate-50 span").textContent =
-            `Item #${index + 1}`
+      // Initialize
+      updateStepperUI()
+      updateNavigation()
+      renderProductTable()
+
+      // Product Table Functions
+      function openProductModal(index = -1) {
+        editingProductIndex = index
+        const modal = document.getElementById("productModal")
+        const title = document.getElementById("modalTitle")
+
+        if (index >= 0) {
+          // Edit mode
+          title.textContent = "Edit Produk"
+          const p = products[index]
+          document.getElementById("prod_nama").value = p.nama || ""
+          document.getElementById("prod_satuan").value = p.satuan || ""
+          document.getElementById("prod_harga").value = p.harga || ""
+          document.getElementById("prod_dimensi").value = p.dimensi || ""
+          document.getElementById("prod_material").value = p.material || ""
+          document.getElementById("prod_finishing").value = p.finishing || ""
+          document.getElementById("prod_berat").value = p.berat || ""
+          document.getElementById("prod_leadtime").value = p.leadTime || ""
+          document.getElementById("prod_moq").value = p.moq || ""
+          document.getElementById("prod_kategori").value = p.kategori || ""
+          document.getElementById("prod_status").value = p.status || "Available"
+          document.getElementById("prod_catatan").value = p.catatan || ""
+        } else {
+          // Add mode
+          title.textContent = "Tambah Produk"
+          document.getElementById("prod_nama").value = ""
+          document.getElementById("prod_satuan").value = ""
+          document.getElementById("prod_harga").value = ""
+          document.getElementById("prod_dimensi").value = ""
+          document.getElementById("prod_material").value = ""
+          document.getElementById("prod_finishing").value = ""
+          document.getElementById("prod_berat").value = ""
+          document.getElementById("prod_leadtime").value = ""
+          document.getElementById("prod_moq").value = ""
+          document.getElementById("prod_kategori").value = ""
+          document.getElementById("prod_status").value = "Available"
+          document.getElementById("prod_catatan").value = ""
+        }
+
+        modal.classList.remove("hidden")
+        modal.classList.add("flex", "items-center", "justify-center")
+        switchProductTab("core")
+      }
+
+      function closeProductModal() {
+        const modal = document.getElementById("productModal")
+        modal.classList.remove("flex", "items-center", "justify-center")
+        modal.classList.add("hidden")
+        editingProductIndex = -1
+      }
+
+      function switchProductTab(tabName) {
+        document.querySelectorAll(".prod-tab-btn").forEach((btn) => {
+          btn.classList.remove(
+            "text-indigo-600",
+            "border-b-2",
+            "border-indigo-600"
+          )
+          btn.classList.add("text-gray-500")
         })
+        document.querySelectorAll(".prod-content").forEach((content) => {
+          content.classList.add("hidden")
+        })
+
+        document
+          .getElementById(
+            "prodTab" + tabName.charAt(0).toUpperCase() + tabName.slice(1)
+          )
+          .classList.add("text-indigo-600", "border-b-2", "border-indigo-600")
+        document
+          .getElementById(
+            "prodTab" + tabName.charAt(0).toUpperCase() + tabName.slice(1)
+          )
+          .classList.remove("text-gray-500")
+        document
+          .getElementById(
+            "prodContent" + tabName.charAt(0).toUpperCase() + tabName.slice(1)
+          )
+          .classList.remove("hidden")
       }
 
-      function addBiayaRow(btn) {
-        const tbody = btn.previousElementSibling
-        const newRow = document.createElement("tr")
-        newRow.className = "biaya-row"
-        newRow.innerHTML = `
-          <td class="py-1"><input type="text" placeholder="[Vendor/Admin isi]" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td>
-          <td class="py-1"><input type="number" placeholder="0" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td>
-          <td class="py-1"><input type="text" placeholder="unit" class="w-full border border-slate-200 rounded px-2 py-1 text-sm"></td>
-          <td class="py-1"><button onclick="removeBiayaRow(this)" class="text-red-400 hover:text-red-600">×</button></td>
+      function addBiayaRow() {
+        const tbody = document.getElementById("biayaTableBody")
+        const tr = document.createElement("tr")
+        tr.className = "border-b"
+        tr.innerHTML = `
+          <td class="py-1"><input type="text" placeholder="[Vendor/Admin isi]" class="w-full rounded border border-gray-200 px-2 py-1 text-sm"></td>
+          <td class="py-1"><input type="number" placeholder="0" class="w-full rounded border border-gray-200 px-2 py-1 text-sm text-right"></td>
+          <td class="py-1"><input type="text" placeholder="unit" class="w-full rounded border border-gray-200 px-2 py-1 text-sm text-right"></td>
+          <td class="py-1 text-center"><button type="button" class="text-red-400 hover:text-red-600" onclick="this.closest('tr').remove()">×</button></td>
         `
-        tbody.appendChild(newRow)
+        tbody.appendChild(tr)
       }
 
-      function removeBiayaRow(btn) {
-        const row = btn.closest("tr")
-        row.remove()
+      function saveProduct() {
+        const nama = document.getElementById("prod_nama").value
+        const satuan = document.getElementById("prod_satuan").value
+        const harga = document.getElementById("prod_harga").value
+
+        if (!nama || !satuan || !harga) {
+          alert("Silakan isi Nama Item, Satuan, dan Harga terlebih dahulu")
+          return
+        }
+
+        const product = {
+          nama: nama,
+          satuan: satuan,
+          harga: Number(harga).toLocaleString("id-ID"),
+          dimensi: document.getElementById("prod_dimensi").value,
+          material: document.getElementById("prod_material").value,
+          finishing: document.getElementById("prod_finishing").value,
+          berat: document.getElementById("prod_berat").value,
+          leadTime: document.getElementById("prod_leadtime").value,
+          moq: document.getElementById("prod_moq").value,
+          kategori: document.getElementById("prod_kategori").value,
+          status: document.getElementById("prod_status").value,
+          catatan: document.getElementById("prod_catatan").value,
+        }
+
+        if (editingProductIndex >= 0) {
+          products[editingProductIndex] = product
+        } else {
+          products.push(product)
+        }
+
+        renderProductTable()
+        closeProductModal()
       }
 
-      renderStepper()
-      setupFileInputHandler()
+      function renderProductTable() {
+        const tbody = document.getElementById("productTableBody")
+
+        if (products.length === 0) {
+          tbody.innerHTML = `
+            <tr id="emptyProductRow" class="border-b border-gray-100">
+              <td colspan="7" class="py-8 text-center text-gray-400">
+                <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                <p>Belum ada produk ditambahkan</p>
+                <p class="text-xs">Klik "Tambah Produk" untuk memulai</p>
+              </td>
+            </tr>
+          `
+          return
+        }
+
+        tbody.innerHTML = products
+          .map(
+            (p, i) => `
+          <tr class="border-b border-gray-100 hover:bg-gray-50">
+            <td class="px-4 py-3 text-center font-medium text-gray-500">${i + 1}</td>
+            <td class="px-4 py-3 text-left font-medium text-gray-800">${p.nama}</td>
+            <td class="px-4 py-3 text-center"><span class="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium">${p.satuan}</span></td>
+            <td class="px-4 py-3 text-right font-mono text-gray-700">${p.harga ? "Rp " + Number(p.harga).toLocaleString("id-ID") : "-"}</td>
+            <td class="px-4 py-3 text-center text-gray-600">${p.leadTime ? p.leadTime + " hari" : "-"}</td>
+            <td class="px-4 py-3 text-center text-gray-600">${p.moq || "-"}</td>
+            <td class="px-4 py-3 text-center">
+              <button type="button" onclick="openProductModal(${i})" class="text-indigo-600 hover:text-indigo-800 mr-2" title="Edit">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button type="button" onclick="deleteProduct(${i})" class="text-red-400 hover:text-red-600" title="Hapus">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `
+          )
+          .join("")
+      }
+
+      function deleteProduct(index) {
+        if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
+          products.splice(index, 1)
+          renderProductTable()
+        }
+      }
     </script>
   </body>
 </html>
