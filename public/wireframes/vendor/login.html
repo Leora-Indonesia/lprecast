@@ -40,9 +40,11 @@
           <p class="mt-1 text-gray-500">Login ke akun vendor Anda</p>
         </div>
 
-        <form class="space-y-5">
+        <form id="loginForm" class="space-y-5">
           <div>
-            <label class="mb-2 block text-sm font-medium text-gray-700"
+            <label
+              for="email"
+              class="mb-2 block text-sm font-medium text-gray-700"
               >Email</label
             >
             <div class="relative">
@@ -51,14 +53,19 @@
               ></i>
               <input
                 type="email"
+                id="email"
+                name="email"
                 placeholder="vendor@perusahaan.com"
+                required
                 class="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-medium text-gray-700"
+            <label
+              for="password"
+              class="mb-2 block text-sm font-medium text-gray-700"
               >Password</label
             >
             <div class="relative">
@@ -67,7 +74,10 @@
               ></i>
               <input
                 type="password"
+                id="password"
+                name="password"
                 placeholder="••••••••"
+                required
                 class="w-full rounded-lg border border-gray-300 py-3 pr-4 pl-10 transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -77,6 +87,8 @@
             <label class="flex items-center">
               <input
                 type="checkbox"
+                id="remember"
+                name="remember"
                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
               <span class="ml-2 text-gray-600">Ingat saya</span>
@@ -88,9 +100,11 @@
 
           <button
             type="submit"
-            class="w-full rounded-lg bg-indigo-700 py-3 font-semibold text-white shadow-lg transition hover:bg-indigo-800"
+            id="submitBtn"
+            class="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-700 py-3 font-semibold text-white shadow-lg transition hover:bg-indigo-800 disabled:opacity-70"
           >
-            Masuk
+            <span id="btnText">Masuk</span>
+            <i id="btnSpinner" class="fa-solid fa-spinner fa-spin hidden"></i>
           </button>
         </form>
 
@@ -119,13 +133,29 @@
           const banner = document.getElementById("successBanner")
           banner.classList.remove("hidden")
 
-          // Remove query param for clean URL
           window.history.replaceState(
             {},
             document.title,
             window.location.pathname
           )
         }
+
+        const form = document.getElementById("loginForm")
+        const submitBtn = document.getElementById("submitBtn")
+        const btnText = document.getElementById("btnText")
+        const btnSpinner = document.getElementById("btnSpinner")
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault()
+
+          submitBtn.disabled = true
+          btnText.textContent = "Memproses..."
+          btnSpinner.classList.remove("hidden")
+
+          setTimeout(function () {
+            window.location.href = "dashboard.html"
+          }, 800)
+        })
       })
     </script>
   </body>

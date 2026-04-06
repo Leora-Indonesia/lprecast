@@ -3,7 +3,9 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import type { CookieOptions } from "@supabase/ssr"
 
-export async function middleware(request: NextRequest) {
+const publicRoutes = ["/", "/login", "/unauthorized", "/about"]
+
+export default async function proxy(request: NextRequest) {
   const supabaseResponse = NextResponse.next({
     request,
   })
@@ -50,21 +52,17 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Allow public access to login, auth, and unauthorized routes
-  if (
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/auth/") ||
-    pathname === "/unauthorized"
-  ) {
+  const isPublicRoute = publicRoutes.includes(pathname)
+  const isAuthRoute = pathname.startsWith("/auth/")
+
+  if (isPublicRoute || isAuthRoute) {
     return supabaseResponse
   }
 
-  // For all other routes, require authentication
   if (!user) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  // Get user profile to check stakeholder_type
   const { data: profile } = await supabase
     .from("user_profiles")
     .select("stakeholder_type")
@@ -83,13 +81,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|wireframes).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 }

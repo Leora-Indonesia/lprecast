@@ -98,23 +98,35 @@
           <div class="space-y-4">
             <div>
               <label class="mb-1 block text-sm font-medium text-gray-700"
-                >Persentase Progress (%) *</label
+                >Progress Item *</label
               >
               <div class="flex items-center space-x-4">
                 <input
                   type="number"
-                  value="65"
+                  id="progress_quantity"
+                  value="50"
                   min="0"
-                  max="100"
                   class="w-32 rounded-lg border border-gray-300 px-4 py-2.5 text-center focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                  onchange="calculateProgress()"
                 />
-                <div class="h-3 flex-1 rounded-full bg-gray-200">
-                  <div
-                    class="h-3 rounded-full bg-indigo-600"
-                    style="width: 65%"
-                  ></div>
+                <select
+                  id="progress_unit"
+                  class="w-32 rounded-lg border border-gray-300 px-4 py-2.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                  onchange="calculateProgress()"
+                >
+                  <option value="unit">unit</option>
+                  <option value="m²">m²</option>
+                  <option value="m³">m³</option>
+                  <option value="lembar">lembar</option>
+                  <option value="paket">paket</option>
+                </select>
+                <div id="progress_display" class="text-sm text-gray-600">
+                  Progress: 50 unit (65%)
                 </div>
               </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Masukkan jumlah item yang telah selesai dikerjakan
+              </p>
             </div>
 
             <div>
@@ -273,5 +285,34 @@ Pemasangan panel dinding lantai 4 mencapai 90%. Sisa 10% untuk sisi timur gedung
         </div>
       </form>
     </div>
+
+    <script>
+      // Milestone target data (in a real app, this would come from the backend)
+      const milestoneTarget = 77 // Example: total target for the current milestone
+
+      function calculateProgress() {
+        const quantity =
+          parseInt(document.getElementById("progress_quantity").value) || 0
+        const unit = document.getElementById("progress_unit").value
+        const display = document.getElementById("progress_display")
+
+        // Calculate percentage based on quantity relative to target
+        const percentage = Math.min(
+          Math.round((quantity / milestoneTarget) * 100),
+          100
+        )
+
+        // Update display
+        display.textContent = `Progress: ${quantity} ${unit} (${percentage}%)`
+
+        // Update visual progress bar (if it existed, but we removed it)
+        // For now, just show the text
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        calculateProgress()
+      })
+    </script>
   </body>
 </html>

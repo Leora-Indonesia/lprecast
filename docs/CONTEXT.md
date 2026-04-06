@@ -16,11 +16,13 @@ Flow utama: Registrasi → Verifikasi → Tender → Pelaksanaan → Pembayaran 
 
 # Stack
 
-Next.js 16 App Router + React 19 + TypeScript
+Next.js 16 App Router + React 19 + TypeScript + Turbopack
 
 Supabase (shared dengan sistem internal) — auth, DB, storage
 
 Tailwind CSS + shadcn/ui + Radix UI
+
+PWA: Serwist — service worker, offline support, installable (manifest + sw)
 
 Payment: Xendit (post-MVP)
 
@@ -94,7 +96,7 @@ KPI & evaluasi otomatis
 
 Notifikasi WhatsApp/email
 
-Mobile app
+Mobile app: PWA with push notification (OneSignal integration)
 
 # Business Rules Penting
 
@@ -117,15 +119,23 @@ Pembayaran hanya ke rekening atas nama PT yang terdaftar
 # Struktur Folder
 
 app/
+├── sw.ts # Service worker (Serwist)
+├── manifest.ts # PWA manifest
+├── ~offline/ # Offline fallback page
 ├── (auth)/login/
 ├── (vendor)/dashboard, profile, tenders, projects
 ├── (client)/dashboard, projects
 ├── (admin)/dashboard, vendors, tenders
 └── api/
+lib/
+├── utils.ts
+└── theme-config.ts # Source of truth untuk warna tema
 docs/
 ├── CONTEXT.md
 ├── PROGRESS.md
-├── architecture/design-system.md
+├── architecture/
+│ ├── design-system.md
+│ └── pwa.md # PWA architecture guide
 └── modules/vendor.md
 
 # Konvensi Koding
@@ -137,3 +147,5 @@ Server components by default, use client hanya jika perlu interaktivitas
 API calls via Supabase client — gunakan RLS, jangan bypass dengan service role di client
 
 Setiap route protected wajib pakai middleware check stakeholder_type
+
+Theme warna: SINGLE SOURCE OF TRUTH di lib/theme-config.ts — cek docs/architecture/pwa.md

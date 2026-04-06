@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background rounded rectangle -->
+  <rect width="512" height="512" rx="96" fill="#16a34a"/>
+  
+  <!-- House icon -->
+  <path 
+    d="M256 120L120 240h48v152h80v-96h16v96h80V240h48L256 120z" 
+    fill="white"
+  />
+  
+  <!-- Window -->
+  <rect x="232" y="280" width="48" height="48" rx="4" fill="white" fill-opacity="0.3"/>
+</svg>

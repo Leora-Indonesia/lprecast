@@ -205,7 +205,7 @@
               <div>
                 <label
                   class="mb-1 block text-xs font-bold text-gray-500 uppercase"
-                  >Email Perusahaan*</label
+                  >Email Perusahaan/PIC*</label
                 >
                 <input
                   type="email"
@@ -328,6 +328,61 @@
                 class="rounded-lg border border-gray-200 px-3 py-2 text-sm"
               />
             </div>
+
+            <!-- Sosial Media & Website -->
+            <div class="mt-8 space-y-4">
+              <h3 class="border-b pb-2 font-semibold text-gray-700">
+                Sosial Media & Website
+              </h3>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Website</label
+                >
+                <input
+                  type="url"
+                  id="website"
+                  placeholder="https://www.perusahaan.com"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Instagram</label
+                >
+                <input
+                  type="text"
+                  id="socmed_instagram"
+                  placeholder="@username"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Facebook</label
+                >
+                <input
+                  type="text"
+                  id="socmed_facebook"
+                  placeholder="facebook.com/username"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >LinkedIn</label
+                >
+                <input
+                  type="text"
+                  id="socmed_linkedin"
+                  placeholder="linkedin.com/company/username"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -340,136 +395,20 @@
             </p>
           </div>
 
-          <!-- NPWP -->
-          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
+          <!-- KTP (First) -->
+          <div
+            class="mb-4 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+          >
             <div
-              onclick="toggleDocSection(this)"
-              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
-            >
-              <div class="flex items-center gap-3">
-                <i class="fa-solid fa-file-invoice text-indigo-600"></i>
-                <span class="font-semibold text-gray-700">NPWP</span>
-                <span class="text-xs text-gray-500"
-                  >Nomor Pokok Wajib Pajak*</span
-                >
-              </div>
-              <span class="text-gray-400">▼</span>
-            </div>
-            <div class="doc-section bg-white p-4">
-              <div class="mb-3">
-                <label
-                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
-                  >Nomor NPWP*</label
-                >
-                <input
-                  type="text"
-                  id="npwp_nomor"
-                  placeholder="00.000.000.0-000.000"
-                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label
-                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
-                  >Upload NPWP (PDF/JPG)*</label
-                >
-                <input
-                  type="file"
-                  id="npwp_file"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- NIB -->
-          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
-            <div
-              onclick="toggleDocSection(this)"
-              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
-            >
-              <div class="flex items-center gap-3">
-                <i class="fa-solid fa-file-code text-indigo-600"></i>
-                <span class="font-semibold text-gray-700">NIB</span>
-                <span class="text-xs text-gray-500">Nomor Induk Berusaha*</span>
-              </div>
-              <span class="text-gray-400">▼</span>
-            </div>
-            <div class="doc-section bg-white p-4">
-              <div class="mb-3">
-                <label
-                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
-                  >Nomor NIB*</label
-                >
-                <input
-                  type="text"
-                  id="nib_nomor"
-                  placeholder="1234567890123"
-                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label
-                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
-                  >Upload NIB (PDF/JPG)*</label
-                >
-                <input
-                  type="file"
-                  id="nib_file"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- SIUP/SBU -->
-          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
-            <div
-              onclick="toggleDocSection(this)"
-              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
-            >
-              <div class="flex items-center gap-3">
-                <i class="fa-solid fa-file-contract text-indigo-600"></i>
-                <span class="font-semibold text-gray-700">SIUP/SBU</span>
-                <span class="text-xs text-gray-500">Izin Usaha*</span>
-              </div>
-              <span class="text-gray-400">▼</span>
-            </div>
-            <div class="doc-section bg-white p-4">
-              <div>
-                <label
-                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
-                  >Upload SIUP/SBU (PDF/JPG)*</label
-                >
-                <input
-                  type="file"
-                  id="siup_file"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- KTP -->
-          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
-            <div
-              onclick="toggleDocSection(this)"
-              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+              class="flex items-center justify-between bg-gray-100 px-4 py-3"
             >
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-id-card text-indigo-600"></i>
                 <span class="font-semibold text-gray-700">KTP</span>
-                <span class="text-xs text-gray-500">KTP Penanggung Jawab*</span>
+                <span class="text-xs text-gray-500">KTP Penanggung Jawab</span>
               </div>
-              <span class="text-gray-400">▼</span>
             </div>
-            <div class="doc-section bg-white p-4">
+            <div class="bg-white p-4">
               <div>
                 <label
                   class="mb-1 block text-xs font-bold text-gray-500 uppercase"
@@ -486,24 +425,140 @@
             </div>
           </div>
 
-          <!-- Company Profile -->
-          <div class="mb-4 overflow-hidden rounded-lg border border-gray-200">
+          <!-- NPWP -->
+          <div
+            class="mb-4 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+          >
             <div
-              onclick="toggleDocSection(this)"
-              class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+              class="flex items-center justify-between bg-gray-100 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-invoice text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">NPWP</span>
+                <span class="text-xs text-gray-500"
+                  >Nomor Pokok Wajib Pajak</span
+                >
+              </div>
+            </div>
+            <div class="bg-white p-4">
+              <div class="mb-3">
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nomor NPWP</label
+                >
+                <input
+                  type="text"
+                  id="npwp_nomor"
+                  placeholder="00.000.000.0-000.000"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload NPWP (PDF/JPG)</label
+                >
+                <input
+                  type="file"
+                  id="npwp_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- NIB -->
+          <div
+            class="mb-4 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+          >
+            <div
+              class="flex items-center justify-between bg-gray-100 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-code text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">NIB</span>
+                <span class="text-xs text-gray-500">Nomor Induk Berusaha</span>
+              </div>
+            </div>
+            <div class="bg-white p-4">
+              <div class="mb-3">
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Nomor NIB</label
+                >
+                <input
+                  type="text"
+                  id="nib_nomor"
+                  placeholder="1234567890123"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload NIB (PDF/JPG)</label
+                >
+                <input
+                  type="file"
+                  id="nib_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- SIUP/SBU -->
+          <div
+            class="mb-4 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+          >
+            <div
+              class="flex items-center justify-between bg-gray-100 px-4 py-3"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-contract text-indigo-600"></i>
+                <span class="font-semibold text-gray-700">SIUP/SBU</span>
+                <span class="text-xs text-gray-500">Izin Usaha</span>
+              </div>
+            </div>
+            <div class="bg-white p-4">
+              <div>
+                <label
+                  class="mb-1 block text-xs font-bold text-gray-500 uppercase"
+                  >Upload SIUP/SBU (PDF/JPG)</label
+                >
+                <input
+                  type="file"
+                  id="siup_file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Company Profile -->
+          <div
+            class="mb-4 overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+          >
+            <div
+              class="flex items-center justify-between bg-gray-100 px-4 py-3"
             >
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-briefcase text-indigo-600"></i>
                 <span class="font-semibold text-gray-700">Company Profile</span>
-                <span class="text-xs text-gray-500">Profil Perusahaan*</span>
+                <span class="text-xs text-gray-500">Profil Perusahaan</span>
               </div>
-              <span class="text-gray-400">▼</span>
             </div>
-            <div class="doc-section bg-white p-4">
+            <div class="bg-white p-4">
               <div>
                 <label
                   class="mb-1 block text-xs font-bold text-gray-500 uppercase"
-                  >Upload Company Profile (PDF)*</label
+                  >Upload Company Profile (PDF)</label
                 >
                 <input
                   type="file"
@@ -554,7 +609,7 @@
                 <input
                   type="text"
                   id="bank_nomor"
-                  placeholder="000-000-0000"
+                  placeholder="0000000000"
                   class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
                 />
               </div>
@@ -577,7 +632,7 @@
               <h3 class="border-b pb-2 font-semibold text-gray-700">
                 Alamat Pabrik
               </h3>
-              <div>
+              <div class="relative">
                 <label
                   class="mb-1 block text-xs font-bold text-gray-500 uppercase"
                   >Alamat Pabrik*</label
@@ -586,7 +641,28 @@
                   id="alamatPabrik"
                   placeholder="Jl. Industri No. 123, Kawasan Industri Jababeka, Cikarang, Bekasi 17530"
                   class="h-32 w-full resize-none rounded-lg border border-gray-200 px-3 py-2.5 text-sm"
+                  onkeypress="
+                    if (event.key === 'Enter') {
+                      event.preventDefault()
+                      updatePreview()
+                    }
+                  "
                 ></textarea>
+                <div class="mt-3">
+                  <button
+                    type="button"
+                    onclick="updatePreview()"
+                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700"
+                  >
+                    <i class="fa-solid fa-map-location-dot mr-2"></i>Tampilkan
+                    Peta
+                  </button>
+                </div>
+                <iframe
+                  id="mapFrame"
+                  class="mt-3 hidden h-80 w-full rounded-lg border border-gray-300"
+                  src=""
+                ></iframe>
               </div>
             </div>
           </div>
@@ -654,16 +730,14 @@
             <!-- Tab 1 Summary -->
             <div class="overflow-hidden rounded-lg border border-gray-200">
               <div
-                onclick="toggleDocSection(this)"
-                class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+                class="flex items-center justify-between bg-gray-50 px-4 py-3"
               >
                 <span class="font-semibold text-gray-700"
                   ><i class="fa-solid fa-building mr-2"></i>Informasi
                   Perusahaan</span
                 >
-                <span class="text-gray-400">▼</span>
               </div>
-              <div class="doc-section space-y-2 bg-white p-4 text-sm">
+              <div class="space-y-2 bg-white p-4 text-sm">
                 <div class="grid grid-cols-2 gap-2">
                   <span class="text-gray-500">Nama Perusahaan:</span>
                   <span id="review_namaPerusahaan" class="text-gray-800"
@@ -682,22 +756,44 @@
                   <span class="text-gray-500">Kontak PIC:</span>
                   <span id="review_kontakPIC" class="text-gray-800">-</span>
                 </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Kontak 1:</span>
+                  <span id="review_kontak1" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Kontak 2:</span>
+                  <span id="review_kontak2" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Website:</span>
+                  <span id="review_website" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Instagram:</span>
+                  <span id="review_instagram" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Facebook:</span>
+                  <span id="review_facebook" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">LinkedIn:</span>
+                  <span id="review_linkedin" class="text-gray-800">-</span>
+                </div>
               </div>
             </div>
 
             <!-- Tab 2 Summary -->
             <div class="overflow-hidden rounded-lg border border-gray-200">
               <div
-                onclick="toggleDocSection(this)"
-                class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+                class="flex items-center justify-between bg-gray-50 px-4 py-3"
               >
                 <span class="font-semibold text-gray-700"
                   ><i class="fa-solid fa-file-contract mr-2"></i>Dokumen
                   Legal</span
                 >
-                <span class="text-gray-400">▼</span>
               </div>
-              <div class="doc-section space-y-2 bg-white p-4 text-sm">
+              <div class="space-y-2 bg-white p-4 text-sm">
                 <div class="grid grid-cols-2 gap-2">
                   <span class="text-gray-500">NPWP:</span>
                   <span id="review_npwp" class="font-mono text-gray-800"
@@ -705,14 +801,26 @@
                   >
                 </div>
                 <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Status Dokumen NPWP:</span>
+                  <span id="review_npwp_file" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
                   <span class="text-gray-500">NIB:</span>
                   <span id="review_nib" class="font-mono text-gray-800">-</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                  <span class="text-gray-500">Dokumen:</span>
-                  <span id="review_docs" class="text-gray-800"
-                    >Silakan upload dokumen</span
+                  <span class="text-gray-500">Status Dokumen NIB:</span>
+                  <span id="review_nib_file" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">SIUP/SBU:</span>
+                  <span id="review_siup" class="font-mono text-gray-800"
+                    >-</span
                   >
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Status Dokumen SIUP/SBU:</span>
+                  <span id="review_siup_file" class="text-gray-800">-</span>
                 </div>
               </div>
             </div>
@@ -720,19 +828,21 @@
             <!-- Tab 3 Summary -->
             <div class="overflow-hidden rounded-lg border border-gray-200">
               <div
-                onclick="toggleDocSection(this)"
-                class="flex cursor-pointer items-center justify-between bg-gray-50 px-4 py-3"
+                class="flex items-center justify-between bg-gray-50 px-4 py-3"
               >
                 <span class="font-semibold text-gray-700"
                   ><i class="fa-solid fa-gear mr-2"></i>Informasi
                   Operasional</span
                 >
-                <span class="text-gray-400">▼</span>
               </div>
-              <div class="doc-section space-y-2 bg-white p-4 text-sm">
+              <div class="space-y-2 bg-white p-4 text-sm">
                 <div class="grid grid-cols-2 gap-2">
                   <span class="text-gray-500">Bank:</span>
                   <span id="review_bank" class="text-gray-800">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <span class="text-gray-500">Atas Nama:</span>
+                  <span id="review_bank_atasNama" class="text-gray-800">-</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                   <span class="text-gray-500">Alamat Pabrik:</span>
@@ -761,6 +871,22 @@
                 </span>
               </label>
             </div>
+
+            <!-- Checkbox Konfirmasi Dokumen -->
+            <div id="doc_confirmation_container" class="mb-4 hidden">
+              <label
+                class="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4"
+              >
+                <input
+                  type="checkbox"
+                  id="doc_confirmation_checkbox"
+                  class="mt-1 h-4 w-4 rounded border-amber-400 text-indigo-600 focus:ring-indigo-500"
+                />
+                <span id="doc_confirmation_text" class="text-sm text-amber-800">
+                  <!-- Dynamic text will be inserted here -->
+                </span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -777,8 +903,9 @@
             <i class="fa-solid fa-arrow-left mr-2"></i>SEBELUMNYA
           </button>
 
-          <span class="text-sm text-gray-400">Draft Tersimpan Auto</span>
-
+          <span class="text-sm text-gray-400"
+            >Perubahan Otomatis Tersimpan</span
+          >
           <button
             type="button"
             onclick="nextTab()"
@@ -986,6 +1113,9 @@
                   placeholder="14"
                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                 />
+                <p class="mt-1 text-xs text-gray-600">
+                  Waktu produksi hingga produk siap dikirim
+                </p>
               </div>
               <div>
                 <label
@@ -998,6 +1128,9 @@
                   placeholder="10"
                   class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
                 />
+                <p class="mt-1 text-xs text-gray-600">
+                  Kuantitas minimum untuk setiap pemesanan
+                </p>
               </div>
             </div>
             <div class="mt-4">
@@ -1005,47 +1138,71 @@
                 class="mb-2 block text-xs font-bold text-gray-500 uppercase"
                 >Area Pengiriman</label
               >
-              <div class="flex flex-wrap gap-3">
-                <label class="flex items-center gap-2 text-sm"
-                  ><input
+              <p class="mb-3 text-xs text-gray-600">
+                Centang 'Pilih Seluruh' untuk cakupan provinsi, atau pilih
+                kabupaten/kota tertentu satu per satu
+              </p>
+
+              <!-- Province Selection -->
+              <div class="mb-4">
+                <label class="mb-1 block text-xs font-medium text-gray-600"
+                  >Provinsi</label
+                >
+                <select
+                  id="provinsi_select"
+                  onchange="onProvinceChange()"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                >
+                  <option value="">Pilih Provinsi...</option>
+                  <!-- Options will be loaded from Supabase -->
+                </select>
+              </div>
+
+              <!-- Select All Option (shown after province selected) -->
+              <div id="select_all_container" class="mb-4 hidden">
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                  <input
                     type="checkbox"
-                    id="area_jabodetabek"
+                    id="select_all_checkbox"
+                    onchange="onSelectAllChange()"
                     class="rounded text-indigo-600"
                   />
-                  Jabodetabek</label
-                >
-                <label class="flex items-center gap-2 text-sm"
-                  ><input
-                    type="checkbox"
-                    id="area_jawabarat"
-                    class="rounded text-indigo-600"
-                  />
-                  Jawa Barat</label
-                >
-                <label class="flex items-center gap-2 text-sm"
-                  ><input
-                    type="checkbox"
-                    id="area_jawatengah"
-                    class="rounded text-indigo-600"
-                  />
-                  Jawa Tengah</label
-                >
-                <label class="flex items-center gap-2 text-sm"
-                  ><input
-                    type="checkbox"
-                    id="area_jawatimur"
-                    class="rounded text-indigo-600"
-                  />
-                  Jawa Timur</label
-                >
-                <label class="flex items-center gap-2 text-sm"
-                  ><input
-                    type="checkbox"
-                    id="area_sumatera"
-                    class="rounded text-indigo-600"
-                  />
-                  Sumatera</label
-                >
+                  <span id="select_all_text">Pilih Seluruh Provinsi</span>
+                </label>
+              </div>
+
+              <!-- District Selection -->
+              <div
+                id="district_container"
+                class="mb-4 grid hidden grid-cols-2 gap-4"
+              >
+                <div>
+                  <label class="mb-1 block text-xs font-medium text-gray-600"
+                    >Kabupaten/Kota</label
+                  >
+                  <select
+                    id="kabupaten_select"
+                    onchange="addDistrict()"
+                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  >
+                    <option value="">Pilih Kabupaten/Kota...</option>
+                    <!-- Options will be loaded based on selected province -->
+                  </select>
+                </div>
+                <div class="flex items-end">
+                  <button
+                    type="button"
+                    onclick="addDistrict()"
+                    class="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                  >
+                    Tambah Area
+                  </button>
+                </div>
+              </div>
+
+              <!-- Selected Areas Display -->
+              <div id="selected_areas" class="space-y-2">
+                <!-- Selected areas will be displayed here as removable tags -->
               </div>
             </div>
           </div>
@@ -1265,6 +1422,7 @@
         // Update review if on last tab
         if (currentTab === 3) {
           updateReview()
+          updateDocConfirmation() // Show document confirmation checkbox when Step 4 becomes visible
         }
       }
 
@@ -1349,7 +1507,57 @@
             return false
           }
         }
+        if (tabIndex === 3) {
+          updateDocConfirmation()
+          const checkbox = document.getElementById("doc_confirmation_checkbox")
+          if (!checkbox.checked) {
+            alert("Silakan centang konfirmasi untuk dokumen yang belum lengkap")
+            return false
+          }
+        }
         return true
+      }
+
+      function checkIncompleteDocuments() {
+        // Check which documents are incomplete (excluding KTP)
+        const incompleteDocs = []
+
+        // NPWP check (nomor AND file required)
+        const npwpNomor = document.getElementById("npwp_nomor").value.trim()
+        const npwpFile = document.getElementById("npwp_file").files.length
+        if (!npwpNomor || !npwpFile) incompleteDocs.push("NPWP")
+
+        // NIB check (nomor AND file required)
+        const nibNomor = document.getElementById("nib_nomor").value.trim()
+        const nibFile = document.getElementById("nib_file").files.length
+        if (!nibNomor || !nibFile) incompleteDocs.push("NIB")
+
+        // SIUP/SBU check (file only)
+        const siupFile = document.getElementById("siup_file").files.length
+        if (!siupFile) incompleteDocs.push("SIUP/SBU")
+
+        // Company Profile check (file only)
+        const comproFile = document.getElementById("compro_file").files.length
+        if (!comproFile) incompleteDocs.push("Company Profile")
+
+        return incompleteDocs
+      }
+
+      function updateDocConfirmation() {
+        const container = document.getElementById("doc_confirmation_container")
+        const checkbox = document.getElementById("doc_confirmation_checkbox")
+        const textSpan = document.getElementById("doc_confirmation_text")
+
+        const incompleteDocs = checkIncompleteDocuments()
+
+        if (incompleteDocs.length > 0) {
+          container.classList.remove("hidden")
+          textSpan.textContent = `Saya akan melengkapi dokumen ${incompleteDocs.join(", ")} dalam jangka waktu 30 hari`
+          checkbox.checked = false // Reset checkbox when docs are incomplete
+        } else {
+          container.classList.add("hidden")
+          checkbox.checked = true // Auto-check when all docs complete
+        }
       }
 
       function toggleDocSection(header) {
@@ -1375,17 +1583,64 @@
         document.getElementById("review_kontakPIC").textContent =
           document.getElementById("kontakPIC").value || "-"
 
+        const kontak1 =
+          [
+            document.getElementById("kontak1_no").value,
+            document.getElementById("kontak1_nama").value,
+            document.getElementById("kontak1_jabatan").value,
+          ]
+            .filter((v) => v)
+            .join(" / ") || "-"
+        document.getElementById("review_kontak1").textContent = kontak1
+
+        const kontak2 =
+          [
+            document.getElementById("kontak2_no").value,
+            document.getElementById("kontak2_nama").value,
+            document.getElementById("kontak2_jabatan").value,
+          ]
+            .filter((v) => v)
+            .join(" / ") || "-"
+        document.getElementById("review_kontak2").textContent = kontak2
+
+        // Tab 1 - Social Media & Website
+        document.getElementById("review_website").textContent =
+          document.getElementById("website").value || "-"
+        document.getElementById("review_instagram").textContent =
+          document.getElementById("socmed_instagram").value || "-"
+        document.getElementById("review_facebook").textContent =
+          document.getElementById("socmed_facebook").value || "-"
+        document.getElementById("review_linkedin").textContent =
+          document.getElementById("socmed_linkedin").value || "-"
+
         // Tab 2
         document.getElementById("review_npwp").textContent =
           document.getElementById("npwp_nomor").value || "-"
         document.getElementById("review_nib").textContent =
           document.getElementById("nib_nomor").value || "-"
+        document.getElementById("review_siup").textContent =
+          document.getElementById("siup_nomor")?.value || "-"
+
+        document.getElementById("review_npwp_file").textContent =
+          document.getElementById("npwp_file").files.length > 0
+            ? "✓ Diupload"
+            : "Belum upload"
+        document.getElementById("review_nib_file").textContent =
+          document.getElementById("nib_file").files.length > 0
+            ? "✓ Diupload"
+            : "Belum upload"
+        document.getElementById("review_siup_file").textContent =
+          document.getElementById("siup_file").files.length > 0
+            ? "✓ Diupload"
+            : "Belum upload"
 
         // Tab 3
         const bankNama = document.getElementById("bank_nama").value || "-"
         const bankNomor = document.getElementById("bank_nomor").value || "-"
         document.getElementById("review_bank").textContent =
           `${bankNama} - ${bankNomor}`
+        document.getElementById("review_bank_atasNama").textContent =
+          document.getElementById("bank_atasNama").value || "-"
         document.getElementById("review_alamat").textContent =
           document.getElementById("alamatPabrik").value || "-"
 
@@ -1475,6 +1730,16 @@
           document.getElementById("prod_kategori").value = p.kategori || ""
           document.getElementById("prod_status").value = p.status || "Available"
           document.getElementById("prod_catatan").value = p.catatan || ""
+          selectedAreas = p.areas || []
+          renderSelectedAreas()
+
+          // Reset province selection UI
+          document.getElementById("provinsi_select").value = ""
+          document
+            .getElementById("select_all_container")
+            .classList.add("hidden")
+          document.getElementById("district_container").classList.add("hidden")
+          document.getElementById("select_all_checkbox").checked = false
         } else {
           // Add mode
           title.textContent = "Tambah Produk"
@@ -1490,6 +1755,16 @@
           document.getElementById("prod_kategori").value = ""
           document.getElementById("prod_status").value = "Available"
           document.getElementById("prod_catatan").value = ""
+          selectedAreas = []
+          renderSelectedAreas()
+
+          // Reset province selection UI
+          document.getElementById("provinsi_select").value = ""
+          document
+            .getElementById("select_all_container")
+            .classList.add("hidden")
+          document.getElementById("district_container").classList.add("hidden")
+          document.getElementById("select_all_checkbox").checked = false
         }
 
         modal.classList.remove("hidden")
@@ -1570,6 +1845,7 @@
           kategori: document.getElementById("prod_kategori").value,
           status: document.getElementById("prod_status").value,
           catatan: document.getElementById("prod_catatan").value,
+          areas: [...selectedAreas], // Array of {type, name, province} objects
         }
 
         if (editingProductIndex >= 0) {
@@ -1628,6 +1904,326 @@
           renderProductTable()
         }
       }
+
+      function updatePreview() {
+        const alamat = document.getElementById("alamatPabrik").value
+        const frame = document.getElementById("mapFrame")
+
+        if (alamat.trim() !== "") {
+          frame.classList.remove("hidden")
+
+          const encoded = encodeURIComponent(alamat)
+          const url = `https://maps.google.com/maps?q=${encoded}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+
+          frame.style.opacity = "0.5"
+          frame.src = url
+
+          frame.onload = function () {
+            frame.style.opacity = "1"
+          }
+        } else {
+          alert("Silakan isi alamat terlebih dahulu")
+        }
+      }
+
+      // Area Pengiriman Functions
+      let selectedAreas = [] // Array of {type: 'provinsi'|'kabupaten', name: string, province: string}
+
+      // Mock data for provinces and districts (replace with Supabase calls)
+      const provincesData = {
+        "Jawa Barat": [
+          "Bandung",
+          "Bekasi",
+          "Bogor",
+          "Depok",
+          "Cirebon",
+          "Tasikmalaya",
+          "Cimahi",
+        ],
+        "DKI Jakarta": [
+          "Jakarta Pusat",
+          "Jakarta Utara",
+          "Jakarta Selatan",
+          "Jakarta Barat",
+          "Jakarta Timur",
+        ],
+        "Jawa Tengah": [
+          "Semarang",
+          "Solo",
+          "Yogyakarta",
+          "Magelang",
+          "Pekalongan",
+        ],
+        "Jawa Timur": ["Surabaya", "Malang", "Sidoarjo", "Kediri", "Blitar"],
+        Banten: ["Tangerang", "Serang", "Cilegon", "Tangerang Selatan"],
+      }
+
+      function initializeProvinces() {
+        const provinceSelect = document.getElementById("provinsi_select")
+        provinceSelect.innerHTML = '<option value="">Pilih Provinsi...</option>'
+
+        Object.keys(provincesData).forEach((province) => {
+          const option = document.createElement("option")
+          option.value = province
+          option.textContent = province
+          provinceSelect.appendChild(option)
+        })
+      }
+
+      function onProvinceChange() {
+        const provinceSelect = document.getElementById("provinsi_select")
+        const selectAllContainer = document.getElementById(
+          "select_all_container"
+        )
+        const districtContainer = document.getElementById("district_container")
+        const selectAllCheckbox = document.getElementById("select_all_checkbox")
+        const selectAllText = document.getElementById("select_all_text")
+
+        const selectedProvince = provinceSelect.value
+
+        if (selectedProvince) {
+          // Show select all option and district container
+          selectAllContainer.classList.remove("hidden")
+          districtContainer.classList.remove("hidden")
+
+          // Update select all text
+          selectAllText.textContent = `Pilih Seluruh ${selectedProvince}`
+
+          // Load districts for this province
+          loadDistricts(selectedProvince)
+
+          // Reset checkbox
+          selectAllCheckbox.checked = false
+        } else {
+          // Hide options when no province selected
+          selectAllContainer.classList.add("hidden")
+          districtContainer.classList.add("hidden")
+        }
+      }
+
+      function loadDistricts(province) {
+        const districtSelect = document.getElementById("kabupaten_select")
+        districtSelect.innerHTML =
+          '<option value="">Pilih Kabupaten/Kota...</option>'
+
+        if (province && provincesData[province]) {
+          provincesData[province].forEach((district) => {
+            const option = document.createElement("option")
+            option.value = district
+            option.textContent = district
+            districtSelect.appendChild(option)
+          })
+        }
+      }
+
+      function onSelectAllChange() {
+        const selectAllCheckbox = document.getElementById("select_all_checkbox")
+        const provinceSelect = document.getElementById("provinsi_select")
+        const districtContainer = document.getElementById("district_container")
+
+        const selectedProvince = provinceSelect.value
+
+        if (selectAllCheckbox.checked) {
+          // Remove any existing district selections for this province
+          selectedAreas = selectedAreas.filter(
+            (area) =>
+              !(area.type === "kabupaten" && area.province === selectedProvince)
+          )
+
+          // Add provincial coverage
+          const provinceExists = selectedAreas.some(
+            (area) => area.type === "provinsi" && area.name === selectedProvince
+          )
+
+          if (!provinceExists) {
+            selectedAreas.push({
+              type: "provinsi",
+              name: selectedProvince,
+              province: selectedProvince,
+            })
+          }
+
+          // Disable district selection
+          districtContainer.classList.add("opacity-50", "pointer-events-none")
+        } else {
+          // Remove provincial coverage
+          selectedAreas = selectedAreas.filter(
+            (area) =>
+              !(area.type === "provinsi" && area.name === selectedProvince)
+          )
+
+          // Enable district selection
+          districtContainer.classList.remove(
+            "opacity-50",
+            "pointer-events-none"
+          )
+        }
+
+        renderSelectedAreas()
+      }
+
+      function addDistrict() {
+        const provinceSelect = document.getElementById("provinsi_select")
+        const districtSelect = document.getElementById("kabupaten_select")
+
+        const selectedProvince = provinceSelect.value
+        const selectedDistrict = districtSelect.value
+
+        if (!selectedProvince || !selectedDistrict) {
+          alert("Pilih provinsi dan kabupaten/kota terlebih dahulu")
+          return
+        }
+
+        // Check if district already exists
+        const districtExists = selectedAreas.some(
+          (area) =>
+            area.type === "kabupaten" &&
+            area.name === selectedDistrict &&
+            area.province === selectedProvince
+        )
+
+        if (districtExists) {
+          alert("Kabupaten ini sudah ditambahkan")
+          return
+        }
+
+        // Remove provincial coverage if exists (since we're now selecting specific districts)
+        selectedAreas = selectedAreas.filter(
+          (area) =>
+            !(area.type === "provinsi" && area.name === selectedProvince)
+        )
+
+        // Uncheck select all checkbox
+        document.getElementById("select_all_checkbox").checked = false
+
+        // Add district
+        selectedAreas.push({
+          type: "kabupaten",
+          name: selectedDistrict,
+          province: selectedProvince,
+        })
+
+        renderSelectedAreas()
+
+        // Reset district selection
+        districtSelect.value = ""
+      }
+
+      function removeArea(index) {
+        selectedAreas.splice(index, 1)
+        renderSelectedAreas()
+      }
+
+      function renderSelectedAreas() {
+        const container = document.getElementById("selected_areas")
+        container.innerHTML = ""
+
+        if (selectedAreas.length === 0) {
+          container.innerHTML =
+            '<p class="text-sm text-gray-500 italic">Belum ada area yang dipilih</p>'
+          return
+        }
+
+        selectedAreas.forEach((area, index) => {
+          let displayText = ""
+          let tagClass = "bg-indigo-100 text-indigo-800"
+
+          if (area.type === "provinsi") {
+            displayText = `Provinsi: ${area.name}`
+            tagClass = "bg-green-100 text-green-800"
+          } else {
+            displayText = `Kabupaten: ${area.name}, ${area.province}`
+            tagClass = "bg-blue-100 text-blue-800"
+          }
+
+          const tag = document.createElement("div")
+          tag.className = `inline-flex items-center gap-2 ${tagClass} px-3 py-1 rounded-full text-sm mr-2 mb-2`
+          tag.innerHTML = `
+            <span>${displayText}</span>
+            <button onclick="removeArea(${index})" class="hover:opacity-75">
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+          `
+          container.appendChild(tag)
+        })
+      }
+
+      function loadDistricts() {
+        const provinceSelect = document.getElementById("provinsi_select")
+        const districtSelect = document.getElementById("kabupaten_select")
+        const selectedProvince = provinceSelect.value
+
+        districtSelect.innerHTML =
+          '<option value="">Pilih Kabupaten/Kota...</option>'
+        districtSelect.disabled = true
+
+        if (selectedProvince && provincesData[selectedProvince]) {
+          districtSelect.disabled = false
+          provincesData[selectedProvince].forEach((district) => {
+            const option = document.createElement("option")
+            option.value = district
+            option.textContent = district
+            districtSelect.appendChild(option)
+          })
+        }
+      }
+
+      // Initialize provinces on page load
+      initializeProvinces()
+
+      // Add event listeners for document confirmation
+      document.addEventListener("DOMContentLoaded", function () {
+        // NPWP inputs
+        document
+          .getElementById("npwp_nomor")
+          .addEventListener("input", updateDocConfirmation)
+        document
+          .getElementById("npwp_file")
+          .addEventListener("change", updateDocConfirmation)
+
+        // NIB inputs
+        document
+          .getElementById("nib_nomor")
+          .addEventListener("input", updateDocConfirmation)
+        document
+          .getElementById("nib_file")
+          .addEventListener("change", updateDocConfirmation)
+
+        // SIUP/SBU input
+        document
+          .getElementById("siup_file")
+          .addEventListener("change", updateDocConfirmation)
+
+        // Company Profile input
+        document
+          .getElementById("compro_file")
+          .addEventListener("change", updateDocConfirmation)
+
+        // Initial check when switching to tab 2
+        const observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (
+              mutation.type === "attributes" &&
+              mutation.attributeName === "class"
+            ) {
+              const target = mutation.target
+              if (
+                target.id === "tabContent1" &&
+                !target.classList.contains("hidden")
+              ) {
+                // Tab 2 (Dokumen Legal) is now visible
+                updateDocConfirmation()
+              }
+            }
+          })
+        })
+
+        // Observe tab content visibility changes
+        const reviewTab = document.getElementById("tabContent3")
+        if (reviewTab) {
+          observer.observe(reviewTab, { attributes: true })
+        }
+      })
     </script>
   </body>
 </html>

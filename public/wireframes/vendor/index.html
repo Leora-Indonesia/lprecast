@@ -9,6 +9,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   </head>
   <body class="min-h-screen bg-gray-100">
     <nav class="bg-indigo-700 text-white shadow-lg">
@@ -35,6 +36,31 @@
       <p class="mb-8 text-gray-600">
         Klik link di bawah untuk melihat masing-masing page wireframe
       </p>
+
+      <!-- Userflow Diagram -->
+      <div class="mb-8 rounded-xl bg-white p-6 shadow-sm">
+        <h2 class="mb-4 flex items-center text-lg font-semibold text-gray-800">
+          <i class="fa-solid fa-diagram-project mr-2 text-indigo-600"></i>
+          User Flow
+        </h2>
+        <pre class="mermaid rounded-lg bg-gray-50 p-4">
+flowchart LR
+    A[LOGIN] --> B[REGISTER]
+    B --> C[REG SUCCESS]
+    C -.-> A
+    A --> D[DASHBOARD]
+    D --> E[PROFILE]
+    D --> F[TENDERS]
+    D --> G[PROJECTS]
+    F --> H[SUBMIT PENAWARAN]
+    G --> I[UPLOAD PROGRESS]
+</pre
+        >
+      </div>
+
+      <script>
+        mermaid.initialize({ startOnLoad: true })
+      </script>
 
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <!-- Auth -->
