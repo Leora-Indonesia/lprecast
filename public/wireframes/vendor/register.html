@@ -711,9 +711,162 @@
             </div>
 
             <p class="mt-2 text-xs text-gray-500">
-              <i class="fa-solid fa-circle-info mr-1"></i>Klik "Detail" untuk
-              tambah informasi spesifikasi, logistik, dan metadata
+              <i class="fa-solid fa-circle-info mr-1"></i>Klik "Edit" untuk
+              tambah informasi spesifikasi, lead time, MOQ, dan informasi
+              tambahan lainnya
             </p>
+          </div>
+
+          <!-- Area Pengiriman Section -->
+          <div class="mt-8">
+            <h3 class="mb-4 border-b pb-2 font-semibold text-gray-700">
+              Area Pengiriman
+            </h3>
+
+            <div>
+              <div class="mb-3">
+                <button
+                  type="button"
+                  onclick="openAreaModal()"
+                  class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                >
+                  <i class="fa-solid fa-plus mr-2"></i>Tambah Area
+                </button>
+              </div>
+
+              <p class="mb-3 text-xs text-gray-600">
+                Klik "Tambah Area" untuk memilih wilayah pengiriman
+              </p>
+
+              <!-- Selected Areas Display -->
+              <div id="selected_areas" class="flex flex-wrap gap-2">
+                <p class="text-sm text-gray-500 italic">
+                  Belum ada area yang dipilih
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Biaya Section -->
+          <div class="mt-8">
+            <h3 class="mb-4 border-b pb-2 font-semibold text-gray-700">
+              Biaya & Inklusi
+            </h3>
+
+            <div class="mb-4">
+              <label
+                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
+                >Checklist Inklusi Biaya</label
+              >
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_mobilisasi"
+                    class="rounded text-indigo-600"
+                  />
+                  Mobilisasi & demobilisasi tukang</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_penginapan"
+                    class="rounded text-indigo-600"
+                  />
+                  Penginapan tukang</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_pengiriman"
+                    class="rounded text-indigo-600"
+                  />
+                  Biaya pengiriman</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_langsir"
+                    class="rounded text-indigo-600"
+                  />
+                  Biaya langsir/bongkar muat</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_instalasi"
+                    class="rounded text-indigo-600"
+                  />
+                  Instalasi/pemasangan</label
+                >
+                <label class="flex items-center gap-2 text-sm text-gray-700"
+                  ><input
+                    type="checkbox"
+                    id="inc_ppn"
+                    class="rounded text-indigo-600"
+                  />
+                  PPN 11%</label
+                >
+              </div>
+            </div>
+
+            <div>
+              <label
+                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
+                >Biaya Tambahan Lain</label
+              >
+              <table class="w-full text-sm">
+                <thead class="text-xs text-gray-500 uppercase">
+                  <tr class="border-b">
+                    <th class="py-2 text-left">Keterangan</th>
+                    <th class="w-32 py-2 text-right">Nilai (Rp)</th>
+                    <th class="w-24 py-2 text-right">Satuan</th>
+                    <th class="w-8 py-2"></th>
+                  </tr>
+                </thead>
+                <tbody id="biayaTableBody">
+                  <tr class="border-b">
+                    <td class="py-1">
+                      <input
+                        type="text"
+                        placeholder="[Vendor/Admin isi]"
+                        class="w-full rounded border border-gray-200 px-2 py-1 text-sm"
+                      />
+                    </td>
+                    <td class="py-1">
+                      <input
+                        type="number"
+                        placeholder="0"
+                        class="w-full rounded border border-gray-200 px-2 py-1 text-right text-sm"
+                      />
+                    </td>
+                    <td class="py-1">
+                      <input
+                        type="text"
+                        placeholder="unit"
+                        class="w-full rounded border border-gray-200 px-2 py-1 text-right text-sm"
+                      />
+                    </td>
+                    <td class="py-1 text-center">
+                      <button
+                        type="button"
+                        class="text-red-400 hover:text-red-600"
+                        onclick="this.closest('tr').remove()"
+                      >
+                        ×
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button
+                type="button"
+                onclick="addBiayaRow()"
+                class="mt-2 text-xs font-bold text-indigo-600 uppercase"
+              >
+                + Tambah Biaya
+              </button>
+            </div>
           </div>
         </div>
 
@@ -932,6 +1085,73 @@
       </div>
     </div>
 
+    <!-- Area Selection Modal -->
+    <div
+      id="areaModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm"
+    >
+      <div
+        class="max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-2xl"
+      >
+        <div
+          class="flex items-center justify-between border-b border-gray-200 bg-indigo-600 px-6 py-4"
+        >
+          <h3 class="text-lg font-bold text-white">
+            <i class="fa-solid fa-map-marker-alt mr-2"></i>Pilih Area Pengiriman
+          </h3>
+          <button
+            onclick="closeAreaModal()"
+            class="text-white hover:text-gray-200"
+          >
+            <i class="fa-solid fa-xmark text-2xl"></i>
+          </button>
+        </div>
+
+        <div class="custom-scrollbar max-h-[60vh] overflow-y-auto p-4">
+          <div class="mb-4">
+            <input
+              type="text"
+              id="areaSearch"
+              placeholder="Cari wilayah..."
+              class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div id="areaTree" class="space-y-3">
+            <!-- Area tree will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <div
+          class="flex items-center justify-between border-t border-gray-200 px-6 py-4"
+        >
+          <span id="selectedAreaCount" class="text-sm text-gray-500"
+            >0 dipilih</span
+          >
+          <div class="flex gap-3">
+            <button
+              onclick="resetAreaSelection()"
+              class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-50"
+            >
+              Reset
+            </button>
+            <button
+              onclick="closeAreaModal()"
+              class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-50"
+            >
+              Batal
+            </button>
+            <button
+              onclick="applyAreaSelection()"
+              class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-700"
+            >
+              Terapkan
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Product Modal -->
     <div
       id="productModal"
@@ -973,25 +1193,11 @@
               Spesifikasi
             </button>
             <button
-              onclick="switchProductTab('logistik')"
-              id="prodTabLogistik"
+              onclick="switchProductTab('info')"
+              id="prodTabInfo"
               class="prod-tab-btn px-4 py-2 text-sm font-bold text-gray-500 hover:text-indigo-600"
             >
-              Logistik
-            </button>
-            <button
-              onclick="switchProductTab('biaya')"
-              id="prodTabBiaya"
-              class="prod-tab-btn px-4 py-2 text-sm font-bold text-gray-500 hover:text-indigo-600"
-            >
-              Biaya
-            </button>
-            <button
-              onclick="switchProductTab('meta')"
-              id="prodTabMeta"
-              class="prod-tab-btn px-4 py-2 text-sm font-bold text-gray-500 hover:text-indigo-600"
-            >
-              Metadata
+              Informasi Tambahan
             </button>
           </div>
 
@@ -1099,8 +1305,8 @@
             </div>
           </div>
 
-          <!-- Logistik Tab -->
-          <div id="prodContentLogistik" class="prod-content hidden">
+          <!-- Informasi Tambahan Tab -->
+          <div id="prodContentInfo" class="prod-content hidden">
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label
@@ -1132,202 +1338,6 @@
                   Kuantitas minimum untuk setiap pemesanan
                 </p>
               </div>
-            </div>
-            <div class="mt-4">
-              <label
-                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
-                >Area Pengiriman</label
-              >
-              <p class="mb-3 text-xs text-gray-600">
-                Centang 'Pilih Seluruh' untuk cakupan provinsi, atau pilih
-                kabupaten/kota tertentu satu per satu
-              </p>
-
-              <!-- Province Selection -->
-              <div class="mb-4">
-                <label class="mb-1 block text-xs font-medium text-gray-600"
-                  >Provinsi</label
-                >
-                <select
-                  id="provinsi_select"
-                  onchange="onProvinceChange()"
-                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                >
-                  <option value="">Pilih Provinsi...</option>
-                  <!-- Options will be loaded from Supabase -->
-                </select>
-              </div>
-
-              <!-- Select All Option (shown after province selected) -->
-              <div id="select_all_container" class="mb-4 hidden">
-                <label class="flex items-center gap-2 text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    id="select_all_checkbox"
-                    onchange="onSelectAllChange()"
-                    class="rounded text-indigo-600"
-                  />
-                  <span id="select_all_text">Pilih Seluruh Provinsi</span>
-                </label>
-              </div>
-
-              <!-- District Selection -->
-              <div
-                id="district_container"
-                class="mb-4 grid hidden grid-cols-2 gap-4"
-              >
-                <div>
-                  <label class="mb-1 block text-xs font-medium text-gray-600"
-                    >Kabupaten/Kota</label
-                  >
-                  <select
-                    id="kabupaten_select"
-                    onchange="addDistrict()"
-                    class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                  >
-                    <option value="">Pilih Kabupaten/Kota...</option>
-                    <!-- Options will be loaded based on selected province -->
-                  </select>
-                </div>
-                <div class="flex items-end">
-                  <button
-                    type="button"
-                    onclick="addDistrict()"
-                    class="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-                  >
-                    Tambah Area
-                  </button>
-                </div>
-              </div>
-
-              <!-- Selected Areas Display -->
-              <div id="selected_areas" class="space-y-2">
-                <!-- Selected areas will be displayed here as removable tags -->
-              </div>
-            </div>
-          </div>
-
-          <!-- Biaya Tab -->
-          <div id="prodContentBiaya" class="prod-content hidden">
-            <div class="mb-4">
-              <label
-                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
-                >Checklist Inklusi Biaya</label
-              >
-              <div class="grid grid-cols-2 gap-2">
-                <label class="flex items-center gap-2 text-sm text-gray-700"
-                  ><input
-                    type="checkbox"
-                    id="inc_mobilisasi"
-                    class="rounded text-indigo-600"
-                  />
-                  Mobilisasi & demobilisasi tukang</label
-                >
-                <label class="flex items-center gap-2 text-sm text-gray-700"
-                  ><input
-                    type="checkbox"
-                    id="inc_penginapan"
-                    class="rounded text-indigo-600"
-                  />
-                  Penginapan tukang</label
-                >
-                <label class="flex items-center gap-2 text-sm text-gray-700"
-                  ><input
-                    type="checkbox"
-                    id="inc_pengiriman"
-                    class="rounded text-indigo-600"
-                  />
-                  Biaya pengiriman</label
-                >
-                <label class="flex items-center gap-2 text-sm text-gray-700"
-                  ><input
-                    type="checkbox"
-                    id="inc_langsir"
-                    class="rounded text-indigo-600"
-                  />
-                  Biaya langsir/bongkar muat</label
-                >
-                <label class="flex items-center gap-2 text-sm text-gray-700"
-                  ><input
-                    type="checkbox"
-                    id="inc_instalasi"
-                    class="rounded text-indigo-600"
-                  />
-                  Instalasi/pemasangan</label
-                >
-                <label class="flex items-center gap-2 text-sm text-gray-700"
-                  ><input
-                    type="checkbox"
-                    id="inc_ppn"
-                    class="rounded text-indigo-600"
-                  />
-                  PPN 11%</label
-                >
-              </div>
-            </div>
-
-            <div>
-              <label
-                class="mb-2 block text-xs font-bold text-gray-500 uppercase"
-                >Biaya Tambahan Lain</label
-              >
-              <table class="w-full text-sm">
-                <thead class="text-xs text-gray-500 uppercase">
-                  <tr class="border-b">
-                    <th class="py-2 text-left">Keterangan</th>
-                    <th class="w-32 py-2 text-right">Nilai (Rp)</th>
-                    <th class="w-24 py-2 text-right">Satuan</th>
-                    <th class="w-8 py-2"></th>
-                  </tr>
-                </thead>
-                <tbody id="biayaTableBody">
-                  <tr class="border-b">
-                    <td class="py-1">
-                      <input
-                        type="text"
-                        placeholder="[Vendor/Admin isi]"
-                        class="w-full rounded border border-gray-200 px-2 py-1 text-sm"
-                      />
-                    </td>
-                    <td class="py-1">
-                      <input
-                        type="number"
-                        placeholder="0"
-                        class="w-full rounded border border-gray-200 px-2 py-1 text-right text-sm"
-                      />
-                    </td>
-                    <td class="py-1">
-                      <input
-                        type="text"
-                        placeholder="unit"
-                        class="w-full rounded border border-gray-200 px-2 py-1 text-right text-sm"
-                      />
-                    </td>
-                    <td class="py-1 text-center">
-                      <button
-                        type="button"
-                        class="text-red-400 hover:text-red-600"
-                        onclick="this.closest('tr').remove()"
-                      >
-                        ×
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <button
-                type="button"
-                onclick="addBiayaRow()"
-                class="mt-2 text-xs font-bold text-indigo-600 uppercase"
-              >
-                + Tambah Biaya
-              </button>
-            </div>
-          </div>
-
-          <!-- Metadata Tab -->
-          <div id="prodContentMeta" class="prod-content hidden">
-            <div class="grid grid-cols-2 gap-4">
               <div>
                 <label
                   class="mb-1 block text-xs font-bold text-gray-500 uppercase"
@@ -1648,7 +1658,7 @@
         document.getElementById("review_products").textContent =
           `${productCount} item`
 
-        // Show product list in review
+        // Show product list in review with Lead Time and MOQ
         const productListEl = document.getElementById("review_product_list")
         if (products.length > 0) {
           productListEl.innerHTML = products
@@ -1656,7 +1666,7 @@
               (p) => `
             <div class="flex justify-between text-sm bg-gray-50 p-2 rounded">
               <span class="text-gray-600">• ${p.nama}</span>
-              <span class="text-gray-800 font-medium">${p.satuan} @ Rp ${p.harga}</span>
+              <span class="text-gray-800 font-medium">${p.satuan} @ Rp ${p.harga}${p.leadTime ? " | LT: " + p.leadTime + " hari" : ""}${p.moq ? " | MOQ: " + p.moq : ""}</span>
             </div>
           `
             )
@@ -1730,16 +1740,6 @@
           document.getElementById("prod_kategori").value = p.kategori || ""
           document.getElementById("prod_status").value = p.status || "Available"
           document.getElementById("prod_catatan").value = p.catatan || ""
-          selectedAreas = p.areas || []
-          renderSelectedAreas()
-
-          // Reset province selection UI
-          document.getElementById("provinsi_select").value = ""
-          document
-            .getElementById("select_all_container")
-            .classList.add("hidden")
-          document.getElementById("district_container").classList.add("hidden")
-          document.getElementById("select_all_checkbox").checked = false
         } else {
           // Add mode
           title.textContent = "Tambah Produk"
@@ -1755,16 +1755,6 @@
           document.getElementById("prod_kategori").value = ""
           document.getElementById("prod_status").value = "Available"
           document.getElementById("prod_catatan").value = ""
-          selectedAreas = []
-          renderSelectedAreas()
-
-          // Reset province selection UI
-          document.getElementById("provinsi_select").value = ""
-          document
-            .getElementById("select_all_container")
-            .classList.add("hidden")
-          document.getElementById("district_container").classList.add("hidden")
-          document.getElementById("select_all_checkbox").checked = false
         }
 
         modal.classList.remove("hidden")
@@ -1845,7 +1835,6 @@
           kategori: document.getElementById("prod_kategori").value,
           status: document.getElementById("prod_status").value,
           catatan: document.getElementById("prod_catatan").value,
-          areas: [...selectedAreas], // Array of {type, name, province} objects
         }
 
         if (editingProductIndex >= 0) {
@@ -1927,186 +1916,233 @@
       }
 
       // Area Pengiriman Functions
-      let selectedAreas = [] // Array of {type: 'provinsi'|'kabupaten', name: string, province: string}
+      let selectedAreas = [] // Array of {type: 'provinsi'|'kabupaten', id: number, name: string, province: string}
+      let tempSelectedAreas = [] // Temporary selection for modal
 
-      // Mock data for provinces and districts (replace with Supabase calls)
-      const provincesData = {
-        "Jawa Barat": [
-          "Bandung",
-          "Bekasi",
-          "Bogor",
-          "Depok",
-          "Cirebon",
-          "Tasikmalaya",
-          "Cimahi",
-        ],
-        "DKI Jakarta": [
-          "Jakarta Pusat",
-          "Jakarta Utara",
-          "Jakarta Selatan",
-          "Jakarta Barat",
-          "Jakarta Timur",
-        ],
-        "Jawa Tengah": [
-          "Semarang",
-          "Solo",
-          "Yogyakarta",
-          "Magelang",
-          "Pekalongan",
-        ],
-        "Jawa Timur": ["Surabaya", "Malang", "Sidoarjo", "Kediri", "Blitar"],
-        Banten: ["Tangerang", "Serang", "Cilegon", "Tangerang Selatan"],
+      // Mock data for provinces and districts with IDs
+      const provincesData = [
+        {
+          id: 1,
+          name: "Jawa Barat",
+          kabupaten: [
+            { id: 101, name: "Kota Bandung" },
+            { id: 102, name: "Kab. Bogor" },
+            { id: 103, name: "Kota Bekasi" },
+            { id: 104, name: "Kota Depok" },
+            { id: 105, name: "Kab. Bandung" },
+            { id: 106, name: "Kab. Garut" },
+            { id: 107, name: "Kota Cirebon" },
+            { id: 108, name: "Kab. Tasikmalaya" },
+            { id: 109, name: "Kota Cimahi" },
+          ],
+        },
+        {
+          id: 2,
+          name: "DKI Jakarta",
+          kabupaten: [
+            { id: 201, name: "Jakarta Selatan" },
+            { id: 202, name: "Jakarta Pusat" },
+            { id: 203, name: "Jakarta Utara" },
+            { id: 204, name: "Jakarta Barat" },
+            { id: 205, name: "Jakarta Timur" },
+          ],
+        },
+        {
+          id: 3,
+          name: "Jawa Tengah",
+          kabupaten: [
+            { id: 301, name: "Kota Semarang" },
+            { id: 302, name: "Kota Solo" },
+            { id: 303, name: "Kota Yogyakarta" },
+            { id: 304, name: "Kab. Magelang" },
+            { id: 305, name: "Kab. Pekalongan" },
+            { id: 306, name: "Kab. Kudus" },
+            { id: 307, name: "Kab. Semarang" },
+          ],
+        },
+        {
+          id: 4,
+          name: "Jawa Timur",
+          kabupaten: [
+            { id: 401, name: "Kota Surabaya" },
+            { id: 402, name: "Kota Malang" },
+            { id: 403, name: "Kab. Sidoarjo" },
+            { id: 404, name: "Kota Kediri" },
+            { id: 405, name: "Kota Blitar" },
+            { id: 406, name: "Kab. Pasuruan" },
+            { id: 407, name: "Kab. Probolinggo" },
+          ],
+        },
+        {
+          id: 5,
+          name: "Banten",
+          kabupaten: [
+            { id: 501, name: "Kab. Tangerang" },
+            { id: 502, name: "Kota Tangerang" },
+            { id: 503, name: "Kab. Serang" },
+            { id: 504, name: "Kota Cilegon" },
+            { id: 505, name: "Kota Tangerang Selatan" },
+          ],
+        },
+      ]
+
+      function openAreaModal() {
+        tempSelectedAreas = [...selectedAreas]
+        renderAreaTree()
+        updateSelectedAreaCount()
+        const modal = document.getElementById("areaModal")
+        modal.classList.remove("hidden")
+        modal.classList.add("flex", "items-center", "justify-center")
       }
 
-      function initializeProvinces() {
-        const provinceSelect = document.getElementById("provinsi_select")
-        provinceSelect.innerHTML = '<option value="">Pilih Provinsi...</option>'
-
-        Object.keys(provincesData).forEach((province) => {
-          const option = document.createElement("option")
-          option.value = province
-          option.textContent = province
-          provinceSelect.appendChild(option)
-        })
+      function closeAreaModal() {
+        const modal = document.getElementById("areaModal")
+        modal.classList.remove("flex", "items-center", "justify-center")
+        modal.classList.add("hidden")
       }
 
-      function onProvinceChange() {
-        const provinceSelect = document.getElementById("provinsi_select")
-        const selectAllContainer = document.getElementById(
-          "select_all_container"
-        )
-        const districtContainer = document.getElementById("district_container")
-        const selectAllCheckbox = document.getElementById("select_all_checkbox")
-        const selectAllText = document.getElementById("select_all_text")
+      function resetAreaSelection() {
+        tempSelectedAreas = []
+        renderAreaTree()
+        updateSelectedAreaCount()
+      }
 
-        const selectedProvince = provinceSelect.value
+      function applyAreaSelection() {
+        selectedAreas = [...tempSelectedAreas]
+        renderSelectedAreas()
+        closeAreaModal()
+      }
 
-        if (selectedProvince) {
-          // Show select all option and district container
-          selectAllContainer.classList.remove("hidden")
-          districtContainer.classList.remove("hidden")
+      function updateSelectedAreaCount() {
+        const count = tempSelectedAreas.length
+        document.getElementById("selectedAreaCount").textContent =
+          `${count} dipilih`
+      }
 
-          // Update select all text
-          selectAllText.textContent = `Pilih Seluruh ${selectedProvince}`
+      function renderAreaTree() {
+        const container = document.getElementById("areaTree")
+        const search = document.getElementById("areaSearch").value.toLowerCase()
 
-          // Load districts for this province
-          loadDistricts(selectedProvince)
+        let filteredProvinces = provincesData
 
-          // Reset checkbox
-          selectAllCheckbox.checked = false
-        } else {
-          // Hide options when no province selected
-          selectAllContainer.classList.add("hidden")
-          districtContainer.classList.add("hidden")
+        if (search) {
+          filteredProvinces = provincesData
+            .map((prov) => {
+              const provMatches = prov.name.toLowerCase().includes(search)
+              const matchedKab = prov.kabupaten.filter((k) =>
+                k.name.toLowerCase().includes(search)
+              )
+              if (provMatches) return prov
+              if (matchedKab.length > 0)
+                return { ...prov, kabupaten: matchedKab }
+              return null
+            })
+            .filter((p) => p !== null)
+        }
+
+        container.innerHTML = filteredProvinces
+          .map((prov) => {
+            const isProvSelected =
+              prov.kabupaten.length > 0 &&
+              prov.kabupaten.every((k) =>
+                tempSelectedAreas.some((a) => a.id === k.id)
+              )
+            const selectedKabCount = prov.kabupaten.filter((k) =>
+              tempSelectedAreas.some((a) => a.id === k.id)
+            ).length
+
+            return `
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+              <div class="flex items-center px-3 py-2 bg-gray-50">
+                <input type="checkbox" 
+                       id="prov-${prov.id}"
+                       ${isProvSelected ? "checked" : ""}
+                       onchange="toggleProv(${prov.id})"
+                       class="w-4 h-4 text-indigo-600 rounded border-gray-300">
+                <label for="prov-${prov.id}" class="ml-2 flex-1 cursor-pointer">
+                  <span class="font-semibold text-sm text-gray-700">${prov.name}</span>
+                  <span class="text-xs text-gray-400 ml-1">(Pilih Semua)</span>
+                </label>
+                <span class="text-xs text-gray-500">${selectedKabCount}/${prov.kabupaten.length}</span>
+              </div>
+              <div class="grid grid-cols-2 gap-x-4 px-4 py-2 bg-white">
+                ${prov.kabupaten
+                  .map(
+                    (kab) => `
+                  <label class="flex items-center py-1 cursor-pointer hover:bg-indigo-50 rounded px-2 transition-colors">
+                    <input type="checkbox" 
+                           value="${kab.id}"
+                           ${tempSelectedAreas.some((a) => a.id === kab.id) ? "checked" : ""}
+                           onchange="toggleKab(${kab.id}, ${prov.id})"
+                           class="w-3.5 h-3.5 text-indigo-600 rounded border-gray-300">
+                    <span class="ml-2 text-sm text-gray-600">${kab.name}</span>
+                  </label>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
+          `
+          })
+          .join("")
+
+        if (filteredProvinces.length === 0) {
+          container.innerHTML =
+            '<p class="text-center text-gray-400 py-8">Data tidak ditemukan</p>'
         }
       }
 
-      function loadDistricts(province) {
-        const districtSelect = document.getElementById("kabupaten_select")
-        districtSelect.innerHTML =
-          '<option value="">Pilih Kabupaten/Kota...</option>'
+      function toggleProv(provId) {
+        const prov = provincesData.find((p) => p.id === provId)
+        if (!prov) return
 
-        if (province && provincesData[province]) {
-          provincesData[province].forEach((district) => {
-            const option = document.createElement("option")
-            option.value = district
-            option.textContent = district
-            districtSelect.appendChild(option)
+        const allKabIds = prov.kabupaten.map((k) => k.id)
+        const allSelected = allKabIds.every((id) =>
+          tempSelectedAreas.some((a) => a.id === id)
+        )
+
+        if (allSelected) {
+          // Deselect all kabupaten in this province
+          tempSelectedAreas = tempSelectedAreas.filter(
+            (a) => !allKabIds.includes(a.id)
+          )
+        } else {
+          // Select all kabupaten in this province
+          prov.kabupaten.forEach((kab) => {
+            if (!tempSelectedAreas.some((a) => a.id === kab.id)) {
+              tempSelectedAreas.push({
+                type: "kabupaten",
+                id: kab.id,
+                name: kab.name,
+                province: prov.name,
+              })
+            }
           })
         }
+
+        renderAreaTree()
+        updateSelectedAreaCount()
       }
 
-      function onSelectAllChange() {
-        const selectAllCheckbox = document.getElementById("select_all_checkbox")
-        const provinceSelect = document.getElementById("provinsi_select")
-        const districtContainer = document.getElementById("district_container")
+      function toggleKab(kabId, provId) {
+        const prov = provincesData.find((p) => p.id === provId)
+        const kab = prov?.kabupaten.find((k) => k.id === kabId)
+        if (!kab) return
 
-        const selectedProvince = provinceSelect.value
-
-        if (selectAllCheckbox.checked) {
-          // Remove any existing district selections for this province
-          selectedAreas = selectedAreas.filter(
-            (area) =>
-              !(area.type === "kabupaten" && area.province === selectedProvince)
-          )
-
-          // Add provincial coverage
-          const provinceExists = selectedAreas.some(
-            (area) => area.type === "provinsi" && area.name === selectedProvince
-          )
-
-          if (!provinceExists) {
-            selectedAreas.push({
-              type: "provinsi",
-              name: selectedProvince,
-              province: selectedProvince,
-            })
-          }
-
-          // Disable district selection
-          districtContainer.classList.add("opacity-50", "pointer-events-none")
+        const exists = tempSelectedAreas.some((a) => a.id === kabId)
+        if (exists) {
+          tempSelectedAreas = tempSelectedAreas.filter((a) => a.id !== kabId)
         } else {
-          // Remove provincial coverage
-          selectedAreas = selectedAreas.filter(
-            (area) =>
-              !(area.type === "provinsi" && area.name === selectedProvince)
-          )
-
-          // Enable district selection
-          districtContainer.classList.remove(
-            "opacity-50",
-            "pointer-events-none"
-          )
+          tempSelectedAreas.push({
+            type: "kabupaten",
+            id: kab.id,
+            name: kab.name,
+            province: prov.name,
+          })
         }
 
-        renderSelectedAreas()
-      }
-
-      function addDistrict() {
-        const provinceSelect = document.getElementById("provinsi_select")
-        const districtSelect = document.getElementById("kabupaten_select")
-
-        const selectedProvince = provinceSelect.value
-        const selectedDistrict = districtSelect.value
-
-        if (!selectedProvince || !selectedDistrict) {
-          alert("Pilih provinsi dan kabupaten/kota terlebih dahulu")
-          return
-        }
-
-        // Check if district already exists
-        const districtExists = selectedAreas.some(
-          (area) =>
-            area.type === "kabupaten" &&
-            area.name === selectedDistrict &&
-            area.province === selectedProvince
-        )
-
-        if (districtExists) {
-          alert("Kabupaten ini sudah ditambahkan")
-          return
-        }
-
-        // Remove provincial coverage if exists (since we're now selecting specific districts)
-        selectedAreas = selectedAreas.filter(
-          (area) =>
-            !(area.type === "provinsi" && area.name === selectedProvince)
-        )
-
-        // Uncheck select all checkbox
-        document.getElementById("select_all_checkbox").checked = false
-
-        // Add district
-        selectedAreas.push({
-          type: "kabupaten",
-          name: selectedDistrict,
-          province: selectedProvince,
-        })
-
-        renderSelectedAreas()
-
-        // Reset district selection
-        districtSelect.value = ""
+        renderAreaTree()
+        updateSelectedAreaCount()
       }
 
       function removeArea(index) {
@@ -2116,60 +2152,46 @@
 
       function renderSelectedAreas() {
         const container = document.getElementById("selected_areas")
-        container.innerHTML = ""
 
         if (selectedAreas.length === 0) {
-          container.innerHTML =
-            '<p class="text-sm text-gray-500 italic">Belum ada area yang dipilih</p>'
+          container.innerHTML = `
+            <p class="text-sm text-gray-500 italic">Belum ada area yang dipilih</p>
+          `
           return
         }
 
-        selectedAreas.forEach((area, index) => {
-          let displayText = ""
-          let tagClass = "bg-indigo-100 text-indigo-800"
+        container.innerHTML = selectedAreas
+          .map((area, index) => {
+            let tagClass = "bg-indigo-100 text-indigo-800"
+            let displayText = `${area.name}`
 
-          if (area.type === "provinsi") {
-            displayText = `Provinsi: ${area.name}`
-            tagClass = "bg-green-100 text-green-800"
-          } else {
-            displayText = `Kabupaten: ${area.name}, ${area.province}`
-            tagClass = "bg-blue-100 text-blue-800"
-          }
+            if (area.type === "kabupaten") {
+              tagClass = "bg-blue-100 text-blue-800"
+              displayText = `${area.name}, ${area.province}`
+            }
 
-          const tag = document.createElement("div")
-          tag.className = `inline-flex items-center gap-2 ${tagClass} px-3 py-1 rounded-full text-sm mr-2 mb-2`
-          tag.innerHTML = `
-            <span>${displayText}</span>
-            <button onclick="removeArea(${index})" class="hover:opacity-75">
-              <i class="fa-solid fa-xmark text-xs"></i>
-            </button>
+            return `
+            <span class="inline-flex items-center gap-1.5 ${tagClass} px-2.5 py-1 rounded-full text-xs font-medium">
+              <i class="fa-solid fa-map-marker-alt text-xs"></i>
+              <span>${displayText}</span>
+              <button onclick="removeArea(${index})" class="ml-1 hover:text-red-600">
+                <i class="fa-solid fa-xmark text-xs"></i>
+              </button>
+            </span>
           `
-          container.appendChild(tag)
-        })
-      }
-
-      function loadDistricts() {
-        const provinceSelect = document.getElementById("provinsi_select")
-        const districtSelect = document.getElementById("kabupaten_select")
-        const selectedProvince = provinceSelect.value
-
-        districtSelect.innerHTML =
-          '<option value="">Pilih Kabupaten/Kota...</option>'
-        districtSelect.disabled = true
-
-        if (selectedProvince && provincesData[selectedProvince]) {
-          districtSelect.disabled = false
-          provincesData[selectedProvince].forEach((district) => {
-            const option = document.createElement("option")
-            option.value = district
-            option.textContent = district
-            districtSelect.appendChild(option)
           })
-        }
+          .join("")
       }
 
-      // Initialize provinces on page load
-      initializeProvinces()
+      // Initialize - render empty state
+      renderSelectedAreas()
+
+      // Add event listeners for area search
+      document
+        .getElementById("areaSearch")
+        .addEventListener("input", function () {
+          renderAreaTree()
+        })
 
       // Add event listeners for document confirmation
       document.addEventListener("DOMContentLoaded", function () {

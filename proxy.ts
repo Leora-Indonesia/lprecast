@@ -3,7 +3,13 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import type { CookieOptions } from "@supabase/ssr"
 
-const publicRoutes = ["/", "/login", "/unauthorized", "/about"]
+const publicRoutes = [
+  "/",
+  "/login",
+  "/unauthorized",
+  "/about",
+  "/vendor/register",
+]
 
 export default async function proxy(request: NextRequest) {
   const supabaseResponse = NextResponse.next({
@@ -69,12 +75,31 @@ export default async function proxy(request: NextRequest) {
     .eq("id", user.id)
     .single()
 
-  if (profile?.stakeholder_type === "internal") {
-    return NextResponse.redirect(new URL("/unauthorized", request.url))
+  const stakeholderType = profile?.stakeholder_type
+
+  if (pathname.startsWith("/vendor/")) {
+    if (stakeholderType !== "vendor") {
+      return NextResponse.redirect(new URL("/unauthorized", request.url))
+    }
+  } else if (pathname.startsWith("/client/")) {
+    if (stakeholderType !== "client") {
+      return NextResponse.redirect(new URL("/unauthorized", request.url))
+    }
+  } else if (pathname.startsWith("/admin/")) {
+    if (stakeholderType !== "internal") {
+      return NextResponse.redirect(new URL("/unauthorized", request.url))
+    }
   }
 
-  if (!["vendor", "admin"].includes(profile?.stakeholder_type)) {
-    return NextResponse.redirect(new URL("/unauthorized", request.url))
+  if (stakeholderType === "vendor" && !pathname.startsWith("/vendor/")) {
+    return NextResponse.redirect(new URL("/vendor/dashboard", request.url))
+  } else if (stakeholderType === "client" && !pathname.startsWith("/client/")) {
+    return NextResponse.redirect(new URL("/client/dashboard", request.url))
+  } else if (
+    stakeholderType === "internal" &&
+    !pathname.startsWith("/admin/")
+  ) {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url))
   }
 
   return supabaseResponse
