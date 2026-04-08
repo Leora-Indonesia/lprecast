@@ -1,14 +1,37 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { supabase } from "@/lib/supabase"
+import { cookies } from "next/headers"
+import { createServerClient } from "@supabase/ssr"
 import type { VendorRegistrationFormData } from "@/lib/validations/vendor-registration"
+
+async function getSupabaseServerClient() {
+  const cookieStore = await cookies()
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+        set(name: string, value: string, options: Record<string, unknown>) {
+          cookieStore.set({ name, value, ...options })
+        },
+        remove(name: string, options: Record<string, unknown>) {
+          cookieStore.set({ name, value: "", ...options })
+        },
+      },
+    }
+  )
+}
 
 export async function saveDraft(
   registrationId: string,
   currentStep: number,
   _formData: Partial<VendorRegistrationFormData>
 ) {
+  const supabase = await getSupabaseServerClient()
   const { data, error } = await supabase
     .from("vendor_registrations")
     .update({
@@ -28,6 +51,7 @@ export async function saveDraft(
 }
 
 export async function loadDraft(userId: string) {
+  const supabase = await getSupabaseServerClient()
   const { data, error } = await supabase
     .from("vendor_registrations")
     .select("*")
@@ -47,14 +71,7 @@ export async function loadDraft(userId: string) {
 
 export async function submitRegistration(formData: VendorRegistrationFormData) {
   try {
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      return { success: false, error: "User not authenticated" }
-    }
+    const supabase = await getSupabaseServerClient()
 
     const registrationId = crypto.randomUUID()
 
@@ -62,7 +79,7 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
       .from("vendor_registrations")
       .insert({
         id: registrationId,
-        vendor_id: user.id,
+        vendor_id: null,
         status: "submitted",
         submission_date: new Date().toISOString(),
         current_step: 4,

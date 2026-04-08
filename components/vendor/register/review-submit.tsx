@@ -1,6 +1,8 @@
 "use client"
 
 import { UseFormReturn } from "react-hook-form"
+import Link from "next/link"
+
 import { Building2, FileCheck, Settings } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
@@ -13,7 +15,7 @@ export interface ReviewSubmitProps {
 export function ReviewSubmit({ form }: ReviewSubmitProps) {
   const {
     watch,
-    register,
+    setValue,
     formState: { errors },
   } = form
   const data = watch()
@@ -261,21 +263,36 @@ export function ReviewSubmit({ form }: ReviewSubmitProps) {
           </div>
         </div>
 
-        <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
-          <label className="flex cursor-pointer items-start gap-3">
-            <Checkbox
-              {...register("review.legal_agreement")}
-              className={cn(
-                "mt-1 h-4 w-4 rounded",
-                errors.review?.legal_agreement && "border-destructive"
-              )}
-            />
-            <span className="text-sm leading-relaxed font-medium text-gray-700">
-              Saya menyatakan bahwa seluruh data perusahaan dan dokumen yang
-              diunggah adalah sah, benar, dan dapat dipertanggungjawabkan di
-              mata hukum.
-            </span>
-          </label>
+        <div>
+          <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+            <label className="flex cursor-pointer items-start gap-3">
+              <Checkbox
+                checked={watch("review.legal_agreement") === true}
+                onCheckedChange={(checked) =>
+                  setValue("review.legal_agreement", checked === true, {
+                    shouldValidate: true,
+                  })
+                }
+                className={cn(
+                  "mt-1 h-4 w-4 rounded",
+                  errors.review?.legal_agreement && "border-destructive"
+                )}
+              />
+              <span className="text-sm leading-relaxed font-medium text-gray-700">
+                Saya menyatakan bahwa seluruh data perusahaan dan dokumen yang
+                diunggah adalah sah, benar, dan dapat dipertanggungjawabkan di
+                mata hukum.{" "}
+                <Link
+                  href="/terms/vendor"
+                  target="_blank"
+                  className="text-primary underline hover:text-primary/80"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Baca Syarat & Ketentuan Vendor
+                </Link>
+              </span>
+            </label>
+          </div>
           {errors.review?.legal_agreement && (
             <p className="mt-2 text-xs text-destructive">
               {errors.review.legal_agreement.message}
@@ -284,16 +301,28 @@ export function ReviewSubmit({ form }: ReviewSubmitProps) {
         </div>
 
         {hasMissingDocuments && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <label className="flex items-start gap-3">
-              <Checkbox
-                {...register("review.document_confirmation")}
-                className="mt-1 h-4 w-4 rounded border-amber-400"
-              />
-              <span className="text-sm text-amber-800">
-                {docConfirmationText}
-              </span>
-            </label>
+          <div>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <label className="flex items-start gap-3">
+                <Checkbox
+                  checked={watch("review.document_confirmation") === true}
+                  onCheckedChange={(checked) =>
+                    setValue("review.document_confirmation", checked === true, {
+                      shouldValidate: true,
+                    })
+                  }
+                  className="mt-1 h-4 w-4 rounded border-amber-400"
+                />
+                <span className="text-sm text-amber-800">
+                  {docConfirmationText}
+                </span>
+              </label>
+            </div>
+            {errors.review?.document_confirmation && (
+              <p className="mt-2 text-xs text-destructive">
+                {errors.review.document_confirmation.message}
+              </p>
+            )}
           </div>
         )}
       </div>

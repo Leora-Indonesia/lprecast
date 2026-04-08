@@ -39,6 +39,8 @@ import {
   type ReviewSubmitProps,
 } from "@/components/vendor/register/review-submit"
 import { VendorHeader } from "@/components/vendor/vendor-header"
+import { submitRegistration } from "./actions"
+import { Loader2 } from "lucide-react"
 
 const STEPS = [
   { label: "Informasi Perusahaan" },
@@ -108,6 +110,7 @@ export default function VendorRegisterPage() {
     "idle" | "saving" | "saved"
   >("idle")
   const [showLoadDialog, setShowLoadDialog] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
   const form = useForm<VendorRegistrationFormData>({
@@ -265,20 +268,30 @@ export default function VendorRegisterPage() {
     ])
     if (!isValid) return
 
-    const formData = form.getValues()
+    setIsSubmitting(true)
 
-    if (typeof window !== "undefined") {
-      const cleanedData = JSON.parse(JSON.stringify(formData))
-      sessionStorage.setItem(
-        "vendor-submitted-data",
-        JSON.stringify(cleanedData)
-      )
+    try {
+      const formData = form.getValues()
+      const result = await submitRegistration(formData)
+
+      if (result.success) {
+        toast.success("Pendaftaran berhasil!", {
+          description: "Data vendor telah tersimpan.",
+        })
+        clearSavedData()
+        router.push("/vendor/register/success")
+      } else {
+        toast.error("Gagal submit", {
+          description: result.error,
+        })
+      }
+    } catch (error) {
+      toast.error("Terjadi kesalahan", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      })
+    } finally {
+      setIsSubmitting(false)
     }
-
-    toast.success("Data berhasil disubmit!", {
-      description: "Mengalihkan ke halaman review...",
-    })
-    router.push("/vendor/register/review")
   }
 
   return (
@@ -387,8 +400,14 @@ export default function VendorRegisterPage() {
               <Button
                 type="button"
                 onClick={currentStep < 3 ? handleNext : handleSubmit}
+                disabled={isSubmitting}
               >
-                {currentStep < 3 ? (
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span>Menyimpan...</span>
+                  </>
+                ) : currentStep < 3 ? (
                   <>
                     <span>Lanjutkan</span>
                     <ArrowRight className="h-3 w-3" />

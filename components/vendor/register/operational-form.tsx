@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { UseFormReturn, useFieldArray } from "react-hook-form"
 import {
   Plus,
@@ -212,30 +212,41 @@ export function OperationalForm({ form }: OperationalFormProps) {
   const selectedProvince = provinces.find((p) => p.id === selectedProvinsiId)
   const selectedCity = cities.find((c) => c.id === selectedKabupatenId)
 
+  const prevProvinsiIdRef = useRef<string | null>(null)
+  const isInitialLoadRef = useRef(true)
+
   useEffect(() => {
     fetchProvinces()
   }, [])
 
   useEffect(() => {
-    if (selectedProvinsiId) {
-      fetchCities(selectedProvinsiId)
+    if (!selectedProvinsiId) return
+
+    if (isInitialLoadRef.current) {
+      isInitialLoadRef.current = false
+      if (
+        cities.length === 0 ||
+        !cities.find((c) => c.province_id === selectedProvinsiId)
+      ) {
+        fetchCities(selectedProvinsiId)
+      }
+      return
+    }
+
+    if (
+      prevProvinsiIdRef.current &&
+      prevProvinsiIdRef.current !== selectedProvinsiId
+    ) {
       setValue("operational.factory_address.kabupaten_id", "", {
         shouldValidate: true,
       })
       setValue("operational.factory_address.kabupaten_name", "", {
         shouldValidate: true,
       })
-      const selectedProv = provinces.find((p) => p.id === selectedProvinsiId)
-      if (selectedProv) {
-        setValue(
-          "operational.factory_address.provinsi_name",
-          selectedProv.name,
-          {
-            shouldValidate: true,
-          }
-        )
-      }
     }
+
+    prevProvinsiIdRef.current = selectedProvinsiId
+    fetchCities(selectedProvinsiId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProvinsiId])
 
@@ -931,34 +942,79 @@ export function OperationalForm({ form }: OperationalFormProps) {
           <div className="grid grid-cols-2 gap-3">
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
-                {...register("operational.cost_inclusions.mobilisasi")}
+                checked={
+                  watch("operational.cost_inclusions.mobilisasi") === true
+                }
+                onCheckedChange={(checked) =>
+                  setValue(
+                    "operational.cost_inclusions.mobilisasi",
+                    checked === true
+                  )
+                }
               />
               Mobilisasi & demobilisasi tukang
             </label>
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
-                {...register("operational.cost_inclusions.penginapan")}
+                checked={
+                  watch("operational.cost_inclusions.penginapan") === true
+                }
+                onCheckedChange={(checked) =>
+                  setValue(
+                    "operational.cost_inclusions.penginapan",
+                    checked === true
+                  )
+                }
               />
               Penginapan tukang
             </label>
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
-                {...register("operational.cost_inclusions.pengiriman")}
+                checked={
+                  watch("operational.cost_inclusions.pengiriman") === true
+                }
+                onCheckedChange={(checked) =>
+                  setValue(
+                    "operational.cost_inclusions.pengiriman",
+                    checked === true
+                  )
+                }
               />
               Biaya pengiriman
             </label>
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
-              <Checkbox {...register("operational.cost_inclusions.langsir")} />
+              <Checkbox
+                checked={watch("operational.cost_inclusions.langsir") === true}
+                onCheckedChange={(checked) =>
+                  setValue(
+                    "operational.cost_inclusions.langsir",
+                    checked === true
+                  )
+                }
+              />
               Biaya langsir/bongkar muat
             </label>
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
-                {...register("operational.cost_inclusions.instalasi")}
+                checked={
+                  watch("operational.cost_inclusions.instalasi") === true
+                }
+                onCheckedChange={(checked) =>
+                  setValue(
+                    "operational.cost_inclusions.instalasi",
+                    checked === true
+                  )
+                }
               />
               Instalasi/pemasangan
             </label>
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
-              <Checkbox {...register("operational.cost_inclusions.ppn")} />
+              <Checkbox
+                checked={watch("operational.cost_inclusions.ppn") === true}
+                onCheckedChange={(checked) =>
+                  setValue("operational.cost_inclusions.ppn", checked === true)
+                }
+              />
               PPN 11%
             </label>
           </div>

@@ -9,6 +9,7 @@ const publicRoutes = [
   "/unauthorized",
   "/about",
   "/vendor/register",
+  "/vendor/register/success",
   "/terms/vendor",
   "/terms/client",
   "/privacy",
