@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Dashboard Client | LPrecast",
+  description: "Portal client untuk mengelola proyek konstruksi",
+}
+
 export default function ClientDashboard() {
   return (
     <div className="p-8">

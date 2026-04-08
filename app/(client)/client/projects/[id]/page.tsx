@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Detail Proyek | LPrecast",
+  description: "Lihat detail dan progres proyek konstruksi",
+}
+
 export default function ProjectDetail() {
   return (
     <div className="p-8">

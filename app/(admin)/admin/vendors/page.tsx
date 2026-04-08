@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Kelola Vendor | LPrecast",
+  description: "Kelola dan verifikasi vendor mitra LPrecast",
+}
+
 export default function AdminVendors() {
   return (
     <div className="p-8">

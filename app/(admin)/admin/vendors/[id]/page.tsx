@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Detail Vendor | LPrecast",
+  description: "Lihat detail profil dan performa vendor",
+}
+
 export default function VendorDetail() {
   return (
     <div className="p-8">

@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Proyek Saya | LPrecast",
+  description: "Kelola dan pantau proyek konstruksi Anda",
+}
+
 export default function ClientProjects() {
   return (
     <div className="p-8">

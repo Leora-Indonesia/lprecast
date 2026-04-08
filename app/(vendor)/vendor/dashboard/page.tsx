@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Dashboard Vendor | LPrecast",
+  description: "Portal vendor untuk mengelola proyek dan tender",
+}
+
 export default function VendorDashboard() {
   return (
     <div className="p-8">

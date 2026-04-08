@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Detail Tender | LPrecast",
+  description: "Lihat detail tender proyek konstruksi",
+}
+
 export default function TenderDetail() {
   return (
     <div className="p-8">
