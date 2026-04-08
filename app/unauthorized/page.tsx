@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Akses Ditolak | LPrecast",
+  description: "Anda tidak memiliki akses ke halaman ini",
+}
+
 export default function UnauthorizedPage() {
   return (
     <div className="flex min-h-screen items-center justify-center">

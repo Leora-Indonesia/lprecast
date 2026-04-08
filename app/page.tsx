@@ -2,6 +2,12 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Fragment } from "react"
+
+export const metadata = {
+  title: "LPrecast - Platform Konstruksi Terpercaya",
+  description:
+    "Platform konstruksi yang menghubungkan proyek Anda dengan mitra terbaik. Transparan, efisien, dan terjamin kualitasnya.",
+}
 import {
   Shield,
   Activity,
@@ -305,9 +311,15 @@ export default function Page() {
               <p className="text-sm text-muted-foreground">
                 &copy; {new Date().getFullYear()} LPrecast. All rights reserved.
               </p>
-              <p className="text-sm text-muted-foreground">
-                precast.leora.co.id
-              </p>
+              <div className="flex gap-4 text-sm text-muted-foreground">
+                <Link href="/terms/client" className="hover:text-foreground">
+                  Syarat & Ketentuan
+                </Link>
+                <span>|</span>
+                <Link href="/privacy" className="hover:text-foreground">
+                  Privacy Policy
+                </Link>
+              </div>
             </div>
           </div>
         </footer>

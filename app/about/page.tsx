@@ -1,6 +1,11 @@
 import Link from "next/link"
+
+export const metadata = {
+  title: "Tentang Kami | LPrecast",
+  description:
+    "Pelajari lebih lanjut tentang LPrecast - platform konstruksi terpercaya",
+}
 import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
 
 export default function AboutPage() {
   return (
@@ -48,15 +53,6 @@ export default function AboutPage() {
 
       <section className="py-16 md:py-20 lg:py-24">
         <div className="container mx-auto max-w-4xl px-4 md:px-6">
-          <div className="mb-8">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Kembali
-              </Link>
-            </Button>
-          </div>
-
           <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
             Tentang LPrecast
           </h1>
@@ -107,7 +103,15 @@ export default function AboutPage() {
             <p className="text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} LPrecast. All rights reserved.
             </p>
-            <p className="text-sm text-muted-foreground">precast.leora.co.id</p>
+            <div className="flex gap-4 text-sm text-muted-foreground">
+              <Link href="/terms/client" className="hover:text-foreground">
+                Syarat & Ketentuan
+              </Link>
+              <span>|</span>
+              <Link href="/privacy" className="hover:text-foreground">
+                Privacy Policy
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
