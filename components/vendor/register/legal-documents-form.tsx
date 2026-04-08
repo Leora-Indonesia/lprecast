@@ -4,6 +4,7 @@ import { UseFormReturn, Controller, FieldErrors } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Check, X } from "lucide-react"
+import { cn } from "@/lib/utils"
 import type { VendorRegistrationFormData } from "@/lib/validations/vendor-registration"
 
 export interface LegalDocumentsFormProps {
@@ -103,7 +104,7 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
         Upload Dokumen Legalitas
       </h2>
       <p className="mb-8 text-sm text-gray-500">
-        Format file: PDF/JPG, Max 10MB per file.
+        Format file: PDF/JPG/PNG, Maksimal 5MB per file.
       </p>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -123,10 +124,21 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
           </Label>
           <Input
             id="npwp_nomor"
-            placeholder="00.000.000.0-000.000"
+            placeholder="16 digit angka (contoh: 1234567890123456)"
             {...register("legal_documents.npwp_nomor")}
-            className="form-input mb-3"
+            className={cn(
+              "form-input mb-1",
+              errors.legal_documents?.npwp_nomor && "border-destructive"
+            )}
           />
+          {errors.legal_documents?.npwp_nomor && (
+            <p className="mb-2 text-xs text-destructive">
+              {errors.legal_documents.npwp_nomor.message as string}
+            </p>
+          )}
+          <p className="mb-3 text-xs text-gray-500">
+            Masukkan 16 digit NPWP tanpa titik atau spasi
+          </p>
           <FileInputField
             label=""
             name="legal_documents.npwp_file"
@@ -142,10 +154,21 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
           </Label>
           <Input
             id="nib_nomor"
-            placeholder="0123456789013"
+            placeholder="13 digit angka (contoh: 0123456789013)"
             {...register("legal_documents.nib_nomor")}
-            className="form-input mb-3"
+            className={cn(
+              "form-input mb-1",
+              errors.legal_documents?.nib_nomor && "border-destructive"
+            )}
           />
+          {errors.legal_documents?.nib_nomor && (
+            <p className="mb-2 text-xs text-destructive">
+              {errors.legal_documents.nib_nomor.message as string}
+            </p>
+          )}
+          <p className="mb-3 text-xs text-gray-500">
+            Masukkan 13 digit NIB tanpa spasi
+          </p>
           <FileInputField
             label=""
             name="legal_documents.nib_file"

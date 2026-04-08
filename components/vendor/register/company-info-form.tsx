@@ -10,30 +10,105 @@ export interface CompanyInfoFormProps {
   form: UseFormReturn<VendorRegistrationFormData>
 }
 
-export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
+interface ContactFieldConfig {
+  key: "contact_1" | "contact_2" | "contact_3"
+  label: string
+  placeholder: string
+  required: boolean
+}
+
+const contactFields: ContactFieldConfig[] = [
+  { key: "contact_1", label: "1", placeholder: "Supervisor", required: true },
+  { key: "contact_2", label: "2", placeholder: "Finance", required: true },
+  { key: "contact_3", label: "3", placeholder: "Admin", required: false },
+]
+
+function ContactField({
+  form,
+  config,
+}: {
+  form: CompanyInfoFormProps["form"]
+  config: ContactFieldConfig
+}) {
   const {
     register,
     formState: { errors },
   } = form
+  const errorRoot = errors.company_info?.[config.key]
 
-  const contactFields = [
-    {
-      index: 0,
-      label: "Kontak Administrasi",
-      placeholder: { nama: "Budi Santoso", jabatan: "Admin" },
-    },
-    {
-      index: 1,
-      label: "Kontak Keuangan",
-      placeholder: { nama: "Deni Wijaya", jabatan: "Finance" },
-    },
-    {
-      index: 2,
-      label: "Kontak Operasional (Opsional)",
-      placeholder: { nama: "Ari Purnomo", jabatan: "Supervisor" },
-    },
-  ]
+  return (
+    <div className="rounded-lg border border-gray-200 p-4">
+      <h4 className="mb-3 font-medium text-gray-900">
+        Kontak {config.label}
+        {config.required && <span className="required-star">*</span>}
+        {!config.required && (
+          <span className="ml-1 text-xs text-gray-400">(Opsional)</span>
+        )}
+      </h4>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div>
+          <Label
+            htmlFor={`${config.key}.no_hp`}
+            className="text-sm text-gray-600"
+          >
+            No. HP
+          </Label>
+          <Input
+            id={`${config.key}.no_hp`}
+            placeholder="081234567890"
+            {...register(`company_info.${config.key}.no_hp`)}
+            className={cn("mt-1", errorRoot?.no_hp && "border-destructive")}
+          />
+          {errorRoot?.no_hp && (
+            <p className="mt-1 text-xs text-destructive">
+              {errorRoot.no_hp.message as string}
+            </p>
+          )}
+        </div>
+        <div>
+          <Label
+            htmlFor={`${config.key}.nama`}
+            className="text-sm text-gray-600"
+          >
+            Nama Lengkap
+          </Label>
+          <Input
+            id={`${config.key}.nama`}
+            placeholder="Contoh Nama"
+            {...register(`company_info.${config.key}.nama`)}
+            className={cn("mt-1", errorRoot?.nama && "border-destructive")}
+          />
+          {errorRoot?.nama && (
+            <p className="mt-1 text-xs text-destructive">
+              {errorRoot.nama.message as string}
+            </p>
+          )}
+        </div>
+        <div>
+          <Label
+            htmlFor={`${config.key}.jabatan`}
+            className="text-sm text-gray-600"
+          >
+            Jabatan
+          </Label>
+          <Input
+            id={`${config.key}.jabatan`}
+            placeholder={config.placeholder}
+            {...register(`company_info.${config.key}.jabatan`)}
+            className={cn("mt-1", errorRoot?.jabatan && "border-destructive")}
+          />
+          {errorRoot?.jabatan && (
+            <p className="mt-1 text-xs text-destructive">
+              {errorRoot.jabatan.message as string}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 
+export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
   return (
     <div className="space-y-8">
       <h2 className="mb-6 text-xl font-semibold text-gray-900">
@@ -48,15 +123,19 @@ export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
           <Input
             id="nama_perusahaan"
             placeholder="PT. Maju Jaya"
-            {...register("company_info.nama_perusahaan")}
+            {...form.register("company_info.nama_perusahaan")}
             className={cn(
               "form-input",
-              errors.company_info?.nama_perusahaan && "border-destructive"
+              form.formState.errors.company_info?.nama_perusahaan &&
+                "border-destructive"
             )}
           />
-          {errors.company_info?.nama_perusahaan && (
+          {form.formState.errors.company_info?.nama_perusahaan && (
             <p className="mt-1 text-xs text-destructive">
-              {errors.company_info.nama_perusahaan.message}
+              {
+                form.formState.errors.company_info.nama_perusahaan
+                  .message as string
+              }
             </p>
           )}
         </div>
@@ -68,15 +147,15 @@ export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
             id="email"
             type="email"
             placeholder="vendor@perusahaan.com"
-            {...register("company_info.email")}
+            {...form.register("company_info.email")}
             className={cn(
               "form-input",
-              errors.company_info?.email && "border-destructive"
+              form.formState.errors.company_info?.email && "border-destructive"
             )}
           />
-          {errors.company_info?.email && (
+          {form.formState.errors.company_info?.email && (
             <p className="mt-1 text-xs text-destructive">
-              {errors.company_info.email.message}
+              {form.formState.errors.company_info.email.message as string}
             </p>
           )}
         </div>
@@ -88,15 +167,16 @@ export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
           <Input
             id="nama_pic"
             placeholder="Budi Santoso"
-            {...register("company_info.nama_pic")}
+            {...form.register("company_info.nama_pic")}
             className={cn(
               "form-input",
-              errors.company_info?.nama_pic && "border-destructive"
+              form.formState.errors.company_info?.nama_pic &&
+                "border-destructive"
             )}
           />
-          {errors.company_info?.nama_pic && (
+          {form.formState.errors.company_info?.nama_pic && (
             <p className="mt-1 text-xs text-destructive">
-              {errors.company_info.nama_pic.message}
+              {form.formState.errors.company_info.nama_pic.message as string}
             </p>
           )}
         </div>
@@ -107,15 +187,16 @@ export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
           <Input
             id="kontak_pic"
             placeholder="081234567890"
-            {...register("company_info.kontak_pic")}
+            {...form.register("company_info.kontak_pic")}
             className={cn(
               "form-input",
-              errors.company_info?.kontak_pic && "border-destructive"
+              form.formState.errors.company_info?.kontak_pic &&
+                "border-destructive"
             )}
           />
-          {errors.company_info?.kontak_pic && (
+          {form.formState.errors.company_info?.kontak_pic && (
             <p className="mt-1 text-xs text-destructive">
-              {errors.company_info.kontak_pic.message}
+              {form.formState.errors.company_info.kontak_pic.message as string}
             </p>
           )}
         </div>
@@ -128,41 +209,41 @@ export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
             id="website"
             type="url"
             placeholder="https://www.perusahaan.com"
-            {...register("company_info.website")}
+            {...form.register("company_info.website")}
             className="form-input"
           />
         </div>
         <div>
           <Label htmlFor="instagram" className="form-label">
-            Instagram
+            Username Instagram
           </Label>
           <Input
             id="instagram"
             placeholder="@namaptjaya"
-            {...register("company_info.instagram")}
+            {...form.register("company_info.instagram")}
             className="form-input"
           />
         </div>
 
         <div>
           <Label htmlFor="facebook" className="form-label">
-            Facebook
+            Link Facebook
           </Label>
           <Input
             id="facebook"
             placeholder="facebook.com/PTMajuJaya"
-            {...register("company_info.facebook")}
+            {...form.register("company_info.facebook")}
             className="form-input"
           />
         </div>
         <div>
           <Label htmlFor="linkedin" className="form-label">
-            LinkedIn
+            Link LinkedIn
           </Label>
           <Input
             id="linkedin"
             placeholder="linkedin.com/company/PTMajuJaya"
-            {...register("company_info.linkedin")}
+            {...form.register("company_info.linkedin")}
             className="form-input"
           />
         </div>
@@ -172,67 +253,15 @@ export function CompanyInfoForm({ form }: CompanyInfoFormProps) {
         <h3 className="mb-1 text-lg font-semibold text-gray-900">
           Kontak Alternatif (Backup)
         </h3>
-        <p className="mb-6 text-sm text-gray-500">
-          Mohon sediakan minimal 2 kontak aktif.
+        <p className="mb-4 text-sm text-gray-500">
+          Kontak cadangan. Isi kontak cadangan minimal 2 kontak.
         </p>
 
-        <div className="overflow-x-auto">
-          <table className="w-full rounded border border-gray-100 text-sm">
-            <thead className="bg-gray-50 text-gray-600">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium">No. HP</th>
-                <th className="px-4 py-3 text-left font-medium">
-                  Nama Lengkap
-                </th>
-                <th className="px-4 py-3 text-left font-medium">Jabatan</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {contactFields.map(({ index, placeholder }, i) => (
-                <tr key={i}>
-                  <td className="px-2 py-2">
-                    <Input
-                      placeholder="081234567890"
-                      {...register(`company_info.contacts.${index}.no_hp`)}
-                      className={cn(
-                        "border-0 focus:ring-0",
-                        errors.company_info?.contacts?.[index]?.no_hp &&
-                          "border-destructive"
-                      )}
-                    />
-                  </td>
-                  <td className="px-2 py-2">
-                    <Input
-                      placeholder={placeholder.nama}
-                      {...register(`company_info.contacts.${index}.nama`)}
-                      className={cn(
-                        "border-0 focus:ring-0",
-                        errors.company_info?.contacts?.[index]?.nama &&
-                          "border-destructive"
-                      )}
-                    />
-                  </td>
-                  <td className="px-2 py-2">
-                    <Input
-                      placeholder={placeholder.jabatan}
-                      {...register(`company_info.contacts.${index}.jabatan`)}
-                      className={cn(
-                        "border-0 focus:ring-0",
-                        errors.company_info?.contacts?.[index]?.jabatan &&
-                          "border-destructive"
-                      )}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-4">
+          {contactFields.map((config) => (
+            <ContactField key={config.key} form={form} config={config} />
+          ))}
         </div>
-        {errors.company_info?.contacts && (
-          <p className="mt-2 text-xs text-destructive">
-            {errors.company_info.contacts.message}
-          </p>
-        )}
       </div>
     </div>
   )

@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
+
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Check, ArrowLeft, ArrowRight, Send, Loader2 } from "lucide-react"
+import { Check, ArrowLeft, ArrowRight, Send } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -38,7 +39,6 @@ import {
   type ReviewSubmitProps,
 } from "@/components/vendor/register/review-submit"
 import { VendorHeader } from "@/components/vendor/vendor-header"
-import { submitRegistration } from "./actions"
 
 const STEPS = [
   { label: "Informasi Perusahaan" },
@@ -57,14 +57,12 @@ const defaultValues: VendorRegistrationFormData = {
     instagram: "",
     facebook: "",
     linkedin: "",
-    contacts: [
-      { no_hp: "", nama: "", jabatan: "" },
-      { no_hp: "", nama: "", jabatan: "" },
-      { no_hp: "", nama: "", jabatan: "" },
-    ],
+    contact_1: { no_hp: "", nama: "", jabatan: "" },
+    contact_2: { no_hp: "", nama: "", jabatan: "" },
+    contact_3: { no_hp: "", nama: "", jabatan: "" },
   },
   legal_documents: {
-    ktp_file: null,
+    ktp_file: undefined,
     npwp_nomor: "",
     npwp_file: undefined,
     nib_nomor: "",
@@ -79,7 +77,13 @@ const defaultValues: VendorRegistrationFormData = {
       bank_atas_nama: "",
     },
     factory_address: {
-      alamat_pabrik: "",
+      alamat_detail: "",
+      provinsi_id: "",
+      provinsi_name: "",
+      kabupaten_id: "",
+      kabupaten_name: "",
+      kecamatan: "",
+      kode_pos: "",
     },
     products: [],
     delivery_areas: [],
@@ -100,7 +104,6 @@ const defaultValues: VendorRegistrationFormData = {
 
 export default function VendorRegisterPage() {
   const [currentStep, setCurrentStep] = useState(0)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [autoSaveStatus, setAutoSaveStatus] = useState<
     "idle" | "saving" | "saved"
   >("idle")
@@ -125,7 +128,9 @@ export default function VendorRegisterPage() {
 
   useEffect(() => {
     if (hasSavedData) {
-      setShowLoadDialog(true)
+      requestAnimationFrame(() => {
+        setShowLoadDialog(true)
+      })
     }
   }, [hasSavedData])
 
@@ -167,7 +172,13 @@ export default function VendorRegisterPage() {
         "operational.bank.bank_nama": "bank_nama",
         "operational.bank.bank_nomor": "bank_nomor",
         "operational.bank.bank_atas_nama": "bank_atas_nama",
-        "operational.factory_address.alamat_pabrik": "alamat_pabrik",
+        "operational.factory_address.alamat_detail": "alamat_detail",
+        "operational.factory_address.provinsi_id": "provinsi_id",
+        "operational.factory_address.kabupaten_id": "kabupaten_id",
+        "operational.factory_address.kecamatan": "kecamatan",
+        "operational.factory_address.kode_pos": "kode_pos",
+        "operational.products": "products-section",
+        "operational.delivery_areas": "delivery-areas-section",
       },
     }
 
@@ -200,6 +211,8 @@ export default function VendorRegisterPage() {
         "company_info.email",
         "company_info.nama_pic",
         "company_info.kontak_pic",
+        "company_info.contact_1",
+        "company_info.contact_2",
       ])
     } else if (currentStep === 1) {
       isValid = await form.trigger("legal_documents.ktp_file")
@@ -208,10 +221,19 @@ export default function VendorRegisterPage() {
         "operational.bank.bank_nama",
         "operational.bank.bank_nomor",
         "operational.bank.bank_atas_nama",
-        "operational.factory_address.alamat_pabrik",
+        "operational.factory_address.alamat_detail",
+        "operational.factory_address.provinsi_id",
+        "operational.factory_address.kabupaten_id",
+        "operational.factory_address.kecamatan",
+        "operational.factory_address.kode_pos",
+        "operational.products",
+        "operational.delivery_areas",
       ])
     } else if (currentStep === 3) {
-      isValid = await form.trigger("review.legal_agreement")
+      isValid = await form.trigger([
+        "review.legal_agreement",
+        "review.document_confirmation",
+      ])
     }
 
     if (isValid && currentStep < 3) {
@@ -237,33 +259,26 @@ export default function VendorRegisterPage() {
   }
 
   const handleSubmit = async () => {
-    const isValid = await form.trigger("review.legal_agreement")
+    const isValid = await form.trigger([
+      "review.legal_agreement",
+      "review.document_confirmation",
+    ])
     if (!isValid) return
 
-    setIsSubmitting(true)
-    try {
-      const result = await submitRegistration(form.getValues())
-      if (result.success) {
-        clearSavedData()
-        toast.success("Pendaftaran berhasil dikirim!", {
-          description: "Tim kami akan segera memproses pendaftaran Anda.",
-        })
-        router.push("/vendor/register/success")
-      } else {
-        console.error("Submission error:", result.error)
-        toast.error("Gagal mengirim data", {
-          description: result.error || "Silakan coba lagi.",
-        })
-      }
-    } catch (error) {
-      console.error("Submission error:", error)
-      toast.error("Gagal mengirim data", {
-        description:
-          error instanceof Error ? error.message : "Silakan coba lagi.",
-      })
-    } finally {
-      setIsSubmitting(false)
+    const formData = form.getValues()
+
+    if (typeof window !== "undefined") {
+      const cleanedData = JSON.parse(JSON.stringify(formData))
+      sessionStorage.setItem(
+        "vendor-submitted-data",
+        JSON.stringify(cleanedData)
+      )
     }
+
+    toast.success("Data berhasil disubmit!", {
+      description: "Mengalihkan ke halaman review...",
+    })
+    router.push("/vendor/register/review")
   }
 
   return (
@@ -372,14 +387,8 @@ export default function VendorRegisterPage() {
               <Button
                 type="button"
                 onClick={currentStep < 3 ? handleNext : handleSubmit}
-                disabled={isSubmitting}
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Mengirim...</span>
-                  </>
-                ) : currentStep < 3 ? (
+                {currentStep < 3 ? (
                   <>
                     <span>Lanjutkan</span>
                     <ArrowRight className="h-3 w-3" />

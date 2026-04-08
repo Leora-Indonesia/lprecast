@@ -93,16 +93,23 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
       return { success: false, error: companyError.message }
     }
 
-    for (let i = 0; i < formData.company_info.contacts.length; i++) {
-      const contact = formData.company_info.contacts[i]
-      if (contact.no_hp || contact.nama) {
+    const contacts = [
+      { ...formData.company_info.contact_1, sequence: 1 },
+      { ...formData.company_info.contact_2, sequence: 2 },
+      formData.company_info.contact_3
+        ? { ...formData.company_info.contact_3, sequence: 3 }
+        : null,
+    ].filter(Boolean)
+
+    for (const contact of contacts) {
+      if (contact && (contact.no_hp || contact.nama)) {
         await supabase.from("vendor_contacts").insert({
           registration_id: registrationId,
           nama: contact.nama,
           no_hp: contact.no_hp,
-          jabatan: contact.jabatan,
-          is_primary: i === 0,
-          sequence: i + 1,
+          jabatan: contact.jabatan || "",
+          is_primary: contact.sequence === 1,
+          sequence: contact.sequence,
         })
       }
     }
@@ -168,9 +175,15 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
       is_primary: true,
     })
 
+    const factoryAddress = formData.operational.factory_address
+
     await supabase.from("vendor_factory_addresses").insert({
       registration_id: registrationId,
-      address: formData.operational.factory_address.alamat_pabrik,
+      address: factoryAddress.alamat_detail,
+      province: factoryAddress.provinsi_name || "",
+      kabupaten: factoryAddress.kabupaten_name || "",
+      kecamatan: factoryAddress.kecamatan,
+      postal_code: factoryAddress.kode_pos,
       is_primary: true,
     })
 
@@ -193,8 +206,8 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
     for (const area of formData.operational.delivery_areas) {
       await supabase.from("vendor_delivery_areas").insert({
         registration_id: registrationId,
-        provinsi: area.province,
-        kabupaten: area.name,
+        province_id: area.province_id,
+        city_id: area.city_id,
       })
     }
 

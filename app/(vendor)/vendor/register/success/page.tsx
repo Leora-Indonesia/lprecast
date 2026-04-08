@@ -1,4 +1,9 @@
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, FileText } from "lucide-react"
+
+export const metadata = {
+  title: "Pendaftaran Berhasil | LPrecast",
+  description: "Pendaftaran vendor berhasil, sedang dalam proses review",
+}
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -41,9 +46,17 @@ export default function RegisterSuccessPage() {
           </ul>
         </div>
 
-        <Button asChild className="w-full">
-          <Link href="/login">Menuju Halaman Login</Link>
-        </Button>
+        <div className="space-y-3">
+          <Button asChild className="w-full">
+            <Link href="/vendor/register/review">
+              <FileText className="mr-2 h-4 w-4" />
+              Lihat Data Submitted
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="w-full">
+            <Link href="/vendor/login">Menuju Halaman Login</Link>
+          </Button>
+        </div>
       </div>
     </div>
   )

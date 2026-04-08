@@ -1,13 +1,7 @@
 "use client"
 
 import { UseFormReturn } from "react-hook-form"
-import {
-  Building2,
-  FileCheck,
-  Settings,
-  FileText,
-  AlertCircle,
-} from "lucide-react"
+import { Building2, FileCheck, Settings } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 import type { VendorRegistrationFormData } from "@/lib/validations/vendor-registration"
@@ -44,6 +38,12 @@ export function ReviewSubmit({ form }: ReviewSubmitProps) {
   const companyInfo = data.company_info
   const legalDocs = data.legal_documents
   const operational = data.operational
+
+  const contactsList = [
+    companyInfo.contact_1,
+    companyInfo.contact_2,
+    companyInfo.contact_3,
+  ].filter((c): c is NonNullable<typeof c> => Boolean(c))
 
   const hasMissingDocuments =
     !legalDocs.npwp_file ||
@@ -106,7 +106,7 @@ export function ReviewSubmit({ form }: ReviewSubmitProps) {
                 {companyInfo.kontak_pic || "-"}
               </span>
             </div>
-            {companyInfo.contacts.slice(0, 2).map((contact, i) => (
+            {contactsList.slice(0, 2).map((contact, i) => (
               <div key={i} className="grid grid-cols-2 gap-2">
                 <span className="text-gray-500">Kontak {i + 1}:</span>
                 <span className="text-gray-800">
@@ -121,19 +121,19 @@ export function ReviewSubmit({ form }: ReviewSubmitProps) {
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <span className="text-gray-500">Instagram:</span>
+              <span className="text-gray-500">Username Instagram:</span>
               <span className="text-gray-800">
                 {companyInfo.instagram || "-"}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <span className="text-gray-500">Facebook:</span>
+              <span className="text-gray-500">Link Facebook:</span>
               <span className="text-gray-800">
                 {companyInfo.facebook || "-"}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <span className="text-gray-500">LinkedIn:</span>
+              <span className="text-gray-500">Link LinkedIn:</span>
               <span className="text-gray-800">
                 {companyInfo.linkedin || "-"}
               </span>
@@ -213,7 +213,25 @@ export function ReviewSubmit({ form }: ReviewSubmitProps) {
             <div className="grid grid-cols-2 gap-2">
               <span className="text-gray-500">Alamat Pabrik:</span>
               <span className="text-gray-800">
-                {operational.factory_address?.alamat_pabrik || "-"}
+                {operational.factory_address?.alamat_detail
+                  ? `${operational.factory_address.alamat_detail}${
+                      operational.factory_address.kecamatan
+                        ? `, Kec. ${operational.factory_address.kecamatan}`
+                        : ""
+                    }${
+                      operational.factory_address.kabupaten_name
+                        ? `, ${operational.factory_address.kabupaten_name}`
+                        : ""
+                    }${
+                      operational.factory_address.provinsi_name
+                        ? `, ${operational.factory_address.provinsi_name}`
+                        : ""
+                    }${
+                      operational.factory_address.kode_pos
+                        ? ` ${operational.factory_address.kode_pos}`
+                        : ""
+                    }`
+                  : "-"}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2">

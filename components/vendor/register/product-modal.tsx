@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 import {
   Select,
   SelectContent,
@@ -20,6 +21,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
 import type { ProductFormData } from "@/lib/validations/vendor-registration"
 
 interface ProductModalProps {
@@ -68,6 +70,12 @@ const initialProduct: ProductFormData = {
   description: "",
 }
 
+interface FormErrors {
+  name?: string
+  satuan?: string
+  price?: string
+}
+
 export function ProductModal({
   open,
   onOpenChange,
@@ -78,19 +86,44 @@ export function ProductModal({
     editingProduct || initialProduct
   )
   const [activeTab, setActiveTab] = useState("core")
+  const [errors, setErrors] = useState<FormErrors>({})
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {}
+
+    if (!product.name || product.name.trim() === "") {
+      newErrors.name = "Nama produk wajib diisi"
+    }
+    if (!product.satuan || product.satuan.trim() === "") {
+      newErrors.satuan = "Satuan wajib dipilih"
+    }
+    if (!product.price || product.price <= 0) {
+      newErrors.price = "Harga wajib diisi"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSave = () => {
-    if (!product.name || !product.satuan || product.price <= 0) {
+    if (!validateForm()) {
+      toast.error("Mohon lengkapi data produk yang wajib diisi")
       return
     }
     onSave(product)
     onOpenChange(false)
     setProduct(initialProduct)
+    setErrors({})
   }
 
   const handleClose = () => {
     onOpenChange(false)
     setProduct(initialProduct)
+    setErrors({})
+  }
+
+  const clearError = (field: keyof FormErrors) => {
+    setErrors((prev) => ({ ...prev, [field]: undefined }))
   }
 
   return (
@@ -128,10 +161,15 @@ export function ProductModal({
                     id="prod_nama"
                     placeholder="Pagar Precast 5 susun"
                     value={product.name}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setProduct({ ...product, name: e.target.value })
-                    }
+                      clearError("name")
+                    }}
+                    className={cn(errors.name && "border-destructive")}
                   />
+                  {errors.name && (
+                    <p className="text-xs text-destructive">{errors.name}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label
@@ -142,11 +180,14 @@ export function ProductModal({
                   </Label>
                   <Select
                     value={product.satuan}
-                    onValueChange={(val) =>
+                    onValueChange={(val) => {
                       setProduct({ ...product, satuan: val })
-                    }
+                      clearError("satuan")
+                    }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger
+                      className={cn(errors.satuan && "border-destructive")}
+                    >
                       <SelectValue placeholder="Pilih..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -157,6 +198,9 @@ export function ProductModal({
                       ))}
                     </SelectContent>
                   </Select>
+                  {errors.satuan && (
+                    <p className="text-xs text-destructive">{errors.satuan}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label
@@ -170,10 +214,15 @@ export function ProductModal({
                     type="number"
                     placeholder="370000"
                     value={product.price || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setProduct({ ...product, price: Number(e.target.value) })
-                    }
+                      clearError("price")
+                    }}
+                    className={cn(errors.price && "border-destructive")}
                   />
+                  {errors.price && (
+                    <p className="text-xs text-destructive">{errors.price}</p>
+                  )}
                 </div>
               </div>
             </TabsContent>
