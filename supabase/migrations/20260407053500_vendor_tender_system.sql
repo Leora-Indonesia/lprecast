@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS vendor_contacts (
   sequence int NOT NULL,
   no_hp varchar(50) NOT NULL,
   nama varchar(255) NOT NULL,
-  jabatan varchar(255),
+  jabatan varchar(255) NOT NULL,
   is_primary boolean DEFAULT false,
   created_at timestamptz DEFAULT now(),
   CONSTRAINT check_max_contacts CHECK (sequence BETWEEN 1 AND 3)

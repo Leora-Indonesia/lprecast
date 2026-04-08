@@ -381,9 +381,45 @@ export type Database = {
           },
         ]
       }
+      master_cities: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          name: string
+          province_id: string
+          type: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          name: string
+          province_id: string
+          type: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          province_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "master_cities_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "master_provinces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       master_ongkir: {
         Row: {
           biaya: number | null
+          city_id: string
           created_at: string | null
           id: string
           kabupaten: string | null
@@ -392,6 +428,7 @@ export type Database = {
         }
         Insert: {
           biaya?: number | null
+          city_id: string
           created_at?: string | null
           id?: string
           kabupaten?: string | null
@@ -400,10 +437,46 @@ export type Database = {
         }
         Update: {
           biaya?: number | null
+          city_id?: string
           created_at?: string | null
           id?: string
           kabupaten?: string | null
           provinsi?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "master_ongkir_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "master_cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      master_ongkir_backup: {
+        Row: {
+          biaya: number | null
+          created_at: string | null
+          id: string | null
+          kabupaten: string | null
+          provinsi: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          biaya?: number | null
+          created_at?: string | null
+          id?: string | null
+          kabupaten?: string | null
+          provinsi?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          biaya?: number | null
+          created_at?: string | null
+          id?: string | null
+          kabupaten?: string | null
+          provinsi?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -438,6 +511,27 @@ export type Database = {
           name?: string
           type?: string
           volume?: number | null
+        }
+        Relationships: []
+      }
+      master_provinces: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
@@ -1590,7 +1684,7 @@ export type Database = {
           created_at: string | null
           id: string
           is_primary: boolean | null
-          jabatan: string | null
+          jabatan: string
           nama: string
           no_hp: string
           registration_id: string
@@ -1600,7 +1694,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
-          jabatan?: string | null
+          jabatan: string
           nama: string
           no_hp: string
           registration_id: string
@@ -1610,7 +1704,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
-          jabatan?: string | null
+          jabatan?: string
           nama?: string
           no_hp?: string
           registration_id?: string
@@ -1663,27 +1757,47 @@ export type Database = {
       }
       vendor_delivery_areas: {
         Row: {
+          city_id: string | null
           created_at: string | null
           id: string
           kabupaten: string | null
+          province_id: string | null
           provinsi: string | null
           registration_id: string
         }
         Insert: {
+          city_id?: string | null
           created_at?: string | null
           id?: string
           kabupaten?: string | null
+          province_id?: string | null
           provinsi?: string | null
           registration_id: string
         }
         Update: {
+          city_id?: string | null
           created_at?: string | null
           id?: string
           kabupaten?: string | null
+          province_id?: string | null
           provinsi?: string | null
           registration_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "vendor_delivery_areas_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "master_cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_delivery_areas_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "master_provinces"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "vendor_delivery_areas_registration_id_fkey"
             columns: ["registration_id"]
