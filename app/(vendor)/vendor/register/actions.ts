@@ -161,7 +161,7 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
 
     for (const doc of documents) {
       if (doc.file) {
-        const filePath = `vendor-documents/${registrationId}/${doc.type}-${doc.file.name}`
+        const filePath = `${registrationId}/${doc.type}-${doc.file.name}`
         const { error: uploadError } = await supabase.storage
           .from("vendor-documents")
           .upload(filePath, doc.file)
