@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Loader2 } from "lucide-react"
+import { Search, Loader2, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
@@ -177,10 +177,10 @@ export function AreaModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col overflow-hidden">
-        <DialogHeader className="-m-6 mb-4 bg-indigo-600 p-4 text-white">
-          <DialogTitle className="text-lg font-bold text-white">
-            <i className="fa-solid fa-map-marker-alt mr-2" />
+      <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col overflow-hidden border-0">
+        <DialogHeader className="-m-6 mb-4 bg-primary px-6 py-4 text-primary-foreground">
+          <DialogTitle className="flex items-center gap-2 text-lg font-semibold text-primary-foreground">
+            <MapPin className="h-5 w-5" />
             Pilih Area Pengiriman
           </DialogTitle>
         </DialogHeader>
@@ -201,7 +201,7 @@ export function AreaModal({
         >
           {isLoading ? (
             <div className="flex h-64 items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : (
             <div className="space-y-3">
@@ -222,15 +222,15 @@ export function AreaModal({
                   return (
                     <div
                       key={prov.id}
-                      className="overflow-hidden rounded-lg border border-gray-200"
+                      className="overflow-hidden rounded-lg border border-border"
                     >
-                      <div className="flex items-center bg-gray-50 px-3 py-2">
+                      <div className="flex items-center bg-muted px-3 py-2">
                         <input
                           type="checkbox"
                           id={`prov-${prov.id}`}
                           checked={isAllSelected}
                           onChange={() => toggleProvince(prov)}
-                          className="h-4 w-4 rounded border-gray-300 text-indigo-600"
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                         />
                         <label
                           htmlFor={`prov-${prov.id}`}
@@ -251,7 +251,7 @@ export function AreaModal({
                         {prov.cities.map((city) => (
                           <label
                             key={city.id}
-                            className="flex cursor-pointer items-center rounded px-2 py-1 transition-colors hover:bg-indigo-50"
+                            className="flex cursor-pointer items-center rounded px-2 py-1 transition-colors hover:bg-primary/10"
                           >
                             <input
                               type="checkbox"
@@ -259,7 +259,7 @@ export function AreaModal({
                                 (a) => a.city_id === city.id
                               )}
                               onChange={() => toggleCity(city, prov.name)}
-                              className="h-3.5 w-3.5 rounded border-gray-300 text-indigo-600"
+                              className="h-3.5 w-3.5 rounded border-gray-300 text-primary focus:ring-primary"
                             />
                             <span className="ml-2 text-sm text-gray-600">
                               {city.name}

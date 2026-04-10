@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "wireframe": "live-server public/wireframes/vendor --port=3001",
     "test:pwa": "bash scripts/test-pwa.sh",
-    "db:pull": "npx supabase gen types typescript --project-id phfuwunwgzkfzettekkh --schema public > types/database.types.ts",
+    "db:pull": "npx supabase gen types typescript --project-id mgjtlmuqsgkhiopwzeni --schema public > types/database.types.ts",
     "db:push": "npx supabase db push"
   },
   "dependencies": {

@@ -23,7 +23,7 @@ export default async function AdminDashboard() {
   ])
 
   const { count: clientCount } = await supabase
-    .from("user_profiles")
+    .from("users")
     .select("*", { count: "exact", head: true })
     .eq("stakeholder_type", "client")
 

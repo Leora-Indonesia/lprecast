@@ -17,7 +17,7 @@ export async function loginAction(email: string, password: string) {
 
   // Get user profile to determine redirect
   const { data: profile } = await supabase
-    .from("user_profiles")
+    .from("users")
     .select("stakeholder_type")
     .eq("id", data.user.id)
     .single()

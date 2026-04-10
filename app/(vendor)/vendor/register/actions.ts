@@ -9,7 +9,7 @@ async function getSupabaseServerClient() {
   const cookieStore = await cookies()
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         get(name: string) {
@@ -69,11 +69,35 @@ export async function loadDraft(userId: string) {
   return { success: true, data }
 }
 
-export async function submitRegistration(formData: VendorRegistrationFormData) {
+interface DocumentUpload {
+  url: string
+  fileName: string
+  fileSize: number
+  mimeType: string
+}
+
+interface DocumentsPayload {
+  ktp: DocumentUpload | null
+  npwp: DocumentUpload | null
+  npwp_nomor: string | null
+  nib: DocumentUpload | null
+  nib_nomor: string | null
+  siup_sbu: DocumentUpload | null
+  company_profile: DocumentUpload | null
+}
+
+interface RegistrationPayload {
+  registrationId: string
+  company_info: VendorRegistrationFormData["company_info"]
+  legal_documents: DocumentsPayload
+  operational: VendorRegistrationFormData["operational"]
+}
+
+export async function submitRegistration(payload: RegistrationPayload) {
   try {
     const supabase = await getSupabaseServerClient()
-
-    const registrationId = crypto.randomUUID()
+    const { registrationId, company_info, legal_documents, operational } =
+      payload
 
     const { error: registrationError } = await supabase
       .from("vendor_registrations")
@@ -95,14 +119,14 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
       .from("vendor_company_info")
       .insert({
         registration_id: registrationId,
-        nama_perusahaan: formData.company_info.nama_perusahaan,
-        email: formData.company_info.email,
-        nama_pic: formData.company_info.nama_pic,
-        kontak_pic: formData.company_info.kontak_pic,
-        website: formData.company_info.website || null,
-        instagram: formData.company_info.instagram || null,
-        facebook: formData.company_info.facebook || null,
-        linkedin: formData.company_info.linkedin || null,
+        nama_perusahaan: company_info.nama_perusahaan,
+        email: company_info.email,
+        nama_pic: company_info.nama_pic,
+        kontak_pic: company_info.kontak_pic,
+        website: company_info.website || null,
+        instagram: company_info.instagram || null,
+        facebook: company_info.facebook || null,
+        linkedin: company_info.linkedin || null,
       })
 
     if (companyError) {
@@ -111,10 +135,10 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
     }
 
     const contacts = [
-      { ...formData.company_info.contact_1, sequence: 1 },
-      { ...formData.company_info.contact_2, sequence: 2 },
-      formData.company_info.contact_3
-        ? { ...formData.company_info.contact_3, sequence: 3 }
+      { ...company_info.contact_1, sequence: 1 },
+      { ...company_info.contact_2, sequence: 2 },
+      company_info.contact_3
+        ? { ...company_info.contact_3, sequence: 3 }
         : null,
     ].filter(Boolean)
 
@@ -134,77 +158,66 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
     const documents = [
       {
         type: "ktp",
-        file: formData.legal_documents.ktp_file,
+        doc: legal_documents.ktp,
         number: null,
       },
       {
         type: "npwp",
-        file: formData.legal_documents.npwp_file,
-        number: formData.legal_documents.npwp_nomor,
+        doc: legal_documents.npwp,
+        number: legal_documents.npwp_nomor,
       },
       {
         type: "nib",
-        file: formData.legal_documents.nib_file,
-        number: formData.legal_documents.nib_nomor,
+        doc: legal_documents.nib,
+        number: legal_documents.nib_nomor,
       },
       {
         type: "siup_sbu",
-        file: formData.legal_documents.siup_file,
+        doc: legal_documents.siup_sbu,
         number: null,
       },
       {
         type: "company_profile",
-        file: formData.legal_documents.compro_file,
+        doc: legal_documents.company_profile,
         number: null,
       },
     ]
 
     for (const doc of documents) {
-      if (doc.file) {
-        const filePath = `${registrationId}/${doc.type}-${doc.file.name}`
-        const { error: uploadError } = await supabase.storage
-          .from("vendor-documents")
-          .upload(filePath, doc.file)
-
-        if (!uploadError) {
-          const { data: urlData } = supabase.storage
-            .from("vendor-documents")
-            .getPublicUrl(filePath)
-
-          await supabase.from("vendor_legal_documents").insert({
-            registration_id: registrationId,
-            document_type: doc.type,
-            document_number: doc.number,
-            file_name: doc.file.name,
-            file_path: urlData.publicUrl,
-            file_size: doc.file.size,
-            mime_type: doc.file.type,
-          })
-        }
+      if (doc.doc) {
+        await supabase.from("vendor_legal_documents").insert({
+          registration_id: registrationId,
+          document_type: doc.type,
+          document_number: doc.number,
+          file_name: doc.doc.fileName,
+          file_path: doc.doc.url,
+          file_size: doc.doc.fileSize,
+          mime_type: doc.doc.mimeType,
+        })
       }
     }
 
     await supabase.from("vendor_bank_accounts").insert({
       registration_id: registrationId,
-      bank_name: formData.operational.bank.bank_nama,
-      account_number: formData.operational.bank.bank_nomor,
-      account_holder_name: formData.operational.bank.bank_atas_nama,
+      bank_name: operational.bank?.bank_nama || "",
+      account_number: operational.bank?.bank_nomor || "",
+      account_holder_name: operational.bank?.bank_atas_nama || "",
       is_primary: true,
     })
 
-    const factoryAddress = formData.operational.factory_address
+    const factoryAddress = operational.factory_address
 
     await supabase.from("vendor_factory_addresses").insert({
       registration_id: registrationId,
-      address: factoryAddress.alamat_detail,
-      province: factoryAddress.provinsi_name || "",
-      kabupaten: factoryAddress.kabupaten_name || "",
-      kecamatan: factoryAddress.kecamatan,
-      postal_code: factoryAddress.kode_pos,
+      address: factoryAddress?.alamat_detail || "",
+      province: factoryAddress?.provinsi_name || "",
+      kabupaten: factoryAddress?.kabupaten_name || "",
+      kecamatan: factoryAddress?.kecamatan || "",
+      postal_code: factoryAddress?.kode_pos || "",
       is_primary: true,
     })
 
-    for (const product of formData.operational.products) {
+    for (const product of operational.products || []) {
       await supabase.from("vendor_products").insert({
         registration_id: registrationId,
         name: product.name,
@@ -220,7 +233,7 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
       })
     }
 
-    for (const area of formData.operational.delivery_areas) {
+    for (const area of operational.delivery_areas || []) {
       await supabase.from("vendor_delivery_areas").insert({
         registration_id: registrationId,
         province_id: area.province_id,
@@ -228,7 +241,7 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
       })
     }
 
-    const inclusions = formData.operational.cost_inclusions
+    const inclusions = operational.cost_inclusions
     const inclusionTypes = [
       { key: "mobilisasi", value: "mobilisasi_demobilisasi" },
       { key: "penginapan", value: "penginapan_tukang" },
@@ -249,7 +262,7 @@ export async function submitRegistration(formData: VendorRegistrationFormData) {
       }
     }
 
-    for (const cost of formData.operational.additional_costs) {
+    for (const cost of operational.additional_costs || []) {
       if (cost.description) {
         await supabase.from("vendor_additional_costs").insert({
           registration_id: registrationId,

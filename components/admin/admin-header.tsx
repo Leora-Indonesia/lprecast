@@ -41,9 +41,13 @@ export function AdminHeader({ user }: AdminHeaderProps) {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 px-2"
+                  suppressHydrationWarning
                 >
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-[#16a34a] text-white">
+                  <Avatar className="h-8 w-8" suppressHydrationWarning>
+                    <AvatarFallback
+                      className="bg-[#16a34a] text-white"
+                      suppressHydrationWarning
+                    >
                       {user.nama.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>

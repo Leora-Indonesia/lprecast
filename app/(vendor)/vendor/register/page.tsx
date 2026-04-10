@@ -40,6 +40,7 @@ import {
 } from "@/components/vendor/register/review-submit"
 import { VendorHeader } from "@/components/vendor/vendor-header"
 import { submitRegistration } from "./actions"
+import { uploadVendorDocument } from "@/lib/upload"
 import { Loader2 } from "lucide-react"
 
 const STEPS = [
@@ -116,10 +117,19 @@ export default function VendorRegisterPage() {
   const form = useForm<VendorRegistrationFormData>({
     resolver: zodResolver(vendorRegistrationSchema) as never,
     defaultValues,
-    mode: "onChange",
+    mode: "onTouched",
+    reValidateMode: "onChange",
+    criteriaMode: "firstError",
+    shouldFocusError: true,
   })
 
-  const { hasSavedData, loadSavedData, clearSavedData, savedTimestamp } =
+  const {
+    hasSavedData,
+    loadSavedData,
+    clearSavedData,
+    savedTimestamp,
+    forceSave,
+  } =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useFormPersistence<any>({
       key: "vendor-registration-draft",
@@ -216,9 +226,33 @@ export default function VendorRegisterPage() {
         "company_info.kontak_pic",
         "company_info.contact_1",
         "company_info.contact_2",
+        "company_info.contact_3.no_hp",
+        "company_info.contact_3.nama",
+        "company_info.contact_3.jabatan",
       ])
     } else if (currentStep === 1) {
-      isValid = await form.trigger("legal_documents.ktp_file")
+      const npwpNomor = form.getValues("legal_documents.npwp_nomor")
+      const nibNomor = form.getValues("legal_documents.nib_nomor")
+
+      if (npwpNomor && nibNomor) {
+        isValid = await form.trigger([
+          "legal_documents.ktp_file",
+          "legal_documents.npwp_nomor",
+          "legal_documents.nib_nomor",
+        ])
+      } else if (npwpNomor) {
+        isValid = await form.trigger([
+          "legal_documents.ktp_file",
+          "legal_documents.npwp_nomor",
+        ])
+      } else if (nibNomor) {
+        isValid = await form.trigger([
+          "legal_documents.ktp_file",
+          "legal_documents.nib_nomor",
+        ])
+      } else {
+        isValid = await form.trigger("legal_documents.ktp_file")
+      }
     } else if (currentStep === 2) {
       isValid = await form.trigger([
         "operational.bank.bank_nama",
@@ -233,10 +267,7 @@ export default function VendorRegisterPage() {
         "operational.delivery_areas",
       ])
     } else if (currentStep === 3) {
-      isValid = await form.trigger([
-        "review.legal_agreement",
-        "review.document_confirmation",
-      ])
+      isValid = true
     }
 
     if (isValid && currentStep < 3) {
@@ -271,8 +302,100 @@ export default function VendorRegisterPage() {
     setIsSubmitting(true)
 
     try {
-      const formData = form.getValues()
-      const result = await submitRegistration(formData)
+      const data = form.getValues()
+      const registrationId = crypto.randomUUID()
+
+      const documentUploads: Array<{
+        type: string
+        file: File | undefined
+        result?: {
+          url: string
+          fileName: string
+          fileSize: number
+          mimeType: string
+        }
+      }> = [
+        { type: "ktp", file: data.legal_documents.ktp_file || undefined },
+        { type: "npwp", file: data.legal_documents.npwp_file || undefined },
+        { type: "nib", file: data.legal_documents.nib_file || undefined },
+        { type: "siup_sbu", file: data.legal_documents.siup_file || undefined },
+        {
+          type: "company_profile",
+          file: data.legal_documents.compro_file || undefined,
+        },
+      ]
+
+      for (const doc of documentUploads) {
+        if (doc.file) {
+          try {
+            doc.result = await uploadVendorDocument(
+              doc.file,
+              registrationId,
+              doc.type
+            )
+          } catch (uploadError) {
+            toast.error("Gagal upload dokumen", {
+              description: `Dokumen ${doc.type} gagal diupload. Cek koneksi dan coba lagi.`,
+            })
+            setIsSubmitting(false)
+            return
+          }
+        }
+      }
+
+      const documents = {
+        ktp: documentUploads[0].result
+          ? {
+              url: documentUploads[0].result.url,
+              fileName: documentUploads[0].result.fileName,
+              fileSize: documentUploads[0].result.fileSize,
+              mimeType: documentUploads[0].result.mimeType,
+            }
+          : null,
+        npwp: documentUploads[1].result
+          ? {
+              url: documentUploads[1].result.url,
+              fileName: documentUploads[1].result.fileName,
+              fileSize: documentUploads[1].result.fileSize,
+              mimeType: documentUploads[1].result.mimeType,
+            }
+          : null,
+        npwp_nomor: data.legal_documents.npwp_nomor || null,
+        nib: documentUploads[2].result
+          ? {
+              url: documentUploads[2].result.url,
+              fileName: documentUploads[2].result.fileName,
+              fileSize: documentUploads[2].result.fileSize,
+              mimeType: documentUploads[2].result.mimeType,
+            }
+          : null,
+        nib_nomor: data.legal_documents.nib_nomor || null,
+        siup_sbu: documentUploads[3].result
+          ? {
+              url: documentUploads[3].result.url,
+              fileName: documentUploads[3].result.fileName,
+              fileSize: documentUploads[3].result.fileSize,
+              mimeType: documentUploads[3].result.mimeType,
+            }
+          : null,
+        company_profile: documentUploads[4].result
+          ? {
+              url: documentUploads[4].result.url,
+              fileName: documentUploads[4].result.fileName,
+              fileSize: documentUploads[4].result.fileSize,
+              mimeType: documentUploads[4].result.mimeType,
+            }
+          : null,
+      }
+
+      const payload = {
+        registrationId,
+        company_info: data.company_info,
+        legal_documents: documents,
+        operational: data.operational,
+      }
+
+      const result = await submitRegistration(payload)
 
       if (result.success) {
         toast.success("Pendaftaran berhasil!", {
@@ -372,6 +495,7 @@ export default function VendorRegisterPage() {
               {currentStep === 2 && (
                 <OperationalForm
                   form={form as unknown as OperationalFormProps["form"]}
+                  onForceSave={forceSave}
                 />
               )}
               {currentStep === 3 && (

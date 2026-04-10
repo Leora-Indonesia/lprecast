@@ -12,6 +12,7 @@ import {
   CheckCircle,
   XCircle,
   Clock,
+  Eye,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -33,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { DocumentViewerDialog } from "@/components/vendor/DocumentViewerDialog"
 
 export const metadata = {
   title: "Detail Vendor | LPrecast",
@@ -86,6 +88,9 @@ type VendorRegistration = {
     id: string
     document_type: string
     file_name: string
+    file_path: string
+    file_size: number
+    mime_type: string
     document_number: string | null
     verification_status: string | null
     verified_at: string | null
@@ -605,6 +610,7 @@ export default async function VendorDetailPage({
                       <TableHead>Nomor Dokumen</TableHead>
                       <TableHead>Tanggal Upload</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -619,6 +625,17 @@ export default async function VendorDetailPage({
                         <TableCell>{formatDate(doc.uploaded_at)}</TableCell>
                         <TableCell>
                           <VerificationBadge status={doc.verification_status} />
+                        </TableCell>
+                        <TableCell>
+                          <DocumentViewerDialog
+                            document={doc}
+                            trigger={
+                              <Button variant="ghost" size="sm">
+                                <Eye className="mr-1 h-4 w-4" />
+                                Lihat
+                              </Button>
+                            }
+                          />
                         </TableCell>
                       </TableRow>
                     ))}

@@ -21,7 +21,7 @@ export default async function proxy(request: NextRequest) {
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         getAll() {
@@ -60,7 +60,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   const { data: profile } = await supabase
-    .from("user_profiles")
+    .from("users")
     .select("stakeholder_type")
     .eq("id", user.id)
     .single()

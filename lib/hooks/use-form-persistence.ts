@@ -9,27 +9,19 @@ interface UseFormPersistenceOptions<T extends FieldValues> {
 }
 
 function removeFileObjects<T extends FieldValues>(data: T): T {
-  const entries = Object.entries(data)
-
-  const cleaned: Record<string, unknown> = {}
-
-  for (const [key, value] of entries) {
-    if (value instanceof File) {
-      continue
-    } else if (Array.isArray(value)) {
-      cleaned[key] = value.map((item) =>
-        typeof item === "object" && item !== null && !(item instanceof File)
-          ? removeFileObjects(item as FieldValues)
-          : item
-      )
-    } else if (value && typeof value === "object" && !(value instanceof File)) {
-      cleaned[key] = removeFileObjects(value as FieldValues)
-    } else {
-      cleaned[key] = value
-    }
+  try {
+    const cleaned = JSON.parse(
+      JSON.stringify(data, (key, value) => {
+        if (value instanceof File) {
+          return undefined
+        }
+        return value
+      })
+    )
+    return cleaned as T
+  } catch {
+    return data
   }
-
-  return cleaned as T
 }
 
 function getSavedData(
@@ -147,11 +139,16 @@ export function useFormPersistence<T extends FieldValues>({
     isLoadedRef.current = false
   }, [key])
 
+  const forceSave = useCallback(() => {
+    saveToLocalStorage()
+  }, [saveToLocalStorage])
+
   return {
     hasSavedData,
     savedTimestamp,
     loadSavedData,
     clearSavedData,
+    forceSave,
     isLoaded: true,
     isSaving: false,
   }

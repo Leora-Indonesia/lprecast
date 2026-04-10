@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/alvinstuff/.qwen/**)",
+      "Read(//Users/alvinstuff/**)"
+    ]
+  },
+  "$version": 3
+}

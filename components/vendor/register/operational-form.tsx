@@ -147,6 +147,7 @@ const ALL_BANKS = [...POPULAR_BANKS, ...OTHER_BANKS].map((bank) => ({
 
 export interface OperationalFormProps {
   form: UseFormReturn<VendorRegistrationFormData>
+  onForceSave?: () => void
 }
 
 interface DeliveryArea {
@@ -156,7 +157,7 @@ interface DeliveryArea {
   province_name: string
 }
 
-export function OperationalForm({ form }: OperationalFormProps) {
+export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
   const {
     register,
     watch,
@@ -326,28 +327,46 @@ export function OperationalForm({ form }: OperationalFormProps) {
     }
     setEditingProductIndex(null)
     setShowProductModal(false)
+    setTimeout(() => {
+      onForceSave?.()
+    }, 50)
   }
 
   const handleDeleteProduct = (index: number) => {
     removeProduct(index)
+    setTimeout(() => {
+      onForceSave?.()
+    }, 50)
   }
 
   const handleApplyAreas = (areas: DeliveryArea[]) => {
     areas.forEach((area) => {
       appendArea(area)
     })
+    setTimeout(() => {
+      onForceSave?.()
+    }, 50)
   }
 
   const handleRemoveArea = (index: number) => {
     removeArea(index)
+    setTimeout(() => {
+      onForceSave?.()
+    }, 50)
   }
 
   const handleAddCostRow = () => {
     appendCost({ description: "", amount: 0, unit: "unit" })
+    setTimeout(() => {
+      onForceSave?.()
+    }, 50)
   }
 
   const handleRemoveCost = (index: number) => {
     removeCost(index)
+    setTimeout(() => {
+      onForceSave?.()
+    }, 50)
   }
 
   const getEditingProduct = (): ProductFormData | undefined => {
@@ -1022,69 +1041,82 @@ export function OperationalForm({ form }: OperationalFormProps) {
 
         <div>
           <Label className="form-label mb-3">Biaya Tambahan Lain</Label>
-          <table className="w-full text-sm">
-            <thead className="text-xs text-muted-foreground">
-              <tr className="border-b">
-                <th className="py-2 text-left">Keterangan</th>
-                <th className="w-32 py-2 text-right">Nilai (Rp)</th>
-                <th className="w-24 py-2 text-right">Satuan</th>
-                <th className="w-8 py-2"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {costFields.map((cost, index) => (
-                <tr key={cost.id} className="border-b">
-                  <td className="py-1">
-                    <Input
-                      placeholder="Biaya Listrik"
-                      {...register(
-                        `operational.additional_costs.${index}.description`
-                      )}
-                      className="text-sm"
-                    />
-                  </td>
-                  <td className="py-1">
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      {...register(
-                        `operational.additional_costs.${index}.amount`,
-                        { valueAsNumber: true }
-                      )}
-                      className="text-right text-sm"
-                    />
-                  </td>
-                  <td className="py-1">
-                    <Input
-                      placeholder="unit"
-                      {...register(
-                        `operational.additional_costs.${index}.unit`
-                      )}
-                      className="text-right text-sm"
-                    />
-                  </td>
-                  <td className="py-1 text-center">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveCost(index)}
-                      className="text-destructive hover:text-destructive/80"
+          {costFields.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center">
+              <p className="text-sm text-gray-500">Belum ada biaya tambahan</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-gray-100">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 text-xs font-medium text-gray-600">
+                  <tr>
+                    <th className="px-3 py-2 text-left">Keterangan</th>
+                    <th className="w-36 px-3 py-2 text-right">Nilai (Rp)</th>
+                    <th className="w-28 px-3 py-2 text-center">Satuan</th>
+                    <th className="w-12 px-3 py-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {costFields.map((cost, index) => (
+                    <tr
+                      key={cost.id}
+                      className="border-b border-gray-100 hover:bg-gray-50/50"
                     >
-                      ×
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <td className="px-3 py-2">
+                        <Input
+                          placeholder="Biaya Listrik"
+                          {...register(
+                            `operational.additional_costs.${index}.description`
+                          )}
+                          className="h-9 text-sm"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <Input
+                          type="number"
+                          placeholder="0"
+                          {...register(
+                            `operational.additional_costs.${index}.amount`,
+                            { valueAsNumber: true }
+                          )}
+                          className="h-9 text-right text-sm"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <Input
+                          placeholder="unit"
+                          {...register(
+                            `operational.additional_costs.${index}.unit`
+                          )}
+                          className="h-9 text-center text-sm"
+                        />
+                      </td>
+                      <td className="px-3 py-2 text-center">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveCost(index)}
+                          className="text-destructive hover:text-destructive/80"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           <Button
             type="button"
-            variant="link"
+            variant="outline"
+            size="sm"
             onClick={handleAddCostRow}
-            className="mt-2 text-xs font-semibold text-primary"
+            className="mt-3 text-sm font-medium"
           >
-            + Tambah Biaya
+            <Plus className="mr-1 h-4 w-4" />
+            Tambah Biaya
           </Button>
         </div>
       </div>
