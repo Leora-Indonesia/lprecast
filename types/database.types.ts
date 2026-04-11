@@ -64,690 +64,6 @@ export type Database = {
           },
         ]
       }
-      backup_payment_requests: {
-        Row: {
-          amount: number
-          attachments: Json | null
-          client_approved_at: string | null
-          client_approved_by: string | null
-          created_at: string | null
-          finance_verified_at: string | null
-          finance_verified_by: string | null
-          id: string
-          notes: string | null
-          requested_by: string
-          status: Database["public"]["Enums"]["payment_request_status"] | null
-          updated_at: string | null
-          vendor_spk_id: string
-        }
-        Insert: {
-          amount: number
-          attachments?: Json | null
-          client_approved_at?: string | null
-          client_approved_by?: string | null
-          created_at?: string | null
-          finance_verified_at?: string | null
-          finance_verified_by?: string | null
-          id?: string
-          notes?: string | null
-          requested_by: string
-          status?: Database["public"]["Enums"]["payment_request_status"] | null
-          updated_at?: string | null
-          vendor_spk_id: string
-        }
-        Update: {
-          amount?: number
-          attachments?: Json | null
-          client_approved_at?: string | null
-          client_approved_by?: string | null
-          created_at?: string | null
-          finance_verified_at?: string | null
-          finance_verified_by?: string | null
-          id?: string
-          notes?: string | null
-          requested_by?: string
-          status?: Database["public"]["Enums"]["payment_request_status"] | null
-          updated_at?: string | null
-          vendor_spk_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "payment_requests_client_approved_by_fkey"
-            columns: ["client_approved_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_requests_finance_verified_by_fkey"
-            columns: ["finance_verified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_requests_requested_by_fkey"
-            columns: ["requested_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_requests_vendor_spk_id_fkey"
-            columns: ["vendor_spk_id"]
-            isOneToOne: false
-            referencedRelation: "backup_vendor_spk"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_project_milestones: {
-        Row: {
-          completed_at: string | null
-          created_at: string | null
-          created_by: string | null
-          description: string | null
-          due_date: string
-          id: string
-          project_id: string
-          status: Database["public"]["Enums"]["milestone_status"] | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          completed_at?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          due_date: string
-          id?: string
-          project_id: string
-          status?: Database["public"]["Enums"]["milestone_status"] | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          completed_at?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          description?: string | null
-          due_date?: string
-          id?: string
-          project_id?: string
-          status?: Database["public"]["Enums"]["milestone_status"] | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "project_milestones_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "project_milestones_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "backup_projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_projects: {
-        Row: {
-          client_id: string | null
-          contract_value: number
-          created_at: string | null
-          customer_name: string
-          description: string | null
-          end_date: string | null
-          id: string
-          location: string | null
-          name: string
-          start_date: string | null
-          status: Database["public"]["Enums"]["project_status"] | null
-          updated_at: string | null
-        }
-        Insert: {
-          client_id?: string | null
-          contract_value?: number
-          created_at?: string | null
-          customer_name: string
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          location?: string | null
-          name: string
-          start_date?: string | null
-          status?: Database["public"]["Enums"]["project_status"] | null
-          updated_at?: string | null
-        }
-        Update: {
-          client_id?: string | null
-          contract_value?: number
-          created_at?: string | null
-          customer_name?: string
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          location?: string | null
-          name?: string
-          start_date?: string | null
-          status?: Database["public"]["Enums"]["project_status"] | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "projects_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_tender_items: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string
-          name: string
-          quantity: number
-          tender_id: string
-          unit: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          quantity: number
-          tender_id: string
-          unit?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          quantity?: number
-          tender_id?: string
-          unit?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tender_items_tender_id_fkey"
-            columns: ["tender_id"]
-            isOneToOne: false
-            referencedRelation: "backup_tenders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_tender_submission_history: {
-        Row: {
-          created_at: string | null
-          id: string
-          revised_by: string
-          revision_count: number
-          snapshot: Json
-          submission_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          revised_by: string
-          revision_count: number
-          snapshot: Json
-          submission_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          revised_by?: string
-          revision_count?: number
-          snapshot?: Json
-          submission_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tender_submission_history_revised_by_fkey"
-            columns: ["revised_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tender_submission_history_submission_id_fkey"
-            columns: ["submission_id"]
-            isOneToOne: false
-            referencedRelation: "backup_tender_submissions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_tender_submission_items: {
-        Row: {
-          created_at: string | null
-          id: string
-          notes: string | null
-          submission_id: string
-          tender_item_id: string
-          total_price: number
-          unit_price: number
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          submission_id: string
-          tender_item_id: string
-          total_price: number
-          unit_price: number
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          submission_id?: string
-          tender_item_id?: string
-          total_price?: number
-          unit_price?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tender_submission_items_submission_id_fkey"
-            columns: ["submission_id"]
-            isOneToOne: false
-            referencedRelation: "backup_tender_submissions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tender_submission_items_tender_item_id_fkey"
-            columns: ["tender_item_id"]
-            isOneToOne: false
-            referencedRelation: "backup_tender_items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_tender_submissions: {
-        Row: {
-          attachments: Json | null
-          created_at: string | null
-          id: string
-          is_revised: boolean | null
-          last_revised_at: string | null
-          notes: string | null
-          revision_count: number | null
-          status: Database["public"]["Enums"]["tender_submission_status"] | null
-          submitted_at: string | null
-          tender_id: string
-          updated_at: string | null
-          vendor_id: string
-        }
-        Insert: {
-          attachments?: Json | null
-          created_at?: string | null
-          id?: string
-          is_revised?: boolean | null
-          last_revised_at?: string | null
-          notes?: string | null
-          revision_count?: number | null
-          status?:
-            | Database["public"]["Enums"]["tender_submission_status"]
-            | null
-          submitted_at?: string | null
-          tender_id: string
-          updated_at?: string | null
-          vendor_id: string
-        }
-        Update: {
-          attachments?: Json | null
-          created_at?: string | null
-          id?: string
-          is_revised?: boolean | null
-          last_revised_at?: string | null
-          notes?: string | null
-          revision_count?: number | null
-          status?:
-            | Database["public"]["Enums"]["tender_submission_status"]
-            | null
-          submitted_at?: string | null
-          tender_id?: string
-          updated_at?: string | null
-          vendor_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tender_submissions_tender_id_fkey"
-            columns: ["tender_id"]
-            isOneToOne: false
-            referencedRelation: "backup_tenders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tender_submissions_vendor_id_fkey"
-            columns: ["vendor_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_tenders: {
-        Row: {
-          created_at: string | null
-          created_by: string
-          description: string | null
-          id: string
-          min_vendors: number | null
-          project_id: string
-          revision_deadline_hours: number | null
-          status: Database["public"]["Enums"]["tender_status"] | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by: string
-          description?: string | null
-          id?: string
-          min_vendors?: number | null
-          project_id: string
-          revision_deadline_hours?: number | null
-          status?: Database["public"]["Enums"]["tender_status"] | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string
-          description?: string | null
-          id?: string
-          min_vendors?: number | null
-          project_id?: string
-          revision_deadline_hours?: number | null
-          status?: Database["public"]["Enums"]["tender_status"] | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tenders_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenders_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "backup_projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_vendor_kpi_scores: {
-        Row: {
-          created_at: string | null
-          id: string
-          period_month: number
-          period_year: number
-          project_id: string
-          score_client_satisfaction: number | null
-          score_quality: number | null
-          score_report_completeness: number | null
-          score_responsiveness: number | null
-          score_upload_timeliness: number | null
-          total_score: number | null
-          vendor_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          period_month: number
-          period_year: number
-          project_id: string
-          score_client_satisfaction?: number | null
-          score_quality?: number | null
-          score_report_completeness?: number | null
-          score_responsiveness?: number | null
-          score_upload_timeliness?: number | null
-          total_score?: number | null
-          vendor_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          period_month?: number
-          period_year?: number
-          project_id?: string
-          score_client_satisfaction?: number | null
-          score_quality?: number | null
-          score_report_completeness?: number | null
-          score_responsiveness?: number | null
-          score_upload_timeliness?: number | null
-          total_score?: number | null
-          vendor_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_kpi_scores_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "backup_projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_kpi_scores_vendor_id_fkey"
-            columns: ["vendor_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_vendor_payment: {
-        Row: {
-          catatan: string | null
-          created_at: string | null
-          id: string
-          jenis_pembayaran: Database["public"]["Enums"]["vendor_payment_jenis"]
-          jumlah: number
-          lampiran: Json | null
-          tanggal_pembayaran: string
-          vendor_spk_id: string
-        }
-        Insert: {
-          catatan?: string | null
-          created_at?: string | null
-          id?: string
-          jenis_pembayaran: Database["public"]["Enums"]["vendor_payment_jenis"]
-          jumlah: number
-          lampiran?: Json | null
-          tanggal_pembayaran: string
-          vendor_spk_id: string
-        }
-        Update: {
-          catatan?: string | null
-          created_at?: string | null
-          id?: string
-          jenis_pembayaran?: Database["public"]["Enums"]["vendor_payment_jenis"]
-          jumlah?: number
-          lampiran?: Json | null
-          tanggal_pembayaran?: string
-          vendor_spk_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_payment_vendor_spk_id_fkey"
-            columns: ["vendor_spk_id"]
-            isOneToOne: false
-            referencedRelation: "backup_vendor_spk"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_vendor_progress: {
-        Row: {
-          catatan: string | null
-          created_at: string | null
-          id: string
-          lampiran: Json | null
-          progress_percent: number
-          rejection_notes: string | null
-          status: Database["public"]["Enums"]["progress_status"] | null
-          tanggal: string
-          vendor_spk_id: string
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          catatan?: string | null
-          created_at?: string | null
-          id?: string
-          lampiran?: Json | null
-          progress_percent: number
-          rejection_notes?: string | null
-          status?: Database["public"]["Enums"]["progress_status"] | null
-          tanggal: string
-          vendor_spk_id: string
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          catatan?: string | null
-          created_at?: string | null
-          id?: string
-          lampiran?: Json | null
-          progress_percent?: number
-          rejection_notes?: string | null
-          status?: Database["public"]["Enums"]["progress_status"] | null
-          tanggal?: string
-          vendor_spk_id?: string
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_progress_vendor_spk_id_fkey"
-            columns: ["vendor_spk_id"]
-            isOneToOne: false
-            referencedRelation: "backup_vendor_spk"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_progress_verified_by_fkey"
-            columns: ["verified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_vendor_registration_history: {
-        Row: {
-          action: Database["public"]["Enums"]["vendor_registration_status"]
-          action_by: string
-          created_at: string | null
-          id: string
-          new_values: Json | null
-          notes: string | null
-          old_values: Json | null
-          registration_id: string
-        }
-        Insert: {
-          action: Database["public"]["Enums"]["vendor_registration_status"]
-          action_by: string
-          created_at?: string | null
-          id?: string
-          new_values?: Json | null
-          notes?: string | null
-          old_values?: Json | null
-          registration_id: string
-        }
-        Update: {
-          action?: Database["public"]["Enums"]["vendor_registration_status"]
-          action_by?: string
-          created_at?: string | null
-          id?: string
-          new_values?: Json | null
-          notes?: string | null
-          old_values?: Json | null
-          registration_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_registration_history_action_by_fkey"
-            columns: ["action_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_registration_history_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_vendor_spk: {
-        Row: {
-          created_at: string | null
-          id: string
-          nilai_spk: number
-          pekerjaan: string
-          project_id: string
-          status: Database["public"]["Enums"]["vendor_spk_status"] | null
-          updated_at: string | null
-          vendor_id: string | null
-          vendor_name: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          nilai_spk?: number
-          pekerjaan: string
-          project_id: string
-          status?: Database["public"]["Enums"]["vendor_spk_status"] | null
-          updated_at?: string | null
-          vendor_id?: string | null
-          vendor_name: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          nilai_spk?: number
-          pekerjaan?: string
-          project_id?: string
-          status?: Database["public"]["Enums"]["vendor_spk_status"] | null
-          updated_at?: string | null
-          vendor_id?: string | null
-          vendor_name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_spk_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "backup_projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_spk_vendor_id_fkey"
-            columns: ["vendor_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       master_cities: {
         Row: {
           code: string
@@ -853,6 +169,433 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_requests: {
+        Row: {
+          amount: number
+          attachments: Json | null
+          client_approved_at: string | null
+          client_approved_by: string | null
+          created_at: string | null
+          finance_verified_at: string | null
+          finance_verified_by: string | null
+          id: string
+          notes: string | null
+          requested_by: string
+          status: Database["public"]["Enums"]["payment_request_status"] | null
+          updated_at: string | null
+          vendor_spk_id: string
+        }
+        Insert: {
+          amount: number
+          attachments?: Json | null
+          client_approved_at?: string | null
+          client_approved_by?: string | null
+          created_at?: string | null
+          finance_verified_at?: string | null
+          finance_verified_by?: string | null
+          id?: string
+          notes?: string | null
+          requested_by: string
+          status?: Database["public"]["Enums"]["payment_request_status"] | null
+          updated_at?: string | null
+          vendor_spk_id: string
+        }
+        Update: {
+          amount?: number
+          attachments?: Json | null
+          client_approved_at?: string | null
+          client_approved_by?: string | null
+          created_at?: string | null
+          finance_verified_at?: string | null
+          finance_verified_by?: string | null
+          id?: string
+          notes?: string | null
+          requested_by?: string
+          status?: Database["public"]["Enums"]["payment_request_status"] | null
+          updated_at?: string | null
+          vendor_spk_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_requests_client_approved_by_fkey"
+            columns: ["client_approved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_requests_finance_verified_by_fkey"
+            columns: ["finance_verified_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_requests_vendor_spk_id_fkey"
+            columns: ["vendor_spk_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_spk"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_milestones: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          due_date: string
+          id: string
+          project_id: string
+          status: Database["public"]["Enums"]["milestone_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          due_date: string
+          id?: string
+          project_id: string
+          status?: Database["public"]["Enums"]["milestone_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          due_date?: string
+          id?: string
+          project_id?: string
+          status?: Database["public"]["Enums"]["milestone_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_milestones_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_milestones_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          client_id: string | null
+          contract_value: number
+          created_at: string | null
+          customer_name: string
+          description: string | null
+          end_date: string | null
+          id: string
+          location: string | null
+          name: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["project_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          contract_value?: number
+          created_at?: string | null
+          customer_name: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          contract_value?: number
+          created_at?: string | null
+          customer_name?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_items: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          quantity: number
+          tender_id: string
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          quantity: number
+          tender_id: string
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          quantity?: number
+          tender_id?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_items_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_submission_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          revised_by: string
+          revision_count: number
+          snapshot: Json
+          submission_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          revised_by: string
+          revision_count: number
+          snapshot: Json
+          submission_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          revised_by?: string
+          revision_count?: number
+          snapshot?: Json
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_submission_history_revised_by_fkey"
+            columns: ["revised_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tender_submission_history_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "tender_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_submission_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          submission_id: string
+          tender_item_id: string
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          submission_id: string
+          tender_item_id: string
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          submission_id?: string
+          tender_item_id?: string
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_submission_items_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "tender_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tender_submission_items_tender_item_id_fkey"
+            columns: ["tender_item_id"]
+            isOneToOne: false
+            referencedRelation: "tender_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tender_submissions: {
+        Row: {
+          attachments: Json | null
+          created_at: string | null
+          id: string
+          is_revised: boolean | null
+          last_revised_at: string | null
+          notes: string | null
+          revision_count: number | null
+          status: Database["public"]["Enums"]["tender_submission_status"] | null
+          submitted_at: string | null
+          tender_id: string
+          updated_at: string | null
+          vendor_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          created_at?: string | null
+          id?: string
+          is_revised?: boolean | null
+          last_revised_at?: string | null
+          notes?: string | null
+          revision_count?: number | null
+          status?:
+            | Database["public"]["Enums"]["tender_submission_status"]
+            | null
+          submitted_at?: string | null
+          tender_id: string
+          updated_at?: string | null
+          vendor_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          created_at?: string | null
+          id?: string
+          is_revised?: boolean | null
+          last_revised_at?: string | null
+          notes?: string | null
+          revision_count?: number | null
+          status?:
+            | Database["public"]["Enums"]["tender_submission_status"]
+            | null
+          submitted_at?: string | null
+          tender_id?: string
+          updated_at?: string | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tender_submissions_tender_id_fkey"
+            columns: ["tender_id"]
+            isOneToOne: false
+            referencedRelation: "tenders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tender_submissions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenders: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          description: string | null
+          id: string
+          min_vendors: number | null
+          project_id: string
+          revision_deadline_hours: number | null
+          status: Database["public"]["Enums"]["tender_status"] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          id?: string
+          min_vendors?: number | null
+          project_id: string
+          revision_deadline_hours?: number | null
+          status?: Database["public"]["Enums"]["tender_status"] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          id?: string
+          min_vendors?: number | null
+          project_id?: string
+          revision_deadline_hours?: number | null
+          status?: Database["public"]["Enums"]["tender_status"] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenders_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -1209,6 +952,66 @@ export type Database = {
           },
         ]
       }
+      vendor_kpi_scores: {
+        Row: {
+          created_at: string | null
+          id: string
+          period_month: number
+          period_year: number
+          project_id: string
+          score_client_satisfaction: number | null
+          score_quality: number | null
+          score_report_completeness: number | null
+          score_responsiveness: number | null
+          score_upload_timeliness: number | null
+          total_score: number | null
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          period_month: number
+          period_year: number
+          project_id: string
+          score_client_satisfaction?: number | null
+          score_quality?: number | null
+          score_report_completeness?: number | null
+          score_responsiveness?: number | null
+          score_upload_timeliness?: number | null
+          total_score?: number | null
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          period_month?: number
+          period_year?: number
+          project_id?: string
+          score_client_satisfaction?: number | null
+          score_quality?: number | null
+          score_report_completeness?: number | null
+          score_responsiveness?: number | null
+          score_upload_timeliness?: number | null
+          total_score?: number | null
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_kpi_scores_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_kpi_scores_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_legal_documents: {
         Row: {
           created_at: string | null
@@ -1277,6 +1080,47 @@ export type Database = {
             columns: ["verified_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_payment: {
+        Row: {
+          catatan: string | null
+          created_at: string | null
+          id: string
+          jenis_pembayaran: Database["public"]["Enums"]["vendor_payment_jenis"]
+          jumlah: number
+          lampiran: Json | null
+          tanggal_pembayaran: string
+          vendor_spk_id: string
+        }
+        Insert: {
+          catatan?: string | null
+          created_at?: string | null
+          id?: string
+          jenis_pembayaran: Database["public"]["Enums"]["vendor_payment_jenis"]
+          jumlah: number
+          lampiran?: Json | null
+          tanggal_pembayaran: string
+          vendor_spk_id: string
+        }
+        Update: {
+          catatan?: string | null
+          created_at?: string | null
+          id?: string
+          jenis_pembayaran?: Database["public"]["Enums"]["vendor_payment_jenis"]
+          jumlah?: number
+          lampiran?: Json | null
+          tanggal_pembayaran?: string
+          vendor_spk_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_payment_vendor_spk_id_fkey"
+            columns: ["vendor_spk_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_spk"
             referencedColumns: ["id"]
           },
         ]
@@ -1401,6 +1245,111 @@ export type Database = {
           },
         ]
       }
+      vendor_progress: {
+        Row: {
+          catatan: string | null
+          created_at: string | null
+          id: string
+          lampiran: Json | null
+          progress_percent: number
+          rejection_notes: string | null
+          status: Database["public"]["Enums"]["progress_status"] | null
+          tanggal: string
+          vendor_spk_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          catatan?: string | null
+          created_at?: string | null
+          id?: string
+          lampiran?: Json | null
+          progress_percent: number
+          rejection_notes?: string | null
+          status?: Database["public"]["Enums"]["progress_status"] | null
+          tanggal: string
+          vendor_spk_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          catatan?: string | null
+          created_at?: string | null
+          id?: string
+          lampiran?: Json | null
+          progress_percent?: number
+          rejection_notes?: string | null
+          status?: Database["public"]["Enums"]["progress_status"] | null
+          tanggal?: string
+          vendor_spk_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_progress_vendor_spk_id_fkey"
+            columns: ["vendor_spk_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_spk"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_progress_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_registration_history: {
+        Row: {
+          action: Database["public"]["Enums"]["vendor_registration_status"]
+          action_by: string
+          created_at: string | null
+          id: string
+          new_values: Json | null
+          notes: string | null
+          old_values: Json | null
+          registration_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["vendor_registration_status"]
+          action_by: string
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          notes?: string | null
+          old_values?: Json | null
+          registration_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["vendor_registration_status"]
+          action_by?: string
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          notes?: string | null
+          old_values?: Json | null
+          registration_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_registration_history_action_by_fkey"
+            columns: ["action_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_registration_history_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendor_registrations: {
         Row: {
           approval_notes: string | null
@@ -1457,6 +1406,57 @@ export type Database = {
           },
           {
             foreignKeyName: "vendor_registrations_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_spk: {
+        Row: {
+          created_at: string | null
+          id: string
+          nilai_spk: number
+          pekerjaan: string
+          project_id: string
+          status: Database["public"]["Enums"]["vendor_spk_status"] | null
+          updated_at: string | null
+          vendor_id: string | null
+          vendor_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          nilai_spk?: number
+          pekerjaan: string
+          project_id: string
+          status?: Database["public"]["Enums"]["vendor_spk_status"] | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          vendor_name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          nilai_spk?: number
+          pekerjaan?: string
+          project_id?: string
+          status?: Database["public"]["Enums"]["vendor_spk_status"] | null
+          updated_at?: string | null
+          vendor_id?: string | null
+          vendor_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_spk_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_spk_vendor_id_fkey"
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "users"
