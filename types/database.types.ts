@@ -14,62 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      backup_master_cities: {
-        Row: {
-          code: string
-          created_at: string | null
-          id: string
-          name: string
-          province_id: string
-          type: string
-        }
-        Insert: {
-          code: string
-          created_at?: string | null
-          id: string
-          name: string
-          province_id: string
-          type: string
-        }
-        Update: {
-          code?: string
-          created_at?: string | null
-          id?: string
-          name?: string
-          province_id?: string
-          type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "master_cities_province_id_fkey"
-            columns: ["province_id"]
-            isOneToOne: false
-            referencedRelation: "backup_master_provinces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      backup_master_provinces: {
-        Row: {
-          code: string
-          created_at: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          code: string
-          created_at?: string | null
-          id: string
-          name: string
-        }
-        Update: {
-          code?: string
-          created_at?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
       backup_notifications: {
         Row: {
           category: Database["public"]["Enums"]["notification_category"]
@@ -804,6 +748,62 @@ export type Database = {
           },
         ]
       }
+      master_cities: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          name: string
+          province_id: string
+          type: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id: string
+          name: string
+          province_id: string
+          type: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          province_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "master_cities_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "master_provinces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      master_provinces: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           category: Database["public"]["Enums"]["notification_category"]
@@ -1137,14 +1137,14 @@ export type Database = {
             foreignKeyName: "vendor_delivery_areas_city_id_fkey"
             columns: ["city_id"]
             isOneToOne: false
-            referencedRelation: "backup_master_cities"
+            referencedRelation: "master_cities"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "vendor_delivery_areas_province_id_fkey"
             columns: ["province_id"]
             isOneToOne: false
-            referencedRelation: "backup_master_provinces"
+            referencedRelation: "master_provinces"
             referencedColumns: ["id"]
           },
           {
