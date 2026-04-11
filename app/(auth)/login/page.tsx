@@ -48,11 +48,13 @@ export default function LoginPage() {
 
     try {
       const result = await loginAction(values.email, values.password)
-      if (result?.error) {
+      if (result && "error" in result && result.error) {
         setError(result.error)
       }
-    } catch {
-      setError("Terjadi kesalahan. Silakan coba lagi.")
+    } catch (err) {
+      if ((err as Error).message !== "NEXT_REDIRECT") {
+        setError("Terjadi kesalahan. Silakan coba lagi.")
+      }
     } finally {
       setIsLoading(false)
     }

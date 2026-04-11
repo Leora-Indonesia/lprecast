@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 import { createServerClient } from "@supabase/ssr"
+import { createAdminClient } from "@/lib/supabase/admin"
 import type { VendorRegistrationFormData } from "@/lib/validations/vendor-registration"
+import { sendVendorInviteEmail, sendAdminNewVendorEmail } from "@/lib/email"
 
 async function getSupabaseServerClient() {
   const cookieStore = await cookies()
@@ -273,9 +275,100 @@ export async function submitRegistration(payload: RegistrationPayload) {
       }
     }
 
-    revalidatePath("/vendor/register")
+    let vendorUserId: string | null = null
+    let inviteEmailSent = false
 
-    return { success: true, data: { registrationId } }
+    try {
+      const adminSupabase = createAdminClient()
+
+      const { data: authUser, error: authError } =
+        await adminSupabase.auth.admin.createUser({
+          email: company_info.email,
+          email_confirm: true,
+          user_metadata: {
+            nama: company_info.nama_pic,
+            no_hp: company_info.kontak_pic,
+            company_name: company_info.nama_perusahaan,
+          },
+          app_metadata: {
+            stakeholder_type: "vendor",
+          },
+        })
+
+      if (authError) {
+        console.error("Error creating vendor user:", authError)
+      } else if (authUser.user) {
+        vendorUserId = authUser.user.id
+
+        await supabase
+          .from("vendor_registrations")
+          .update({ vendor_id: vendorUserId })
+          .eq("id", registrationId)
+
+        await supabase.from("vendor_profiles").insert({
+          user_id: vendorUserId,
+          registration_id: registrationId,
+          status: "suspended",
+        })
+
+        const inviteUrl = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}/vendor/accept-invite?token=${registrationId}`
+        const emailResult = await sendVendorInviteEmail(
+          company_info.email,
+          inviteUrl,
+          company_info.nama_perusahaan,
+          company_info.nama_pic
+        )
+
+        if (emailResult.success) {
+          inviteEmailSent = true
+        }
+      }
+    } catch (adminError) {
+      console.error("Error creating vendor account:", adminError)
+    }
+
+    try {
+      const adminUsers = await supabase
+        .from("users")
+        .select("id, email, nama")
+        .eq("stakeholder_type", "internal")
+
+      if (adminUsers.data && adminUsers.data.length > 0) {
+        for (const admin of adminUsers.data) {
+          await supabase.from("notifications").insert({
+            user_id: admin.id,
+            type: "vendor_registration",
+            category: "vendor",
+            title: "Pendaftaran Vendor Baru",
+            message: `${company_info.nama_perusahaan} telah mendaftar sebagai vendor dan menunggu review Anda. PIC: ${company_info.nama_pic}`,
+            reference_id: registrationId,
+            reference_type: "vendor_registration",
+            is_read: false,
+          })
+
+          await sendAdminNewVendorEmail(
+            admin.email,
+            company_info.nama_perusahaan,
+            company_info.nama_pic,
+            registrationId
+          )
+        }
+      }
+    } catch (notifyError) {
+      console.error("Error sending admin notifications:", notifyError)
+    }
+
+    revalidatePath("/vendor/register")
+    revalidatePath("/admin/dashboard")
+
+    return {
+      success: true,
+      data: {
+        registrationId,
+        vendorUserId,
+        inviteEmailSent,
+      },
+    }
   } catch (error) {
     console.error("Error submitting registration:", error)
     return {

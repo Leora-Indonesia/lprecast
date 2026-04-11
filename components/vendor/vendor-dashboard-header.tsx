@@ -1,6 +1,7 @@
 "use client"
 
-import { LogOut, User } from "lucide-react"
+import { Bell, LogOut, User } from "lucide-react"
+import Link from "next/link"
 
 import {
   DropdownMenu,
@@ -13,23 +14,17 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { logoutAction } from "@/actions/auth"
-import { NotificationBell } from "./notification-bell"
 
 interface UserData {
-  id?: string
   nama: string | null
   email: string | null
 }
 
-interface AdminHeaderProps {
+interface VendorDashboardHeaderProps {
   user?: UserData | null
-  notifications?: {
-    unreadCount: number
-    notifications: unknown[]
-  }
 }
 
-export function AdminHeader({ user, notifications }: AdminHeaderProps) {
+export function VendorDashboardHeader({ user }: VendorDashboardHeaderProps) {
   const handleLogout = async () => {
     await logoutAction()
   }
@@ -38,16 +33,24 @@ export function AdminHeader({ user, notifications }: AdminHeaderProps) {
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">Admin Panel</span>
+          <Link href="/vendor/dashboard" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded bg-[#16a34a]">
+              <span className="text-sm font-bold text-white">L</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">LPrecast</span>
+              <span className="text-xs text-muted-foreground">
+                Vendor Portal
+              </span>
+            </div>
+          </Link>
         </div>
         <div className="flex items-center gap-4">
-          {user?.id && (
-            <NotificationBell
-              userId={user.id}
-              initialUnreadCount={notifications?.unreadCount}
-              initialNotifications={notifications?.notifications as never}
-            />
-          )}
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/vendor/notifications">
+              <Bell className="h-5 w-5" />
+            </Link>
+          </Button>
           {user?.nama ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
