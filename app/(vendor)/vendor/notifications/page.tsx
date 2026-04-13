@@ -21,7 +21,7 @@ const categories = [
 
 const PAGE_SIZE = 10
 
-export default function NotificationsPage() {
+export default function VendorNotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [total, setTotal] = useState(0)
   const [activeCategory, setActiveCategory] = useState("all")
@@ -69,21 +69,17 @@ export default function NotificationsPage() {
           return
         }
 
-        try {
-          const data = JSON.parse(text)
-          if (reset) {
-            setNotifications(data.notifications ?? [])
-          } else {
-            setNotifications((prev) => [...prev, ...(data.notifications ?? [])])
-          }
-          setTotal(data.total ?? 0)
-        } catch (parseError) {
-          console.error("Failed to parse notifications response:", parseError)
-          if (reset) {
-            setNotifications([])
-          }
-          setTotal(0)
+        if (text.trim().startsWith("<")) {
+          throw new Error("Received HTML instead of JSON")
         }
+
+        const data = JSON.parse(text)
+        if (reset) {
+          setNotifications(data.notifications ?? [])
+        } else {
+          setNotifications((prev) => [...prev, ...(data.notifications ?? [])])
+        }
+        setTotal(data.total ?? 0)
       } catch (error) {
         console.error("Error fetching notifications:", error)
       } finally {
@@ -124,15 +120,13 @@ export default function NotificationsPage() {
           return
         }
 
-        try {
-          const data = JSON.parse(text)
-          setNotifications(data.notifications ?? [])
-          setTotal(data.total ?? 0)
-        } catch (parseError) {
-          console.error("Failed to parse notifications response:", parseError)
-          setNotifications([])
-          setTotal(0)
+        if (text.trim().startsWith("<")) {
+          throw new Error("Received HTML instead of JSON")
         }
+
+        const data = JSON.parse(text)
+        setNotifications(data.notifications ?? [])
+        setTotal(data.total ?? 0)
       } catch (error) {
         console.error("Error fetching notifications:", error)
         setNotifications([])
@@ -211,15 +205,15 @@ export default function NotificationsPage() {
 
   const getNotificationLink = (notification: Notification) => {
     if (notification.reference_type === "vendor_registration") {
-      return `/admin/vendors/${notification.reference_id}`
+      return `/vendor/profile`
     }
     if (notification.reference_type === "tender") {
-      return `/admin/tenders/${notification.reference_id}`
+      return `/vendor/tenders`
     }
     if (notification.reference_type === "payment_request") {
-      return `/admin/payments/${notification.reference_id}`
+      return `/vendor/projects`
     }
-    return "/admin/notifications"
+    return "/vendor/dashboard"
   }
 
   const hasMore = notifications.length < total

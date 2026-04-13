@@ -5,7 +5,6 @@ import { cookies } from "next/headers"
 import { createServerClient } from "@supabase/ssr"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { VendorRegistrationFormData } from "@/lib/validations/vendor-registration"
-import { sendVendorInviteEmail, sendAdminNewVendorEmail } from "@/lib/email"
 
 async function getSupabaseServerClient() {
   const cookieStore = await cookies()
@@ -117,52 +116,18 @@ export async function submitRegistration(payload: RegistrationPayload) {
       return { success: false, error: registrationError.message }
     }
 
-    const { error: companyError } = await supabase
-      .from("vendor_company_info")
-      .insert({
-        registration_id: registrationId,
-        nama_perusahaan: company_info.nama_perusahaan,
-        email: company_info.email,
-        nama_pic: company_info.nama_pic,
-        kontak_pic: company_info.kontak_pic,
-        website: company_info.website || null,
-        instagram: company_info.instagram || null,
-        facebook: company_info.facebook || null,
-        linkedin: company_info.linkedin || null,
-      })
-
-    if (companyError) {
-      console.error("Error creating company info:", companyError)
-      return { success: false, error: companyError.message }
-    }
-
     const contacts = [
       { ...company_info.contact_1, sequence: 1 },
       { ...company_info.contact_2, sequence: 2 },
       company_info.contact_3
         ? { ...company_info.contact_3, sequence: 3 }
         : null,
-    ].filter(Boolean)
-
-    for (const contact of contacts) {
-      if (contact && (contact.no_hp || contact.nama)) {
-        await supabase.from("vendor_contacts").insert({
-          registration_id: registrationId,
-          nama: contact.nama,
-          no_hp: contact.no_hp,
-          jabatan: contact.jabatan || "",
-          is_primary: contact.sequence === 1,
-          sequence: contact.sequence,
-        })
-      }
-    }
+    ]
+      .filter(Boolean)
+      .filter((c): c is NonNullable<typeof c> => !!(c && (c.no_hp || c.nama)))
 
     const documents = [
-      {
-        type: "ktp",
-        doc: legal_documents.ktp,
-        number: null,
-      },
+      { type: "ktp", doc: legal_documents.ktp, number: null },
       {
         type: "npwp",
         doc: legal_documents.npwp,
@@ -173,77 +138,15 @@ export async function submitRegistration(payload: RegistrationPayload) {
         doc: legal_documents.nib,
         number: legal_documents.nib_nomor,
       },
-      {
-        type: "siup_sbu",
-        doc: legal_documents.siup_sbu,
-        number: null,
-      },
+      { type: "siup_sbu", doc: legal_documents.siup_sbu, number: null },
       {
         type: "company_profile",
         doc: legal_documents.company_profile,
         number: null,
       },
-    ]
+    ].filter((d) => d.doc)
 
-    for (const doc of documents) {
-      if (doc.doc) {
-        await supabase.from("vendor_legal_documents").insert({
-          registration_id: registrationId,
-          document_type: doc.type,
-          document_number: doc.number,
-          file_name: doc.doc.fileName,
-          file_path: doc.doc.url,
-          file_size: doc.doc.fileSize,
-          mime_type: doc.doc.mimeType,
-        })
-      }
-    }
-
-    await supabase.from("vendor_bank_accounts").insert({
-      registration_id: registrationId,
-      bank_name: operational.bank?.bank_nama || "",
-      account_number: operational.bank?.bank_nomor || "",
-      account_holder_name: operational.bank?.bank_atas_nama || "",
-      is_primary: true,
-    })
-
-    const factoryAddress = operational.factory_address
-
-    await supabase.from("vendor_factory_addresses").insert({
-      registration_id: registrationId,
-      address: factoryAddress?.alamat_detail || "",
-      province: factoryAddress?.provinsi_name || "",
-      kabupaten: factoryAddress?.kabupaten_name || "",
-      kecamatan: factoryAddress?.kecamatan || "",
-      postal_code: factoryAddress?.kode_pos || "",
-      is_primary: true,
-    })
-
-    for (const product of operational.products || []) {
-      await supabase.from("vendor_products").insert({
-        registration_id: registrationId,
-        name: product.name,
-        satuan: product.satuan,
-        price: product.price,
-        dimensions: product.dimensions || null,
-        material: product.material || null,
-        finishing: product.finishing || null,
-        weight_kg: product.berat || null,
-        lead_time_days: product.lead_time_days || null,
-        moq: product.moq || null,
-        description: product.description || null,
-      })
-    }
-
-    for (const area of operational.delivery_areas || []) {
-      await supabase.from("vendor_delivery_areas").insert({
-        registration_id: registrationId,
-        province_id: area.province_id,
-        city_id: area.city_id,
-      })
-    }
-
-    const inclusions = operational.cost_inclusions
+    const inclusions = operational.cost_inclusions as Record<string, boolean>
     const inclusionTypes = [
       { key: "mobilisasi", value: "mobilisasi_demobilisasi" },
       { key: "penginapan", value: "penginapan_tukang" },
@@ -253,120 +156,136 @@ export async function submitRegistration(payload: RegistrationPayload) {
       { key: "ppn", value: "ppn" },
     ]
 
-    for (const inc of inclusionTypes) {
-      const isIncluded = (inclusions as Record<string, boolean>)[inc.key]
-      if (isIncluded) {
-        await supabase.from("vendor_cost_inclusions").insert({
-          registration_id: registrationId,
-          inclusion_type: inc.value,
-          is_included: true,
-        })
-      }
-    }
+    const additionalCosts = (operational.additional_costs || []).filter(
+      (c) => c.description
+    )
 
-    for (const cost of operational.additional_costs || []) {
-      if (cost.description) {
-        await supabase.from("vendor_additional_costs").insert({
-          registration_id: registrationId,
-          description: cost.description,
-          amount: cost.amount,
-          unit: cost.unit,
-        })
-      }
-    }
+    await Promise.all([
+      supabase.from("vendor_company_info").insert({
+        registration_id: registrationId,
+        nama_perusahaan: company_info.nama_perusahaan,
+        email: company_info.email,
+        nama_pic: company_info.nama_pic,
+        kontak_pic: company_info.kontak_pic,
+        website: company_info.website || null,
+        instagram: company_info.instagram || null,
+        facebook: company_info.facebook || null,
+        linkedin: company_info.linkedin || null,
+      }),
 
-    let vendorUserId: string | null = null
-    let inviteEmailSent = false
-
-    try {
-      const adminSupabase = createAdminClient()
-
-      const { data: authUser, error: authError } =
-        await adminSupabase.auth.admin.createUser({
-          email: company_info.email,
-          email_confirm: true,
-          user_metadata: {
-            nama: company_info.nama_pic,
-            no_hp: company_info.kontak_pic,
-            company_name: company_info.nama_perusahaan,
-          },
-          app_metadata: {
-            stakeholder_type: "vendor",
-          },
-        })
-
-      if (authError) {
-        console.error("Error creating vendor user:", authError)
-      } else if (authUser.user) {
-        vendorUserId = authUser.user.id
-
-        await supabase
-          .from("vendor_registrations")
-          .update({ vendor_id: vendorUserId })
-          .eq("id", registrationId)
-
-        await supabase.from("vendor_profiles").insert({
-          user_id: vendorUserId,
-          registration_id: registrationId,
-          status: "suspended",
-        })
-
-        const inviteUrl = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}/vendor/accept-invite?token=${registrationId}`
-        const emailResult = await sendVendorInviteEmail(
-          company_info.email,
-          inviteUrl,
-          company_info.nama_perusahaan,
-          company_info.nama_pic
-        )
-
-        if (emailResult.success) {
-          inviteEmailSent = true
-        }
-      }
-    } catch (adminError) {
-      console.error("Error creating vendor account:", adminError)
-    }
-
-    try {
-      const adminUsers = await supabase
-        .from("users")
-        .select("id, email, nama")
-        .eq("stakeholder_type", "internal")
-
-      if (adminUsers.data && adminUsers.data.length > 0) {
-        for (const admin of adminUsers.data) {
-          await supabase.from("notifications").insert({
-            user_id: admin.id,
-            type: "vendor_registration",
-            category: "vendor",
-            title: "Pendaftaran Vendor Baru",
-            message: `${company_info.nama_perusahaan} telah mendaftar sebagai vendor dan menunggu review Anda. PIC: ${company_info.nama_pic}`,
-            reference_id: registrationId,
-            reference_type: "vendor_registration",
-            is_read: false,
-          })
-
-          await sendAdminNewVendorEmail(
-            admin.email,
-            company_info.nama_perusahaan,
-            company_info.nama_pic,
-            registrationId
+      contacts.length > 0
+        ? supabase.from("vendor_contacts").insert(
+            contacts.map((contact) => ({
+              registration_id: registrationId,
+              nama: contact.nama,
+              no_hp: contact.no_hp,
+              jabatan: contact.jabatan || "",
+              is_primary: contact.sequence === 1,
+              sequence: contact.sequence,
+            }))
           )
-        }
-      }
-    } catch (notifyError) {
-      console.error("Error sending admin notifications:", notifyError)
-    }
+        : Promise.resolve({ error: null }),
 
-    revalidatePath("/vendor/register")
-    revalidatePath("/admin/dashboard")
+      documents.length > 0
+        ? supabase.from("vendor_legal_documents").insert(
+            documents.map((doc) => ({
+              registration_id: registrationId,
+              document_type: doc.type,
+              document_number: doc.number,
+              file_name: doc.doc!.fileName,
+              file_path: doc.doc!.url,
+              file_size: doc.doc!.fileSize,
+              mime_type: doc.doc!.mimeType,
+            }))
+          )
+        : Promise.resolve({ error: null }),
+
+      supabase.from("vendor_bank_accounts").insert({
+        registration_id: registrationId,
+        bank_name: operational.bank?.bank_nama || "",
+        account_number: operational.bank?.bank_nomor || "",
+        account_holder_name: operational.bank?.bank_atas_nama || "",
+        is_primary: true,
+      }),
+
+      supabase.from("vendor_factory_addresses").insert({
+        registration_id: registrationId,
+        address: operational.factory_address?.alamat_detail || "",
+        province: operational.factory_address?.provinsi_name || "",
+        kabupaten: operational.factory_address?.kabupaten_name || "",
+        kecamatan: operational.factory_address?.kecamatan || "",
+        postal_code: operational.factory_address?.kode_pos || "",
+        is_primary: true,
+      }),
+
+      (operational.products || []).length > 0
+        ? supabase.from("vendor_products").insert(
+            (operational.products || []).map((product) => ({
+              registration_id: registrationId,
+              name: product.name,
+              satuan: product.satuan,
+              price: product.price,
+              dimensions: product.dimensions || null,
+              material: product.material || null,
+              finishing: product.finishing || null,
+              weight_kg: product.berat || null,
+              lead_time_days: product.lead_time_days || null,
+              moq: product.moq || null,
+              description: product.description || null,
+            }))
+          )
+        : Promise.resolve({ error: null }),
+
+      (operational.delivery_areas || []).length > 0
+        ? supabase.from("vendor_delivery_areas").insert(
+            (operational.delivery_areas || []).map((area) => ({
+              registration_id: registrationId,
+              province_id: area.province_id,
+              city_id: area.city_id,
+            }))
+          )
+        : Promise.resolve({ error: null }),
+
+      supabase.from("vendor_cost_inclusions").insert(
+        inclusionTypes
+          .filter((inc) => inclusions[inc.key])
+          .map((inc) => ({
+            registration_id: registrationId,
+            inclusion_type: inc.value,
+            is_included: true,
+          }))
+      ),
+
+      additionalCosts.length > 0
+        ? supabase.from("vendor_additional_costs").insert(
+            additionalCosts.map((cost) => ({
+              registration_id: registrationId,
+              description: cost.description,
+              amount: cost.amount,
+              unit: cost.unit,
+            }))
+          )
+        : Promise.resolve({ error: null }),
+    ])
+
+    invokeBackgroundProcessing(
+      registrationId,
+      company_info,
+      legal_documents,
+      operational
+    ).catch((err) => {
+      console.error("Background processing failed:", err)
+    })
+
+    await Promise.all([
+      revalidatePath("/vendor/register"),
+      revalidatePath("/admin/dashboard"),
+    ])
 
     return {
       success: true,
       data: {
         registrationId,
-        vendorUserId,
-        inviteEmailSent,
       },
     }
   } catch (error) {
@@ -376,4 +295,21 @@ export async function submitRegistration(payload: RegistrationPayload) {
       error: error instanceof Error ? error.message : "Unknown error",
     }
   }
+}
+
+async function invokeBackgroundProcessing(
+  registrationId: string,
+  company_info: RegistrationPayload["company_info"],
+  legal_documents: RegistrationPayload["legal_documents"],
+  operational: RegistrationPayload["operational"]
+) {
+  const supabase = createAdminClient()
+  await supabase.functions.invoke("process-vendor-registration", {
+    body: {
+      registrationId,
+      company_info,
+      legal_documents,
+      operational,
+    },
+  })
 }

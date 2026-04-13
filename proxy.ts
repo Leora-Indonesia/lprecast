@@ -14,6 +14,12 @@ const publicRoutes = [
   "/privacy",
 ]
 
+const isPublicRoute = (pathname: string) => {
+  if (pathname.startsWith("/api/")) return true
+  if (pathname.startsWith("/auth/")) return true
+  return publicRoutes.includes(pathname)
+}
+
 export default async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -48,10 +54,10 @@ export default async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  const isPublicRoute = publicRoutes.includes(pathname)
+  const publicRoute = isPublicRoute(pathname)
   const isAuthRoute = pathname.startsWith("/auth/")
 
-  if (isPublicRoute || isAuthRoute) {
+  if (publicRoute || isAuthRoute) {
     return supabaseResponse
   }
 

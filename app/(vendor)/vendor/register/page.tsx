@@ -21,6 +21,7 @@ import {
   type VendorRegistrationFormData,
 } from "@/lib/validations/vendor-registration"
 import { useFormPersistence } from "@/lib/hooks/use-form-persistence"
+import { formatDateTime } from "@/lib/datetime"
 
 import {
   CompanyInfoForm,
@@ -112,6 +113,7 @@ export default function VendorRegisterPage() {
   >("idle")
   const [showLoadDialog, setShowLoadDialog] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [hasDismissedDialog, setHasDismissedDialog] = useState(false)
   const router = useRouter()
 
   const form = useForm<VendorRegistrationFormData>({
@@ -140,12 +142,20 @@ export default function VendorRegisterPage() {
     })
 
   useEffect(() => {
-    if (hasSavedData) {
+    if (typeof window !== "undefined") {
+      const dismissed =
+        sessionStorage.getItem("vendor-draft-dismissed") === "true"
+      setHasDismissedDialog(dismissed)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (hasSavedData && !hasDismissedDialog) {
       requestAnimationFrame(() => {
         setShowLoadDialog(true)
       })
     }
-  }, [hasSavedData])
+  }, [hasSavedData, hasDismissedDialog])
 
   useEffect(() => {
     if (autoSaveStatus === "saved") {
@@ -305,16 +315,7 @@ export default function VendorRegisterPage() {
       const data = form.getValues()
       const registrationId = crypto.randomUUID()
 
-      const documentUploads: Array<{
-        type: string
-        file: File | undefined
-        result?: {
-          url: string
-          fileName: string
-          fileSize: number
-          mimeType: string
-        }
-      }> = [
+      const documentUploads = [
         { type: "ktp", file: data.legal_documents.ktp_file || undefined },
         { type: "npwp", file: data.legal_documents.npwp_file || undefined },
         { type: "nib", file: data.legal_documents.nib_file || undefined },
@@ -325,67 +326,41 @@ export default function VendorRegisterPage() {
         },
       ]
 
-      for (const doc of documentUploads) {
-        if (doc.file) {
+      const uploadResults = await Promise.all(
+        documentUploads.map(async (doc) => {
+          if (!doc.file) return { type: doc.type, result: null }
           try {
-            doc.result = await uploadVendorDocument(
+            const result = await uploadVendorDocument(
               doc.file,
               registrationId,
               doc.type
             )
-          } catch (uploadError) {
-            toast.error("Gagal upload dokumen", {
-              description: `Dokumen ${doc.type} gagal diupload. Cek koneksi dan coba lagi.`,
-            })
-            setIsSubmitting(false)
-            return
+            return { type: doc.type, result }
+          } catch {
+            return { type: doc.type, result: null, error: true }
           }
-        }
+        })
+      )
+
+      const failedUpload = uploadResults.find((r) => r.error)
+      if (failedUpload) {
+        toast.error("Gagal upload dokumen", {
+          description: `Dokumen ${failedUpload.type} gagal diupload. Cek koneksi dan coba lagi.`,
+        })
+        setIsSubmitting(false)
+        return
       }
 
+      const resultsMap = new Map(uploadResults.map((r) => [r.type, r.result]))
+
       const documents = {
-        ktp: documentUploads[0].result
-          ? {
-              url: documentUploads[0].result.url,
-              fileName: documentUploads[0].result.fileName,
-              fileSize: documentUploads[0].result.fileSize,
-              mimeType: documentUploads[0].result.mimeType,
-            }
-          : null,
-        npwp: documentUploads[1].result
-          ? {
-              url: documentUploads[1].result.url,
-              fileName: documentUploads[1].result.fileName,
-              fileSize: documentUploads[1].result.fileSize,
-              mimeType: documentUploads[1].result.mimeType,
-            }
-          : null,
+        ktp: resultsMap.get("ktp") ?? null,
+        npwp: resultsMap.get("npwp") ?? null,
         npwp_nomor: data.legal_documents.npwp_nomor || null,
-        nib: documentUploads[2].result
-          ? {
-              url: documentUploads[2].result.url,
-              fileName: documentUploads[2].result.fileName,
-              fileSize: documentUploads[2].result.fileSize,
-              mimeType: documentUploads[2].result.mimeType,
-            }
-          : null,
+        nib: resultsMap.get("nib") ?? null,
         nib_nomor: data.legal_documents.nib_nomor || null,
-        siup_sbu: documentUploads[3].result
-          ? {
-              url: documentUploads[3].result.url,
-              fileName: documentUploads[3].result.fileName,
-              fileSize: documentUploads[3].result.fileSize,
-              mimeType: documentUploads[3].result.mimeType,
-            }
-          : null,
-        company_profile: documentUploads[4].result
-          ? {
-              url: documentUploads[4].result.url,
-              fileName: documentUploads[4].result.fileName,
-              fileSize: documentUploads[4].result.fileSize,
-              mimeType: documentUploads[4].result.mimeType,
-            }
-          : null,
+        siup_sbu: resultsMap.get("siup_sbu") ?? null,
+        company_profile: resultsMap.get("company_profile") ?? null,
       }
 
       const payload = {
@@ -402,6 +377,7 @@ export default function VendorRegisterPage() {
           description: "Data vendor telah tersimpan.",
         })
         clearSavedData()
+        sessionStorage.removeItem("vendor-draft-dismissed")
         router.push("/vendor/register/success")
       } else {
         toast.error("Gagal submit", {
@@ -558,13 +534,8 @@ export default function VendorRegisterPage() {
             <DialogTitle>Draft Tersimpan</DialogTitle>
             <DialogDescription>
               Ditemukan draft yang tersimpan pada{" "}
-              {savedTimestamp
-                ? new Date(savedTimestamp).toLocaleString("id-ID", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })
-                : "sebelumnya"}
-              . Apakah Anda ingin melanjutkan draft tersebut?
+              {savedTimestamp ? formatDateTime(savedTimestamp) : "sebelumnya"}.
+              Apakah Anda ingin melanjutkan draft tersebut?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -572,6 +543,8 @@ export default function VendorRegisterPage() {
               variant="outline"
               onClick={() => {
                 clearSavedData()
+                setHasDismissedDialog(true)
+                sessionStorage.setItem("vendor-draft-dismissed", "true")
                 toast.info("Draft dihapus. Silakan mulai dari awal.")
                 setShowLoadDialog(false)
               }}

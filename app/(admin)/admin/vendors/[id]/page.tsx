@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin"
+import { formatDate } from "@/lib/datetime"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import {
@@ -13,6 +14,10 @@ import {
   XCircle,
   Clock,
   Eye,
+  MapPin,
+  Truck,
+  DollarSign,
+  PlusCircle,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -102,6 +107,50 @@ type VendorRegistration = {
     approved_at: string | null
     user_id: string
   }[]
+  vendor_factory_addresses: {
+    id: string
+    address: string
+    province: string | null
+    kabupaten: string | null
+    kecamatan: string | null
+    postal_code: string | null
+    latitude: number | null
+    longitude: number | null
+    map_url: string | null
+    is_primary: boolean | null
+    created_at: string | null
+  }[]
+  vendor_delivery_areas: {
+    id: string
+    province_id: string | null
+    provinsi: string | null
+    city_id: string | null
+    kabupaten: string | null
+    created_at: string | null
+  }[]
+  vendor_cost_inclusions: {
+    id: string
+    inclusion_type: string
+    is_included: boolean | null
+    notes: string | null
+    created_at: string | null
+  }[]
+  vendor_additional_costs: {
+    id: string
+    description: string
+    amount: number
+    unit: string | null
+    created_at: string | null
+  }[]
+}
+
+const costInclusionLabels: Record<string, string> = {
+  mobilisasi_demobilisasi: "Mobilisasi & Demobilisasi",
+  penginapan_tukang: "Penginapan Tukang",
+  biaya_pengiriman: "Biaya Pengiriman",
+  biaya_langsir: "Biaya Langsir",
+  instalasi: "Instalasi",
+  ppn: "PPN",
 }
 
 const statusLabels: Record<string, string> = {
@@ -177,15 +226,6 @@ function formatCurrency(amount: number) {
   }).format(amount)
 }
 
-function formatDate(dateString: string | null) {
-  if (!dateString) return "-"
-  return new Date(dateString).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  })
-}
-
 export default async function VendorDetailPage({
   params,
 }: {
@@ -204,7 +244,11 @@ export default async function VendorDetailPage({
       vendor_bank_accounts (*),
       vendor_products (*),
       vendor_legal_documents (*),
-      vendor_profiles (*)
+      vendor_profiles (*),
+      vendor_factory_addresses (*),
+      vendor_delivery_areas (*),
+      vendor_cost_inclusions (*),
+      vendor_additional_costs (*)
     `
     )
     .eq("id", id)
@@ -250,6 +294,7 @@ export default async function VendorDetailPage({
           <TabsTrigger value="contacts">Kontak</TabsTrigger>
           <TabsTrigger value="accounts">Rekening</TabsTrigger>
           <TabsTrigger value="products">Produk</TabsTrigger>
+          <TabsTrigger value="operational">Operasional</TabsTrigger>
           <TabsTrigger value="documents">Dokumen</TabsTrigger>
         </TabsList>
 
@@ -582,6 +627,188 @@ export default async function VendorDetailPage({
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
                   Tidak ada produk yang terdaftar
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="operational" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                Alamat Pabrik
+              </CardTitle>
+              <CardDescription>Alamat lengkap pabrik/vendor</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {vendor.vendor_factory_addresses &&
+              vendor.vendor_factory_addresses.length > 0 ? (
+                vendor.vendor_factory_addresses.map((factory) => (
+                  <div key={factory.id} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="text-muted-foreground">Alamat</div>
+                      <div className="font-medium">{factory.address}</div>
+
+                      <div className="text-muted-foreground">Provinsi</div>
+                      <div className="font-medium">
+                        {factory.province ?? "-"}
+                      </div>
+
+                      <div className="text-muted-foreground">
+                        Kabupaten/Kota
+                      </div>
+                      <div className="font-medium">
+                        {factory.kabupaten ?? "-"}
+                      </div>
+
+                      <div className="text-muted-foreground">Kecamatan</div>
+                      <div className="font-medium">
+                        {factory.kecamatan ?? "-"}
+                      </div>
+
+                      <div className="text-muted-foreground">Kode Pos</div>
+                      <div className="font-medium">
+                        {factory.postal_code ?? "-"}
+                      </div>
+
+                      {factory.map_url && (
+                        <>
+                          <div className="text-muted-foreground">Map URL</div>
+                          <div className="font-medium">
+                            <a
+                              href={factory.map_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline"
+                            >
+                              Lihat di Maps
+                            </a>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 text-center text-muted-foreground">
+                  Tidak ada alamat pabrik yang terdaftar
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Truck className="h-5 w-5" />
+                Area Pengiriman
+              </CardTitle>
+              <CardDescription>
+                Wilayah yang dilayani untuk pengiriman
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {vendor.vendor_delivery_areas &&
+              vendor.vendor_delivery_areas.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {vendor.vendor_delivery_areas.map((area) => (
+                    <Badge key={area.id} variant="outline">
+                      {area.provinsi ?? "Provinsi tidak diketahui"}
+                      {area.kabupaten ? ` - ${area.kabupaten}` : ""}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-muted-foreground">
+                  Tidak ada area pengiriman yang terdaftar
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Biaya Termasuk
+              </CardTitle>
+              <CardDescription>
+                Jenis biaya yang sudah termasuk dalam penawaran
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {vendor.vendor_cost_inclusions &&
+              vendor.vendor_cost_inclusions.length > 0 ? (
+                <div className="space-y-3">
+                  {vendor.vendor_cost_inclusions.map((cost) => (
+                    <div key={cost.id} className="flex items-center gap-3">
+                      {cost.is_included ? (
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                      ) : (
+                        <XCircle className="h-5 w-5 text-gray-400" />
+                      )}
+                      <div>
+                        <div className="font-medium">
+                          {costInclusionLabels[cost.inclusion_type] ??
+                            cost.inclusion_type}
+                        </div>
+                        {cost.notes && (
+                          <div className="text-sm text-muted-foreground">
+                            {cost.notes}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-muted-foreground">
+                  Tidak ada informasi biaya yang termasuk
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PlusCircle className="h-5 w-5" />
+                Biaya Tambahan
+              </CardTitle>
+              <CardDescription>
+                Biaya tambahan di luar biaya yang termasuk
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {vendor.vendor_additional_costs &&
+              vendor.vendor_additional_costs.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Deskripsi</TableHead>
+                      <TableHead className="text-right">Jumlah</TableHead>
+                      <TableHead>Satuan</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {vendor.vendor_additional_costs.map((cost) => (
+                      <TableRow key={cost.id}>
+                        <TableCell className="font-medium">
+                          {cost.description}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(cost.amount)}
+                        </TableCell>
+                        <TableCell>{cost.unit ?? "-"}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="py-8 text-center text-muted-foreground">
+                  Tidak ada biaya tambahan
                 </div>
               )}
             </CardContent>

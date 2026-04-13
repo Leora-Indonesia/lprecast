@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { getCurrentUser } from "@/lib/auth"
-import { VendorDashboardLayout } from "@/components/vendor/vendor-dashboard-layout"
+import { VendorLayoutWrapper } from "@/components/vendor/vendor-layout-wrapper"
 
 export default async function VendorLayout({
   children,
@@ -16,13 +16,13 @@ export default async function VendorLayout({
   const userData = user.profile
 
   return (
-    <VendorDashboardLayout
+    <VendorLayoutWrapper
       user={{
         nama: userData.nama ?? null,
         email: userData.email ?? null,
       }}
     >
       {children}
-    </VendorDashboardLayout>
+    </VendorLayoutWrapper>
   )
 }

@@ -37,11 +37,24 @@ export function NotificationBell({
     const fetchNotifications = async () => {
       try {
         const response = await fetch(`/api/notifications?limit=10`)
-        if (response.ok) {
-          const data = await response.json()
-          setNotifications(data.notifications || [])
-          setUnreadCount(data.unreadCount || 0)
+        if (response.status === 401) {
+          if (typeof window !== "undefined") {
+            window.location.href = "/login"
+          }
+          return
         }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const text = await response.text()
+        if (!text || text.trim().startsWith("<")) {
+          setNotifications([])
+          setUnreadCount(0)
+          return
+        }
+        const data = JSON.parse(text)
+        setNotifications(data.notifications || [])
+        setUnreadCount(data.unreadCount || 0)
       } catch (error) {
         console.error("Error fetching notifications:", error)
       }

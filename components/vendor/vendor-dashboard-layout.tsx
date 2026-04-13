@@ -6,7 +6,7 @@ import { VendorDashboardHeader } from "@/components/vendor/vendor-dashboard-head
 
 interface VendorDashboardLayoutProps {
   children: React.ReactNode
-  user?: { nama: string; email: string } | null
+  user?: { nama: string | null; email: string | null } | null
 }
 
 export function VendorDashboardLayout({

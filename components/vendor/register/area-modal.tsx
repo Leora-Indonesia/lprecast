@@ -89,7 +89,7 @@ export function AreaModal({
       )
 
       if (prov.name.toLowerCase().includes(search.toLowerCase())) {
-        return { ...prov, cities: matchedCities }
+        return prov
       }
 
       if (matchedCities.length > 0) {

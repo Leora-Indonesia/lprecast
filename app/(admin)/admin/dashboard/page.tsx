@@ -61,6 +61,9 @@ export default async function AdminDashboard() {
     .order("created_at", { ascending: false })
     .limit(5)
 
+  const unreadNotificationCount =
+    recentNotifications?.filter((n) => !n.is_read).length ?? 0
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "vendor":
@@ -111,7 +114,14 @@ export default async function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5" />
+              <div className="relative">
+                <Bell className="h-5 w-5" />
+                {unreadNotificationCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                    {unreadNotificationCount}
+                  </span>
+                )}
+              </div>
               Notifikasi Terbaru
             </CardTitle>
             <Button variant="ghost" size="sm" asChild>

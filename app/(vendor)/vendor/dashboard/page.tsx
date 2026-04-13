@@ -12,6 +12,7 @@ import {
 import Link from "next/link"
 
 import { createClient } from "@/lib/supabase/server"
+import { formatDateTime } from "@/lib/datetime"
 import { StatCard } from "@/components/admin/stat-card"
 import {
   Card,
@@ -243,10 +244,7 @@ export default async function VendorDashboard() {
                             "N/A"}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          Submitted:{" "}
-                          {new Date(submission.created_at!).toLocaleDateString(
-                            "id-ID"
-                          )}
+                          Submitted: {formatDateTime(submission.created_at)}
                         </p>
                       </div>
                       <Badge variant={status.variant}>{status.label}</Badge>
@@ -293,13 +291,7 @@ export default async function VendorDashboard() {
                       {notification.message}
                     </p>
                     <p className="mt-2 text-xs text-muted-foreground">
-                      {new Date(notification.created_at!).toLocaleString(
-                        "id-ID",
-                        {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        }
-                      )}
+                      {formatDateTime(notification.created_at)}
                     </p>
                   </div>
                 ))}

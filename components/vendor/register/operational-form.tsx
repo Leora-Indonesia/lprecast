@@ -201,6 +201,8 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
   )
   const [showAreaModal, setShowAreaModal] = useState(false)
   const [bankPopoverOpen, setBankPopoverOpen] = useState(false)
+  const [provincePopoverOpen, setProvincePopoverOpen] = useState(false)
+  const [cityPopoverOpen, setCityPopoverOpen] = useState(false)
   const [provinces, setProvinces] = useState<Province[]>([])
   const [cities, setCities] = useState<City[]>([])
   const [isLoadingLocations, setIsLoadingLocations] = useState(false)
@@ -214,7 +216,6 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
   const selectedCity = cities.find((c) => c.id === selectedKabupatenId)
 
   const prevProvinsiIdRef = useRef<string | null>(null)
-  const isInitialLoadRef = useRef(true)
 
   useEffect(() => {
     fetchProvinces()
@@ -222,17 +223,6 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
 
   useEffect(() => {
     if (!selectedProvinsiId) return
-
-    if (isInitialLoadRef.current) {
-      isInitialLoadRef.current = false
-      if (
-        cities.length === 0 ||
-        !cities.find((c) => c.province_id === selectedProvinsiId)
-      ) {
-        fetchCities(selectedProvinsiId)
-      }
-      return
-    }
 
     if (
       prevProvinsiIdRef.current &&
@@ -248,8 +238,7 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
 
     prevProvinsiIdRef.current = selectedProvinsiId
     fetchCities(selectedProvinsiId)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProvinsiId])
+  }, [selectedProvinsiId, setValue])
 
   const fetchProvinces = async () => {
     setIsLoadingLocations(true)
@@ -269,6 +258,7 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
   }
 
   const fetchCities = async (provinceId: string) => {
+    setIsLoadingLocations(true)
     try {
       const { data, error } = await supabase
         .from("master_cities")
@@ -276,10 +266,17 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
         .eq("province_id", provinceId)
         .order("name")
 
-      if (error) throw error
+      if (error) {
+        console.error("Error fetching cities:", error)
+        setCities([])
+        return
+      }
       setCities(data || [])
     } catch (error) {
       console.error("Error fetching cities:", error)
+      setCities([])
+    } finally {
+      setIsLoadingLocations(false)
     }
   }
 
@@ -584,37 +581,90 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
               <Label className="text-sm text-gray-600">
                 Provinsi<span className="required-star">*</span>
               </Label>
-              <Select
-                onValueChange={(value) =>
-                  setValue("operational.factory_address.provinsi_id", value, {
-                    shouldValidate: true,
-                  })
-                }
-                defaultValue={selectedProvinsiId}
-                disabled={isLoadingLocations}
+              <Popover
+                open={provincePopoverOpen}
+                onOpenChange={setProvincePopoverOpen}
               >
-                <SelectTrigger
-                  id="provinsi_id"
-                  className={cn(
-                    "form-input mt-1",
-                    errors.operational?.factory_address?.provinsi_id &&
-                      "border-destructive"
-                  )}
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "form-input w-full justify-between font-normal",
+                      !selectedProvince && "text-muted-foreground",
+                      errors.operational?.factory_address?.provinsi_id &&
+                        "border-destructive"
+                    )}
+                    disabled={isLoadingLocations}
+                  >
+                    {selectedProvince
+                      ? selectedProvince.name
+                      : "Cari Provinsi..."}
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-full p-0"
+                  align="start"
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                  onCloseAutoFocus={(e) => e.preventDefault()}
                 >
-                  <SelectValue
-                    placeholder={
-                      isLoadingLocations ? "Memuat..." : "Pilih Provinsi"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {provinces.map((prov) => (
-                    <SelectItem key={prov.id} value={prov.id}>
-                      {prov.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  <Command>
+                    <CommandInput
+                      placeholder="Cari Provinsi..."
+                      autoFocus={false}
+                    />
+                    <CommandList>
+                      <CommandEmpty>Provinsi tidak ditemukan.</CommandEmpty>
+                      <CommandGroup>
+                        {provinces.map((prov) => (
+                          <CommandItem
+                            key={prov.id}
+                            value={prov.name}
+                            onSelect={() => {
+                              setValue(
+                                "operational.factory_address.provinsi_id",
+                                prov.id,
+                                { shouldValidate: true }
+                              )
+                              setValue(
+                                "operational.factory_address.provinsi_name",
+                                prov.name,
+                                { shouldValidate: true }
+                              )
+                              setProvincePopoverOpen(false)
+                            }}
+                            onClick={() => {
+                              setValue(
+                                "operational.factory_address.provinsi_id",
+                                prov.id,
+                                { shouldValidate: true }
+                              )
+                              setValue(
+                                "operational.factory_address.provinsi_name",
+                                prov.name,
+                                { shouldValidate: true }
+                              )
+                              setProvincePopoverOpen(false)
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedProvinsiId === prov.id
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {prov.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               {isLoadingLocations && (
                 <p className="mt-1 flex items-center gap-1 text-xs text-gray-500">
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -635,37 +685,73 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
               <Label className="text-sm text-gray-600">
                 Kabupaten/Kota<span className="required-star">*</span>
               </Label>
-              <Select
-                onValueChange={handleSelectCity}
-                defaultValue={selectedKabupatenId}
-                disabled={!selectedProvinsiId || cities.length === 0}
-              >
-                <SelectTrigger
-                  id="kabupaten_id"
-                  className={cn(
-                    "form-input mt-1",
-                    errors.operational?.factory_address?.kabupaten_id &&
-                      "border-destructive"
-                  )}
-                >
-                  <SelectValue
-                    placeholder={
-                      !selectedProvinsiId
+              <Popover open={cityPopoverOpen} onOpenChange={setCityPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "form-input w-full justify-between font-normal",
+                      !selectedCity && "text-muted-foreground",
+                      errors.operational?.factory_address?.kabupaten_id &&
+                        "border-destructive"
+                    )}
+                    disabled={!selectedProvinsiId}
+                  >
+                    {selectedCity
+                      ? selectedCity.name
+                      : !selectedProvinsiId
                         ? "Pilih Provinsi dulu"
-                        : cities.length === 0
-                          ? "Memuat..."
-                          : "Pilih Kabupaten/Kota"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {cities.map((city) => (
-                    <SelectItem key={city.id} value={city.id}>
-                      {city.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                        : "Cari Kabupaten/Kota..."}
+                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-full p-0"
+                  align="start"
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                  onCloseAutoFocus={(e) => e.preventDefault()}
+                >
+                  <Command>
+                    <CommandInput
+                      placeholder="Cari Kabupaten/Kota..."
+                      autoFocus={false}
+                    />
+                    <CommandList>
+                      <CommandEmpty>
+                        Kabupaten/Kota tidak ditemukan.
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {cities.map((city) => (
+                          <CommandItem
+                            key={city.id}
+                            value={city.name}
+                            onSelect={() => {
+                              handleSelectCity(city.id)
+                              setCityPopoverOpen(false)
+                            }}
+                            onClick={() => {
+                              handleSelectCity(city.id)
+                              setCityPopoverOpen(false)
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedKabupatenId === city.id
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {city.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               {errors.operational?.factory_address?.kabupaten_id && (
                 <p className="mt-1 text-xs text-destructive">
                   {
