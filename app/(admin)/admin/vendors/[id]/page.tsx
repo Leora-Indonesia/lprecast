@@ -123,10 +123,10 @@ type VendorRegistration = {
   vendor_delivery_areas: {
     id: string
     province_id: string | null
-    provinsi: string | null
     city_id: string | null
-    kabupaten: string | null
     created_at: string | null
+    master_provinces: { name: string } | null
+    master_cities: { name: string } | null
   }[]
   vendor_cost_inclusions: {
     id: string
@@ -246,7 +246,11 @@ export default async function VendorDetailPage({
       vendor_legal_documents (*),
       vendor_profiles (*),
       vendor_factory_addresses (*),
-      vendor_delivery_areas (*),
+      vendor_delivery_areas (
+        *,
+        master_provinces:province_id (name),
+        master_cities:city_id (name)
+      ),
       vendor_cost_inclusions (*),
       vendor_additional_costs (*)
     `
@@ -715,8 +719,11 @@ export default async function VendorDetailPage({
                 <div className="flex flex-wrap gap-2">
                   {vendor.vendor_delivery_areas.map((area) => (
                     <Badge key={area.id} variant="outline">
-                      {area.provinsi ?? "Provinsi tidak diketahui"}
-                      {area.kabupaten ? ` - ${area.kabupaten}` : ""}
+                      {area.master_provinces?.name ??
+                        "Provinsi tidak diketahui"}
+                      {area.master_cities?.name
+                        ? ` - ${area.master_cities.name}`
+                        : ""}
                     </Badge>
                   ))}
                 </div>
