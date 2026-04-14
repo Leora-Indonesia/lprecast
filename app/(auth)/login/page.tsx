@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { toast } from "sonner"
 
 import { loginAction } from "@/actions/auth"
 import { Button } from "@/components/ui/button"
@@ -29,6 +31,21 @@ const loginSchema = z.object({
 })
 
 type LoginForm = z.infer<typeof loginSchema>
+
+function LoginFormWithParams() {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const setupSuccess = searchParams.get("setup") === "success"
+    if (setupSuccess) {
+      toast.success(
+        "Password berhasil diset! Silakan login dengan kredensial Anda."
+      )
+    }
+  }, [searchParams])
+
+  return null
+}
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -61,63 +78,68 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Masuk ke LPrecast</CardTitle>
-          <CardDescription>
-            Masukkan kredensial Anda untuk melanjutkan
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="nama@email.com"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+    <>
+      <Suspense fallback={null}>
+        <LoginFormWithParams />
+      </Suspense>
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Masuk ke LPrecast</CardTitle>
+            <CardDescription>
+              Masukkan kredensial Anda untuk melanjutkan
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="nama@email.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Masukkan password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {error && (
+                <div className="text-center text-sm text-red-600">{error}</div>
               )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Masukkan password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {error && (
-              <div className="text-center text-sm text-red-600">{error}</div>
-            )}
-            <Button
-              type="submit"
-              className="w-full bg-[#16a34a] hover:bg-[#15803d]"
-              disabled={isLoading}
-            >
-              {isLoading ? "Sedang masuk..." : "Masuk"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+              <Button
+                type="submit"
+                className="w-full bg-[#16a34a] hover:bg-[#15803d]"
+                disabled={isLoading}
+              >
+                {isLoading ? "Sedang masuk..." : "Masuk"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   )
 }
