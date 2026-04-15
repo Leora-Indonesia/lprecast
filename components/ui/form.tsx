@@ -154,12 +154,21 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = "FormMessage"
 
+const Form = React.forwardRef<
+  HTMLFormElement,
+  React.HTMLAttributes<HTMLFormElement>
+>(({ className, ...props }, ref) => {
+  return <form ref={ref} className={cn("space-y-6", className)} {...props} />
+})
+Form.displayName = "Form"
+
 export {
   useFormField,
-  FormField,
+  Form,
   FormItem,
   FormLabel,
   FormControl,
   FormDescription,
   FormMessage,
+  FormField,
 }

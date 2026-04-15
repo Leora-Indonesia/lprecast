@@ -1,151 +1,64 @@
-# Identitas Proyek
+# LPrecast Vendor Portal - Context
 
-Nama: LPrecast Vendor Portal
+## Quick Reference
 
-URL: precast.leora.co.id
+- Stack: Next.js 16 App Router (proxy.ts as middleware) + React 19 + TypeScript + Turbopack
+- DB: Supabase
+- UI: Tailwind CSS + shadcn/ui + Radix UI
+- PWA: Serwist
+- Theme source of truth: lib/theme-config.ts
+- DB types: types/database.types.ts
 
-Repo: terpisah dari sistem internal, DB Supabase sama
+## Roles
 
-# Bisnis
+| Role   | Access                                  |
+| ------ | --------------------------------------- |
+| admin  | Full access                             |
+| spv    | Verify progress, monitoring (read-only) |
+| vendor | Register, tender, upload progress       |
+| client | View project (post-MVP)                 |
 
-Platform konstruksi model Upwork — Leora sebagai makelar/pihak ketiga
+## Business Rules
 
-3 role: Admin (Leora internal), Vendor, Client
+- Min. 2 vendor submit penawaran agar tender valid
+- Nilai SPK = Tender Price x Quantity
+- Upload progress deadline: 09.00 WIB hari berikutnya
+- Keterlambatan upload -> KPI negatif
+- Payment 2-level approval: Finance Leora -> Client -> Paid
 
-Flow utama: Registrasi → Verifikasi → Tender → Pelaksanaan → Pembayaran → Evaluasi
+## MVP Epics (target Apr 14)
 
-# Stack
+1. Vendor registration & onboarding
+2. Admin verification + field visit checklist
+3. Admin input proyek manual
+4. Tender minimal - submit, pilih pemenang, generate SPK
+5. Monitoring harian - upload progress, verifikasi SPV
 
-Next.js 16 App Router + React 19 + TypeScript + Turbopack
+## Folder Structure
 
-Supabase (shared dengan sistem internal) — auth, DB, storage
+app/(auth)/login/
+app/(vendor)/dashboard, profile, tenders, projects
+app/(admin)/dashboard, vendors, tenders
+lib/utils.ts, lib/theme-config.ts
+docs/architecture/design-system.md (UI conventions)
+docs/architecture/pwa.md (PWA + theme guide)
 
-Tailwind CSS + shadcn/ui + Radix UI
+## Conventions
 
-PWA: Serwist — service worker, offline support, installable (manifest + sw)
+- Server components default, use "use client" only when interactivity needed
+- API via Supabase client with RLS - no service role bypass on client
+- Protected routes must check stakeholder_type in middleware
+- All UI components use shadcn/ui
 
-Payment: Xendit (post-MVP)
+## Database Tables
 
-# Auth
+Existing: users, projects, vendor_spk, vendor_progress, vendor_payment
+New: vendor_profiles, vendor_documents, vendor_products, tenders, tender_submissions, project_milestones, notifications, payment_requests, vendor_kpi_scores
 
-Shared Supabase auth dengan sistem internal
+## On-Demand Docs
 
-Middleware cek stakeholder_type: hanya vendor, client, admin yang boleh masuk
-
-internal user di-redirect ke unauthorized
-
-# Role & Akses
-
-admin — full access, manajemen vendor, tender, proyek
-
-vendor — registrasi, ikut tender, upload progres
-
-client — view proyek & progres (scaffold only, post-MVP)
-
-# Database (Supabase — shared) Existing tables yang direuse:
-
-users — profiles + stakeholder_type + RBAC
-
-projects — data proyek
-
-vendor_spk — SPK vendor
-
-vendor_progress — progres harian
-
-vendor_payment — pembayaran vendor
-
-New tables yang akan dibuat:
-
-vendor_profiles — data perusahaan vendor
-
-vendor_documents — dokumen persyaratan
-
-vendor_products — daftar harga produk
-
-tenders — data tender
-
-tender_submissions — penawaran vendor
-
-project_milestones — milestone proyek
-
-notifications — notifikasi sistem
-
-payment_requests — pengajuan pembayaran (scaffold)
-
-vendor_kpi_scores — skor KPI vendor (scaffold)
-
-# MVP Scope (target 14 April)
-
-Epic 1: Vendor registration & onboarding (full)
-
-Epic 2: Admin verification + field visit checklist (full)
-
-Epic 3: Admin input proyek manual — tanpa client portal
-
-Epic 4: Tender minimal — submit penawaran, pilih pemenang, generate SPK
-
-Epic 5: Monitoring harian full — upload progres, verifikasi SPV
-
-Post-MVP:
-
-Payment via Xendit
-
-Client portal
-
-KPI & evaluasi otomatis
-
-Notifikasi WhatsApp/email
-
-Mobile app: PWA with push notification (OneSignal integration)
-
-# Business Rules Penting
-
-Vendor wajib lengkapi 11 data dalam 3×24 jam atau auto-nonaktif
-
-Min. 2 vendor submit penawaran agar tender valid
-
-Tender tidak auto-close sampai ada vendor yang sesuai
-
-Nilai SPK = Tender Price × Quantity (bukan Base Price)
-
-Upload progres deadline 09.00 WIB hari berikutnya
-
-Keterlambatan upload → KPI negatif + flag sistem
-
-Payment 2-level approval: Finance Leora → Client → Paid
-
-Pembayaran hanya ke rekening atas nama PT yang terdaftar
-
-# Struktur Folder
-
-app/
-├── sw.ts # Service worker (Serwist)
-├── manifest.ts # PWA manifest
-├── ~offline/ # Offline fallback page
-├── (auth)/login/
-├── (vendor)/dashboard, profile, tenders, projects
-├── (client)/dashboard, projects
-├── (admin)/dashboard, vendors, tenders
-└── api/
-lib/
-├── utils.ts
-└── theme-config.ts # Source of truth untuk warna tema
-docs/
-├── CONTEXT.md
-├── PROGRESS.md
-├── architecture/
-│ ├── design-system.md
-│ └── pwa.md # PWA architecture guide
-└── modules/vendor.md
-
-# Konvensi Koding
-
-Semua komponen UI pakai shadcn — cek docs/architecture/design-system.md
-
-Server components by default, use client hanya jika perlu interaktivitas
-
-API calls via Supabase client — gunakan RLS, jangan bypass dengan service role di client
-
-Setiap route protected wajib pakai middleware check stakeholder_type
-
-Theme warna: SINGLE SOURCE OF TRUTH di lib/theme-config.ts — cek docs/architecture/pwa.md
+- docs/tasks/task-XX-\*.md - Task-specific specs
+- docs/end-to-end-plan.md - Full business flow
+- docs/modules/vendor.md - Vendor module detail
+- docs/PLAN-MVP.md - MVP timeline
+- docs/tasks/PROGRESS.md - Progress tracker

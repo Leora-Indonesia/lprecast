@@ -14,56 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      backup_notifications: {
-        Row: {
-          category: Database["public"]["Enums"]["notification_category"]
-          created_at: string | null
-          id: string
-          is_read: boolean | null
-          message: string
-          read_at: string | null
-          reference_id: string | null
-          reference_type: string | null
-          title: string
-          type: string
-          user_id: string
-        }
-        Insert: {
-          category: Database["public"]["Enums"]["notification_category"]
-          created_at?: string | null
-          id?: string
-          is_read?: boolean | null
-          message: string
-          read_at?: string | null
-          reference_id?: string | null
-          reference_type?: string | null
-          title: string
-          type: string
-          user_id: string
-        }
-        Update: {
-          category?: Database["public"]["Enums"]["notification_category"]
-          created_at?: string | null
-          id?: string
-          is_read?: boolean | null
-          message?: string
-          read_at?: string | null
-          reference_id?: string | null
-          reference_type?: string | null
-          title?: string
-          type?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "notifications_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       master_cities: {
         Row: {
           code: string
@@ -651,34 +601,29 @@ export type Database = {
           created_at: string | null
           description: string
           id: string
-          registration_id: string
           unit: string | null
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
-          amount: number
+          amount?: number
           created_at?: string | null
           description: string
           id?: string
-          registration_id: string
           unit?: string | null
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
           amount?: number
           created_at?: string | null
           description?: string
           id?: string
-          registration_id?: string
           unit?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_additional_costs_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_bank_accounts: {
         Row: {
@@ -688,7 +633,8 @@ export type Database = {
           created_at: string | null
           id: string
           is_primary: boolean | null
-          registration_id: string
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
           account_holder_name: string
@@ -697,7 +643,8 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
-          registration_id: string
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
           account_holder_name?: string
@@ -706,202 +653,149 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
-          registration_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_bank_accounts_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      vendor_company_info: {
-        Row: {
-          created_at: string | null
-          email: string
-          facebook: string | null
-          id: string
-          instagram: string | null
-          kontak_pic: string
-          linkedin: string | null
-          nama_perusahaan: string
-          nama_pic: string
-          registration_id: string
-          updated_at: string | null
-          website: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          facebook?: string | null
-          id?: string
-          instagram?: string | null
-          kontak_pic: string
-          linkedin?: string | null
-          nama_perusahaan: string
-          nama_pic: string
-          registration_id: string
           updated_at?: string | null
-          website?: string | null
+          user_id?: string
         }
-        Update: {
-          created_at?: string | null
-          email?: string
-          facebook?: string | null
-          id?: string
-          instagram?: string | null
-          kontak_pic?: string
-          linkedin?: string | null
-          nama_perusahaan?: string
-          nama_pic?: string
-          registration_id?: string
-          updated_at?: string | null
-          website?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_company_info_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_contacts: {
         Row: {
           created_at: string | null
           id: string
           is_primary: boolean | null
-          jabatan: string
+          jabatan: string | null
           nama: string
-          no_hp: string
-          registration_id: string
+          no_hp: string | null
           sequence: number
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
-          jabatan: string
+          jabatan?: string | null
           nama: string
-          no_hp: string
-          registration_id: string
+          no_hp?: string | null
           sequence: number
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
-          jabatan?: string
+          jabatan?: string | null
           nama?: string
-          no_hp?: string
-          registration_id?: string
+          no_hp?: string | null
           sequence?: number
+          updated_at?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_contacts_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_cost_inclusions: {
         Row: {
           created_at: string | null
           id: string
-          inclusion_type: Database["public"]["Enums"]["cost_inclusion_type"]
+          inclusion_type: string
           is_included: boolean | null
           notes: string | null
-          registration_id: string
+          user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          inclusion_type: Database["public"]["Enums"]["cost_inclusion_type"]
+          inclusion_type: string
           is_included?: boolean | null
           notes?: string | null
-          registration_id: string
+          user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          inclusion_type?: Database["public"]["Enums"]["cost_inclusion_type"]
+          inclusion_type?: string
           is_included?: boolean | null
           notes?: string | null
-          registration_id?: string
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_cost_inclusions_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_delivery_areas: {
         Row: {
           city_id: string | null
+          city_name: string | null
           created_at: string | null
           id: string
-          kabupaten: string | null
           province_id: string | null
-          provinsi: string | null
-          registration_id: string
+          province_name: string | null
+          user_id: string
         }
         Insert: {
           city_id?: string | null
+          city_name?: string | null
           created_at?: string | null
           id?: string
-          kabupaten?: string | null
           province_id?: string | null
-          provinsi?: string | null
-          registration_id: string
+          province_name?: string | null
+          user_id: string
         }
         Update: {
           city_id?: string | null
+          city_name?: string | null
           created_at?: string | null
           id?: string
-          kabupaten?: string | null
           province_id?: string | null
-          provinsi?: string | null
-          registration_id?: string
+          province_name?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_delivery_areas_city_id_fkey"
-            columns: ["city_id"]
-            isOneToOne: false
-            referencedRelation: "master_cities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_delivery_areas_province_id_fkey"
-            columns: ["province_id"]
-            isOneToOne: false
-            referencedRelation: "master_provinces"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_delivery_areas_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      vendor_documents: {
+        Row: {
+          document_number: string | null
+          document_type: string
+          file_name: string | null
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          uploaded_at: string | null
+          user_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          document_number?: string | null
+          document_type: string
+          file_name?: string | null
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          uploaded_at?: string | null
+          user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          document_number?: string | null
+          document_type?: string
+          file_name?: string | null
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          uploaded_at?: string | null
+          user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
       }
       vendor_factory_addresses: {
         Row: {
-          address: string
+          address: string | null
           created_at: string | null
           id: string
           is_primary: boolean | null
@@ -912,10 +806,11 @@ export type Database = {
           map_url: string | null
           postal_code: string | null
           province: string | null
-          registration_id: string
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
-          address: string
+          address?: string | null
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
@@ -926,10 +821,11 @@ export type Database = {
           map_url?: string | null
           postal_code?: string | null
           province?: string | null
-          registration_id: string
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
-          address?: string
+          address?: string | null
           created_at?: string | null
           id?: string
           is_primary?: boolean | null
@@ -940,17 +836,10 @@ export type Database = {
           map_url?: string | null
           postal_code?: string | null
           province?: string | null
-          registration_id?: string
+          updated_at?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_factory_addresses_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_kpi_scores: {
         Row: {
@@ -1012,77 +901,35 @@ export type Database = {
           },
         ]
       }
-      vendor_legal_documents: {
+      vendor_onboarding_drafts: {
         Row: {
           created_at: string | null
-          document_number: string | null
-          document_type: Database["public"]["Enums"]["vendor_document_type"]
-          file_name: string
-          file_path: string
-          file_size: number
+          current_step: number
+          draft_data: Json
           id: string
-          mime_type: string
-          registration_id: string
-          uploaded_at: string | null
-          verification_notes: string | null
-          verification_status:
-            | Database["public"]["Enums"]["document_verification_status"]
-            | null
-          verified_at: string | null
-          verified_by: string | null
+          last_saved_at: string | null
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string | null
-          document_number?: string | null
-          document_type: Database["public"]["Enums"]["vendor_document_type"]
-          file_name: string
-          file_path: string
-          file_size: number
+          current_step?: number
+          draft_data?: Json
           id?: string
-          mime_type: string
-          registration_id: string
-          uploaded_at?: string | null
-          verification_notes?: string | null
-          verification_status?:
-            | Database["public"]["Enums"]["document_verification_status"]
-            | null
-          verified_at?: string | null
-          verified_by?: string | null
+          last_saved_at?: string | null
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string | null
-          document_number?: string | null
-          document_type?: Database["public"]["Enums"]["vendor_document_type"]
-          file_name?: string
-          file_path?: string
-          file_size?: number
+          current_step?: number
+          draft_data?: Json
           id?: string
-          mime_type?: string
-          registration_id?: string
-          uploaded_at?: string | null
-          verification_notes?: string | null
-          verification_status?:
-            | Database["public"]["Enums"]["document_verification_status"]
-            | null
-          verified_at?: string | null
-          verified_by?: string | null
+          last_saved_at?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_legal_documents_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_legal_documents_verified_by_fkey"
-            columns: ["verified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_payment: {
         Row: {
@@ -1138,9 +985,9 @@ export type Database = {
           moq: number | null
           name: string
           price: number
-          registration_id: string
           satuan: string
           updated_at: string | null
+          user_id: string
           weight_kg: number | null
         }
         Insert: {
@@ -1154,10 +1001,10 @@ export type Database = {
           material?: string | null
           moq?: number | null
           name: string
-          price: number
-          registration_id: string
+          price?: number
           satuan: string
           updated_at?: string | null
+          user_id: string
           weight_kg?: number | null
         }
         Update: {
@@ -1172,78 +1019,63 @@ export type Database = {
           moq?: number | null
           name?: string
           price?: number
-          registration_id?: string
           satuan?: string
           updated_at?: string | null
+          user_id?: string
           weight_kg?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_products_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_profiles: {
         Row: {
           approved_at: string | null
           approved_by: string | null
           created_at: string | null
-          id: string
-          preferred_vendor: boolean | null
-          registration_id: string | null
-          status: Database["public"]["Enums"]["vendor_profile_status"] | null
+          email_perusahaan: string | null
+          facebook: string | null
+          instagram: string | null
+          kontak_pic: string | null
+          linkedin: string | null
+          nama_perusahaan: string
+          nama_pic: string
+          status: string
           updated_at: string | null
           user_id: string
+          website: string | null
         }
         Insert: {
           approved_at?: string | null
           approved_by?: string | null
           created_at?: string | null
-          id?: string
-          preferred_vendor?: boolean | null
-          registration_id?: string | null
-          status?: Database["public"]["Enums"]["vendor_profile_status"] | null
+          email_perusahaan?: string | null
+          facebook?: string | null
+          instagram?: string | null
+          kontak_pic?: string | null
+          linkedin?: string | null
+          nama_perusahaan: string
+          nama_pic: string
+          status?: string
           updated_at?: string | null
           user_id: string
+          website?: string | null
         }
         Update: {
           approved_at?: string | null
           approved_by?: string | null
           created_at?: string | null
-          id?: string
-          preferred_vendor?: boolean | null
-          registration_id?: string | null
-          status?: Database["public"]["Enums"]["vendor_profile_status"] | null
+          email_perusahaan?: string | null
+          facebook?: string | null
+          instagram?: string | null
+          kontak_pic?: string | null
+          linkedin?: string | null
+          nama_perusahaan?: string
+          nama_pic?: string
+          status?: string
           updated_at?: string | null
           user_id?: string
+          website?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_profiles_approved_by_fkey"
-            columns: ["approved_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_profiles_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vendor_progress: {
         Row: {
@@ -1302,112 +1134,48 @@ export type Database = {
           },
         ]
       }
-      vendor_registration_history: {
-        Row: {
-          action: Database["public"]["Enums"]["vendor_registration_status"]
-          action_by: string
-          created_at: string | null
-          id: string
-          new_values: Json | null
-          notes: string | null
-          old_values: Json | null
-          registration_id: string
-        }
-        Insert: {
-          action: Database["public"]["Enums"]["vendor_registration_status"]
-          action_by: string
-          created_at?: string | null
-          id?: string
-          new_values?: Json | null
-          notes?: string | null
-          old_values?: Json | null
-          registration_id: string
-        }
-        Update: {
-          action?: Database["public"]["Enums"]["vendor_registration_status"]
-          action_by?: string
-          created_at?: string | null
-          id?: string
-          new_values?: Json | null
-          notes?: string | null
-          old_values?: Json | null
-          registration_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_registration_history_action_by_fkey"
-            columns: ["action_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_registration_history_registration_id_fkey"
-            columns: ["registration_id"]
-            isOneToOne: false
-            referencedRelation: "vendor_registrations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       vendor_registrations: {
         Row: {
           approval_notes: string | null
           created_at: string | null
-          current_step: number | null
           id: string
-          legal_agreement: boolean | null
+          rejection_reason: string | null
           reviewed_at: string | null
           reviewed_by: string | null
-          status:
-            | Database["public"]["Enums"]["vendor_registration_status"]
-            | null
-          submission_date: string | null
+          status: string
+          submitted_at: string | null
           updated_at: string | null
-          vendor_id: string | null
+          user_id: string
         }
         Insert: {
           approval_notes?: string | null
           created_at?: string | null
-          current_step?: number | null
           id?: string
-          legal_agreement?: boolean | null
+          rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          status?:
-            | Database["public"]["Enums"]["vendor_registration_status"]
-            | null
-          submission_date?: string | null
+          status?: string
+          submitted_at?: string | null
           updated_at?: string | null
-          vendor_id?: string | null
+          user_id: string
         }
         Update: {
           approval_notes?: string | null
           created_at?: string | null
-          current_step?: number | null
           id?: string
-          legal_agreement?: boolean | null
+          rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          status?:
-            | Database["public"]["Enums"]["vendor_registration_status"]
-            | null
-          submission_date?: string | null
+          status?: string
+          submitted_at?: string | null
           updated_at?: string | null
-          vendor_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "vendor_registrations_reviewed_by_fkey"
-            columns: ["reviewed_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "vendor_registrations_vendor_id_fkey"
-            columns: ["vendor_id"]
-            isOneToOne: false
+            foreignKeyName: "vendor_registrations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -1470,32 +1238,9 @@ export type Database = {
     }
     Functions: {
       current_user_id: { Args: never; Returns: string }
-      get_admin_emails: {
-        Args: never
-        Returns: {
-          email: string
-          nama: string
-          user_id: string
-        }[]
-      }
-      get_user_permissions: { Args: never; Returns: Json }
-      get_vendor_company_info: {
-        Args: { p_registration_id: string }
-        Returns: {
-          email: string
-          kontak_pic: string
-          nama_perusahaan: string
-          nama_pic: string
-        }[]
-      }
       is_client: { Args: never; Returns: boolean }
       is_internal_user: { Args: never; Returns: boolean }
       is_vendor: { Args: never; Returns: boolean }
-      notify_admins_new_vendor: {
-        Args: { p_registration_id: string }
-        Returns: undefined
-      }
-      user_has_permission: { Args: { p_permission: string }; Returns: boolean }
     }
     Enums: {
       cost_inclusion_type:

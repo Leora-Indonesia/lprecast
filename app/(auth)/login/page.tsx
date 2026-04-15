@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
+import Link from "next/link"
 
 import { loginAction } from "@/actions/auth"
 import { Button } from "@/components/ui/button"
@@ -82,7 +83,7 @@ export default function LoginPage() {
       <Suspense fallback={null}>
         <LoginFormWithParams />
       </Suspense>
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-muted/50">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Masuk ke LPrecast</CardTitle>
@@ -129,14 +130,19 @@ export default function LoginPage() {
               {error && (
                 <div className="text-center text-sm text-red-600">{error}</div>
               )}
-              <Button
-                type="submit"
-                className="w-full bg-[#16a34a] hover:bg-[#15803d]"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Sedang masuk..." : "Masuk"}
               </Button>
             </form>
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              Belum punya akun?{" "}
+              <Link
+                href="/vendor/register"
+                className="text-primary hover:underline"
+              >
+                Daftar sebagai Vendor
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

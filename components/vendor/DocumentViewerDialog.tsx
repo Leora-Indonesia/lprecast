@@ -21,6 +21,8 @@ interface VendorLegalDocument {
   verification_status: string | null
   verified_at: string | null
   uploaded_at: string | null
+  file_size?: number
+  mime_type?: string
 }
 
 interface DocumentViewerDialogProps {

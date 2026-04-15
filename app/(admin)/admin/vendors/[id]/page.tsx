@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin"
+import { createClient } from "@/lib/supabase/server"
 import { formatDate } from "@/lib/datetime"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -39,109 +39,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  getVendorRegistrationById,
+  checkVendorTransactions,
+  approveVendor,
+  rejectVendor,
+  deleteVendor,
+} from "../actions"
 import { DocumentViewerDialog } from "@/components/vendor/DocumentViewerDialog"
+import { RejectVendorDialog } from "@/components/admin/reject-vendor-dialog"
+import { ApproveVendorDialog } from "@/components/admin/approve-vendor-dialog"
 
 export const metadata = {
   title: "Detail Vendor | LPrecast",
   description: "Lihat detail profil dan performa vendor",
-}
-
-type VendorRegistration = {
-  id: string
-  status: string | null
-  created_at: string | null
-  submission_date: string | null
-  approval_notes: string | null
-  reviewed_at: string | null
-  vendor_id: string | null
-  vendor_company_info: {
-    nama_perusahaan: string
-    nama_pic: string
-    kontak_pic: string
-    email: string
-    instagram: string | null
-    facebook: string | null
-    linkedin: string | null
-    website: string | null
-  } | null
-  vendor_contacts: {
-    id: string
-    nama: string
-    jabatan: string
-    no_hp: string
-    is_primary: boolean | null
-    sequence: number
-  }[]
-  vendor_bank_accounts: {
-    id: string
-    bank_name: string
-    account_number: string
-    account_holder_name: string
-    is_primary: boolean | null
-  }[]
-  vendor_products: {
-    id: string
-    name: string
-    description: string | null
-    price: number
-    satuan: string
-    material: string | null
-    dimensions: string | null
-    is_active: boolean | null
-  }[]
-  vendor_legal_documents: {
-    id: string
-    document_type: string
-    file_name: string
-    file_path: string
-    file_size: number
-    mime_type: string
-    document_number: string | null
-    verification_status: string | null
-    verified_at: string | null
-    uploaded_at: string | null
-  }[]
-  vendor_profiles: {
-    id: string
-    status: string | null
-    approved_at: string | null
-    user_id: string
-  }[]
-  vendor_factory_addresses: {
-    id: string
-    address: string
-    province: string | null
-    kabupaten: string | null
-    kecamatan: string | null
-    postal_code: string | null
-    latitude: number | null
-    longitude: number | null
-    map_url: string | null
-    is_primary: boolean | null
-    created_at: string | null
-  }[]
-  vendor_delivery_areas: {
-    id: string
-    province_id: string | null
-    city_id: string | null
-    created_at: string | null
-    master_provinces: { name: string } | null
-    master_cities: { name: string } | null
-  }[]
-  vendor_cost_inclusions: {
-    id: string
-    inclusion_type: string
-    is_included: boolean | null
-    notes: string | null
-    created_at: string | null
-  }[]
-  vendor_additional_costs: {
-    id: string
-    description: string
-    amount: number
-    unit: string | null
-    created_at: string | null
-  }[]
 }
 
 const costInclusionLabels: Record<string, string> = {
@@ -159,7 +70,6 @@ const statusLabels: Record<string, string> = {
   under_review: "Ditinjau",
   approved: "Disetujui",
   rejected: "Ditolak",
-  revision_requested: "Revisi Diminta",
 }
 
 const statusVariants: Record<
@@ -171,7 +81,6 @@ const statusVariants: Record<
   under_review: "default",
   approved: "outline",
   rejected: "destructive",
-  revision_requested: "outline",
 }
 
 const documentTypeLabels: Record<string, string> = {
@@ -180,42 +89,6 @@ const documentTypeLabels: Record<string, string> = {
   nib: "NIB",
   siup_sbu: "SIUP/SBU",
   company_profile: "Company Profile",
-}
-
-function VerificationBadge({ status }: { status: string | null }) {
-  if (!status) {
-    return (
-      <Badge variant="secondary">
-        <Clock className="mr-1 h-3 w-3" />
-        Menunggu
-      </Badge>
-    )
-  }
-
-  if (status === "verified") {
-    return (
-      <Badge variant="default" className="bg-green-600 hover:bg-green-700">
-        <CheckCircle className="mr-1 h-3 w-3" />
-        Terverifikasi
-      </Badge>
-    )
-  }
-
-  if (status === "rejected") {
-    return (
-      <Badge variant="destructive">
-        <XCircle className="mr-1 h-3 w-3" />
-        Ditolak
-      </Badge>
-    )
-  }
-
-  return (
-    <Badge variant="secondary">
-      <Clock className="mr-1 h-3 w-3" />
-      {status}
-    </Badge>
-  )
 }
 
 function formatCurrency(amount: number) {
@@ -232,44 +105,50 @@ export default async function VendorDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const supabase = await createAdminClient()
+  const supabase = await createClient()
+  const adminUserId = (await supabase.auth.getUser()).data.user?.id
 
-  const { data: registration, error } = await supabase
-    .from("vendor_registrations")
-    .select(
-      `
-      *,
-      vendor_company_info (*),
-      vendor_contacts (*),
-      vendor_bank_accounts (*),
-      vendor_products (*),
-      vendor_legal_documents (*),
-      vendor_profiles (*),
-      vendor_factory_addresses (*),
-      vendor_delivery_areas (
-        *,
-        master_provinces:province_id (name),
-        master_cities:city_id (name)
-      ),
-      vendor_cost_inclusions (*),
-      vendor_additional_costs (*)
-    `
-    )
-    .eq("id", id)
-    .single()
+  const data = await getVendorRegistrationById(id)
 
-  if (error || !registration) {
-    console.error("Error fetching vendor:", error)
+  if (!data) {
     notFound()
   }
 
-  const vendor: VendorRegistration = registration as VendorRegistration
+  const {
+    registration,
+    draft_data,
+    documents,
+    contacts,
+    bank_accounts,
+    factory_addresses,
+    products,
+    delivery_areas,
+    cost_inclusions,
+    additional_costs,
+    profile,
+  } = data
 
-  let companyInfo = vendor.vendor_company_info
-  if (Array.isArray(companyInfo)) {
-    companyInfo = companyInfo[0] || null
-  }
-  const profile = vendor.vendor_profiles?.[0]
+  const companyInfo = draft_data?.company_info as
+    | {
+        nama_perusahaan?: string
+        nama_pic?: string
+        email?: string
+        kontak_pic?: string
+        website?: string
+        instagram?: string
+        facebook?: string
+        linkedin?: string
+      }
+    | undefined
+
+  const transactionStatus = await checkVendorTransactions(registration.user_id)
+
+  const canApprove =
+    registration.status === "submitted" ||
+    registration.status === "under_review"
+  const canReject =
+    registration.status === "submitted" ||
+    registration.status === "under_review"
 
   return (
     <div className="space-y-6">
@@ -281,14 +160,31 @@ export default async function VendorDetailPage({
         </Button>
         <div>
           <h1 className="text-2xl font-bold">
-            {companyInfo?.nama_perusahaan ?? "Vendor"}
+            {companyInfo?.nama_perusahaan || registration.user_nama || "Vendor"}
           </h1>
           <p className="text-muted-foreground">Detail informasi vendor</p>
         </div>
-        <div className="ml-auto">
-          <Badge variant={statusVariants[vendor.status ?? "draft"]}>
-            {statusLabels[vendor.status ?? "draft"]}
+        <div className="ml-auto flex items-center gap-2">
+          <Badge variant={statusVariants[registration.status]}>
+            {statusLabels[registration.status] || registration.status}
           </Badge>
+          {canApprove && (
+            <ApproveVendorDialog
+              registrationId={registration.id}
+              adminUserId={adminUserId || ""}
+              companyName={companyInfo?.nama_perusahaan || "Vendor"}
+            />
+          )}
+          {canReject && (
+            <RejectVendorDialog
+              registrationId={registration.id}
+              adminUserId={adminUserId || ""}
+              companyName={companyInfo?.nama_perusahaan || "Vendor"}
+            />
+          )}
+          <Button variant="destructive" asChild>
+            <Link href={`/admin/vendors/${registration.id}/delete`}>Hapus</Link>
+          </Button>
         </div>
       </div>
 
@@ -367,14 +263,6 @@ export default async function VendorDetailPage({
                         <div className="font-medium">{companyInfo.website}</div>
                       </>
                     )}
-                    {!companyInfo?.instagram &&
-                      !companyInfo?.facebook &&
-                      !companyInfo?.linkedin &&
-                      !companyInfo?.website && (
-                        <div className="col-span-2 text-muted-foreground italic">
-                          Tidak ada media sosial
-                        </div>
-                      )}
                   </div>
                 </div>
               </CardContent>
@@ -391,28 +279,28 @@ export default async function VendorDetailPage({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-muted-foreground">Status</div>
                   <div className="font-medium">
-                    <Badge variant={statusVariants[vendor.status ?? "draft"]}>
-                      {statusLabels[vendor.status ?? "draft"]}
+                    <Badge variant={statusVariants[registration.status]}>
+                      {statusLabels[registration.status]}
                     </Badge>
                   </div>
 
                   <div className="text-muted-foreground">Tanggal Dibuat</div>
                   <div className="font-medium">
-                    {formatDate(vendor.created_at)}
+                    {formatDate(registration.created_at)}
                   </div>
 
                   <div className="text-muted-foreground">Tanggal Submit</div>
                   <div className="font-medium">
-                    {formatDate(vendor.submission_date)}
+                    {formatDate(registration.submitted_at)}
                   </div>
 
                   <div className="text-muted-foreground">Tanggal Review</div>
                   <div className="font-medium">
-                    {formatDate(vendor.reviewed_at)}
+                    {formatDate(registration.reviewed_at)}
                   </div>
                 </div>
 
-                {vendor.approval_notes && (
+                {registration.approval_notes && (
                   <>
                     <Separator />
                     <div className="space-y-2">
@@ -420,7 +308,21 @@ export default async function VendorDetailPage({
                         Catatan Approval
                       </div>
                       <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
-                        {vendor.approval_notes}
+                        {registration.approval_notes}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {registration.rejection_reason && (
+                  <>
+                    <Separator />
+                    <div className="space-y-2">
+                      <div className="text-sm font-medium">
+                        Alasan Penolakan
+                      </div>
+                      <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                        {registration.rejection_reason}
                       </div>
                     </div>
                   </>
@@ -447,7 +349,7 @@ export default async function VendorDetailPage({
                           profile.status === "active" ? "default" : "secondary"
                         }
                       >
-                        {profile.status ?? "غير نشط"}
+                        {profile.status || "Tidak Aktif"}
                       </Badge>
                     </div>
                   </div>
@@ -461,15 +363,11 @@ export default async function VendorDetailPage({
                   </div>
                   <div>
                     <div className="text-muted-foreground">Jumlah Kontak</div>
-                    <div className="mt-1 font-medium">
-                      {vendor.vendor_contacts?.length ?? 0}
-                    </div>
+                    <div className="mt-1 font-medium">{contacts.length}</div>
                   </div>
                   <div>
                     <div className="text-muted-foreground">Jumlah Produk</div>
-                    <div className="mt-1 font-medium">
-                      {vendor.vendor_products?.length ?? 0}
-                    </div>
+                    <div className="mt-1 font-medium">{products.length}</div>
                   </div>
                 </div>
               </CardContent>
@@ -484,15 +382,13 @@ export default async function VendorDetailPage({
                 <Contact className="h-5 w-5" />
                 Daftar Kontak
               </CardTitle>
-              <CardDescription>
-                Semua kontak yang terdaftar untuk vendor ini
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_contacts && vendor.vendor_contacts.length > 0 ? (
+              {contacts.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>No</TableHead>
                       <TableHead>Nama</TableHead>
                       <TableHead>Jabatan</TableHead>
                       <TableHead>No. HP</TableHead>
@@ -500,20 +396,14 @@ export default async function VendorDetailPage({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {vendor.vendor_contacts.map((contact) => (
+                    {contacts.map((contact) => (
                       <TableRow key={contact.id}>
+                        <TableCell>{contact.sequence}</TableCell>
                         <TableCell className="font-medium">
                           {contact.nama}
                         </TableCell>
                         <TableCell>{contact.jabatan}</TableCell>
-                        <TableCell>
-                          <a
-                            href={`tel:${contact.no_hp}`}
-                            className="text-primary hover:underline"
-                          >
-                            {contact.no_hp}
-                          </a>
-                        </TableCell>
+                        <TableCell>{contact.no_hp}</TableCell>
                         <TableCell>
                           {contact.is_primary && (
                             <Badge variant="default">Utama</Badge>
@@ -525,7 +415,7 @@ export default async function VendorDetailPage({
                 </Table>
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada kontak yang terdaftar
+                  Tidak ada kontak
                 </div>
               )}
             </CardContent>
@@ -539,11 +429,9 @@ export default async function VendorDetailPage({
                 <CreditCard className="h-5 w-5" />
                 Rekening Bank
               </CardTitle>
-              <CardDescription>Informasi rekening bank vendor</CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_bank_accounts &&
-              vendor.vendor_bank_accounts.length > 0 ? (
+              {bank_accounts.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -554,7 +442,7 @@ export default async function VendorDetailPage({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {vendor.vendor_bank_accounts.map((account) => (
+                    {bank_accounts.map((account) => (
                       <TableRow key={account.id}>
                         <TableCell className="font-medium">
                           {account.bank_name}
@@ -572,7 +460,7 @@ export default async function VendorDetailPage({
                 </Table>
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada rekening bank yang terdaftar
+                  Tidak ada rekening
                 </div>
               )}
             </CardContent>
@@ -586,12 +474,9 @@ export default async function VendorDetailPage({
                 <Package className="h-5 w-5" />
                 Produk
               </CardTitle>
-              <CardDescription>
-                Daftar produk yang ditawarkan vendor
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_products && vendor.vendor_products.length > 0 ? (
+              {products.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -600,37 +485,27 @@ export default async function VendorDetailPage({
                       <TableHead>Dimensi</TableHead>
                       <TableHead className="text-right">Harga</TableHead>
                       <TableHead>Satuan</TableHead>
-                      <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {vendor.vendor_products.map((product) => (
+                    {products.map((product) => (
                       <TableRow key={product.id}>
                         <TableCell className="font-medium">
                           {product.name}
                         </TableCell>
-                        <TableCell>{product.material ?? "-"}</TableCell>
-                        <TableCell>{product.dimensions ?? "-"}</TableCell>
+                        <TableCell>{product.material || "-"}</TableCell>
+                        <TableCell>{product.dimensions || "-"}</TableCell>
                         <TableCell className="text-right">
                           {formatCurrency(product.price)}
                         </TableCell>
                         <TableCell>{product.satuan}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              product.is_active ? "default" : "secondary"
-                            }
-                          >
-                            {product.is_active ? "Aktif" : "Nonaktif"}
-                          </Badge>
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada produk yang terdaftar
+                  Tidak ada produk
                 </div>
               )}
             </CardContent>
@@ -644,60 +519,35 @@ export default async function VendorDetailPage({
                 <MapPin className="h-5 w-5" />
                 Alamat Pabrik
               </CardTitle>
-              <CardDescription>Alamat lengkap pabrik/vendor</CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_factory_addresses &&
-              vendor.vendor_factory_addresses.length > 0 ? (
-                vendor.vendor_factory_addresses.map((factory) => (
-                  <div key={factory.id} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="text-muted-foreground">Alamat</div>
-                      <div className="font-medium">{factory.address}</div>
-
-                      <div className="text-muted-foreground">Provinsi</div>
-                      <div className="font-medium">
-                        {factory.province ?? "-"}
-                      </div>
-
-                      <div className="text-muted-foreground">
-                        Kabupaten/Kota
-                      </div>
-                      <div className="font-medium">
-                        {factory.kabupaten ?? "-"}
-                      </div>
-
-                      <div className="text-muted-foreground">Kecamatan</div>
-                      <div className="font-medium">
-                        {factory.kecamatan ?? "-"}
-                      </div>
-
-                      <div className="text-muted-foreground">Kode Pos</div>
-                      <div className="font-medium">
-                        {factory.postal_code ?? "-"}
-                      </div>
-
-                      {factory.map_url && (
-                        <>
-                          <div className="text-muted-foreground">Map URL</div>
-                          <div className="font-medium">
-                            <a
-                              href={factory.map_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline"
-                            >
-                              Lihat di Maps
-                            </a>
-                          </div>
-                        </>
-                      )}
+              {factory_addresses.length > 0 ? (
+                factory_addresses.map((factory) => (
+                  <div
+                    key={factory.id}
+                    className="grid grid-cols-2 gap-4 text-sm"
+                  >
+                    <div className="text-muted-foreground">Alamat</div>
+                    <div className="font-medium">{factory.address || "-"}</div>
+                    <div className="text-muted-foreground">Provinsi</div>
+                    <div className="font-medium">{factory.province || "-"}</div>
+                    <div className="text-muted-foreground">Kabupaten/Kota</div>
+                    <div className="font-medium">
+                      {factory.kabupaten || "-"}
+                    </div>
+                    <div className="text-muted-foreground">Kecamatan</div>
+                    <div className="font-medium">
+                      {factory.kecamatan || "-"}
+                    </div>
+                    <div className="text-muted-foreground">Kode Pos</div>
+                    <div className="font-medium">
+                      {factory.postal_code || "-"}
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada alamat pabrik yang terdaftar
+                  Tidak ada alamat
                 </div>
               )}
             </CardContent>
@@ -709,27 +559,20 @@ export default async function VendorDetailPage({
                 <Truck className="h-5 w-5" />
                 Area Pengiriman
               </CardTitle>
-              <CardDescription>
-                Wilayah yang dilayani untuk pengiriman
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_delivery_areas &&
-              vendor.vendor_delivery_areas.length > 0 ? (
+              {delivery_areas.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {vendor.vendor_delivery_areas.map((area) => (
+                  {delivery_areas.map((area) => (
                     <Badge key={area.id} variant="outline">
-                      {area.master_provinces?.name ??
-                        "Provinsi tidak diketahui"}
-                      {area.master_cities?.name
-                        ? ` - ${area.master_cities.name}`
-                        : ""}
+                      {area.province_name || "Unknown"}{" "}
+                      {area.city_name ? `- ${area.city_name}` : ""}
                     </Badge>
                   ))}
                 </div>
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada area pengiriman yang terdaftar
+                  Tidak ada area pengiriman
                 </div>
               )}
             </CardContent>
@@ -741,38 +584,27 @@ export default async function VendorDetailPage({
                 <DollarSign className="h-5 w-5" />
                 Biaya Termasuk
               </CardTitle>
-              <CardDescription>
-                Jenis biaya yang sudah termasuk dalam penawaran
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_cost_inclusions &&
-              vendor.vendor_cost_inclusions.length > 0 ? (
+              {cost_inclusions.length > 0 ? (
                 <div className="space-y-3">
-                  {vendor.vendor_cost_inclusions.map((cost) => (
+                  {cost_inclusions.map((cost) => (
                     <div key={cost.id} className="flex items-center gap-3">
                       {cost.is_included ? (
                         <CheckCircle className="h-5 w-5 text-green-600" />
                       ) : (
                         <XCircle className="h-5 w-5 text-gray-400" />
                       )}
-                      <div>
-                        <div className="font-medium">
-                          {costInclusionLabels[cost.inclusion_type] ??
-                            cost.inclusion_type}
-                        </div>
-                        {cost.notes && (
-                          <div className="text-sm text-muted-foreground">
-                            {cost.notes}
-                          </div>
-                        )}
+                      <div className="font-medium">
+                        {costInclusionLabels[cost.inclusion_type] ||
+                          cost.inclusion_type}
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada informasi biaya yang termasuk
+                  Tidak ada informasi
                 </div>
               )}
             </CardContent>
@@ -784,13 +616,9 @@ export default async function VendorDetailPage({
                 <PlusCircle className="h-5 w-5" />
                 Biaya Tambahan
               </CardTitle>
-              <CardDescription>
-                Biaya tambahan di luar biaya yang termasuk
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_additional_costs &&
-              vendor.vendor_additional_costs.length > 0 ? (
+              {additional_costs.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -800,7 +628,7 @@ export default async function VendorDetailPage({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {vendor.vendor_additional_costs.map((cost) => (
+                    {additional_costs.map((cost) => (
                       <TableRow key={cost.id}>
                         <TableCell className="font-medium">
                           {cost.description}
@@ -808,7 +636,7 @@ export default async function VendorDetailPage({
                         <TableCell className="text-right">
                           {formatCurrency(cost.amount)}
                         </TableCell>
-                        <TableCell>{cost.unit ?? "-"}</TableCell>
+                        <TableCell>{cost.unit || "-"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -829,40 +657,41 @@ export default async function VendorDetailPage({
                 <FileText className="h-5 w-5" />
                 Dokumen Legal
               </CardTitle>
-              <CardDescription>
-                Dokumen legal yang telah diupload dan diverifikasi
-              </CardDescription>
             </CardHeader>
             <CardContent>
-              {vendor.vendor_legal_documents &&
-              vendor.vendor_legal_documents.length > 0 ? (
+              {documents.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Jenis Dokumen</TableHead>
-                      <TableHead>Nama File</TableHead>
                       <TableHead>Nomor Dokumen</TableHead>
                       <TableHead>Tanggal Upload</TableHead>
-                      <TableHead>Status</TableHead>
                       <TableHead>Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {vendor.vendor_legal_documents.map((doc) => (
+                    {documents.map((doc) => (
                       <TableRow key={doc.id}>
                         <TableCell className="font-medium">
-                          {documentTypeLabels[doc.document_type] ??
+                          {documentTypeLabels[doc.document_type] ||
                             doc.document_type}
                         </TableCell>
-                        <TableCell>{doc.file_name}</TableCell>
-                        <TableCell>{doc.document_number ?? "-"}</TableCell>
+                        <TableCell>{doc.document_number || "-"}</TableCell>
                         <TableCell>{formatDate(doc.uploaded_at)}</TableCell>
                         <TableCell>
-                          <VerificationBadge status={doc.verification_status} />
-                        </TableCell>
-                        <TableCell>
                           <DocumentViewerDialog
-                            document={doc}
+                            document={{
+                              id: doc.id,
+                              document_type: doc.document_type,
+                              document_number: doc.document_number,
+                              file_name: doc.file_name,
+                              file_path: doc.file_path,
+                              file_size: doc.file_size,
+                              mime_type: doc.mime_type,
+                              verification_status: null,
+                              verified_at: null,
+                              uploaded_at: doc.uploaded_at,
+                            }}
                             trigger={
                               <Button variant="ghost" size="sm">
                                 <Eye className="mr-1 h-4 w-4" />
@@ -877,7 +706,7 @@ export default async function VendorDetailPage({
                 </Table>
               ) : (
                 <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada dokumen legal yang diupload
+                  Tidak ada dokumen
                 </div>
               )}
             </CardContent>

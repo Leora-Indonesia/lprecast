@@ -7,12 +7,19 @@ export type VendorRegistrationInsert =
 export type VendorRegistrationUpdate =
   Database["public"]["Tables"]["vendor_registrations"]["Update"]
 
-export type VendorCompanyInfo =
-  Database["public"]["Tables"]["vendor_company_info"]["Row"]
-export type VendorCompanyInfoInsert =
-  Database["public"]["Tables"]["vendor_company_info"]["Insert"]
-export type VendorCompanyInfoUpdate =
-  Database["public"]["Tables"]["vendor_company_info"]["Update"]
+export type VendorOnboardingDraft =
+  Database["public"]["Tables"]["vendor_onboarding_drafts"]["Row"]
+export type VendorOnboardingDraftInsert =
+  Database["public"]["Tables"]["vendor_onboarding_drafts"]["Insert"]
+export type VendorOnboardingDraftUpdate =
+  Database["public"]["Tables"]["vendor_onboarding_drafts"]["Update"]
+
+export type VendorDocument =
+  Database["public"]["Tables"]["vendor_documents"]["Row"]
+export type VendorDocumentInsert =
+  Database["public"]["Tables"]["vendor_documents"]["Insert"]
+export type VendorDocumentUpdate =
+  Database["public"]["Tables"]["vendor_documents"]["Update"]
 
 export type VendorContacts =
   Database["public"]["Tables"]["vendor_contacts"]["Row"]
@@ -20,13 +27,6 @@ export type VendorContactsInsert =
   Database["public"]["Tables"]["vendor_contacts"]["Insert"]
 export type VendorContactsUpdate =
   Database["public"]["Tables"]["vendor_contacts"]["Update"]
-
-export type VendorLegalDocument =
-  Database["public"]["Tables"]["vendor_legal_documents"]["Row"]
-export type VendorLegalDocumentInsert =
-  Database["public"]["Tables"]["vendor_legal_documents"]["Insert"]
-export type VendorLegalDocumentUpdate =
-  Database["public"]["Tables"]["vendor_legal_documents"]["Update"]
 
 export type VendorBankAccount =
   Database["public"]["Tables"]["vendor_bank_accounts"]["Row"]
@@ -62,6 +62,13 @@ export type VendorCostInclusionInsert =
   Database["public"]["Tables"]["vendor_cost_inclusions"]["Insert"]
 export type VendorCostInclusionUpdate =
   Database["public"]["Tables"]["vendor_cost_inclusions"]["Update"]
+
+export type VendorAdditionalCost =
+  Database["public"]["Tables"]["vendor_additional_costs"]["Row"]
+export type VendorAdditionalCostInsert =
+  Database["public"]["Tables"]["vendor_additional_costs"]["Insert"]
+export type VendorAdditionalCostUpdate =
+  Database["public"]["Tables"]["vendor_additional_costs"]["Update"]
 
 export type VendorProfile =
   Database["public"]["Tables"]["vendor_profiles"]["Row"]

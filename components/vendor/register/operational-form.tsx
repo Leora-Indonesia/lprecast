@@ -43,7 +43,7 @@ import {
 import { ProductModal } from "./product-modal"
 import { AreaModal } from "./area-modal"
 import { cn } from "@/lib/utils"
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase/client"
 import type {
   VendorRegistrationFormData,
   ProductFormData,

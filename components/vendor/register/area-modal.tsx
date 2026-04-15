@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { supabase } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase/client"
 import type { Database } from "@/types/database.types"
 
 type Province = Database["public"]["Tables"]["master_provinces"]["Row"]
@@ -65,12 +65,14 @@ export function AreaModal({
 
       if (provincesError) throw provincesError
 
-      const provincesWithCities = (provincesData || []).map((prov) => ({
-        ...prov,
-        cities: (prov.cities || []).sort((a: City, b: City) =>
-          a.name.localeCompare(b.name)
-        ),
-      }))
+      const provincesWithCities = (provincesData || []).map(
+        (prov: Province & { cities?: City[] }) => ({
+          ...prov,
+          cities: (prov.cities || []).sort((a: City, b: City) =>
+            a.name.localeCompare(b.name)
+          ),
+        })
+      )
 
       setProvinces(provincesWithCities)
     } catch (error) {

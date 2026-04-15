@@ -5,13 +5,17 @@ import type { NextRequest } from "next/server"
 const publicRoutes = [
   "/",
   "/login",
+  "/vendor/login",
   "/unauthorized",
   "/about",
   "/vendor/register",
   "/vendor/register/success",
+  "/vendor/set-password",
   "/terms/vendor",
   "/terms/client",
   "/privacy",
+  "/progress",
+  "/auth/callback",
 ]
 
 const isPublicRoute = (pathname: string) => {
