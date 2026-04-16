@@ -66,7 +66,7 @@ export async function signupAction(
         },
         emailRedirectTo: `${
           process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-        }/auth/callback?next=/login`,
+        }/auth/callback?next=/vendor/verification-success`,
       },
     })
 
@@ -86,6 +86,7 @@ export async function signupAction(
       id: data.user.id,
       email: values.email,
       nama: values.nama_pic,
+      nama_perusahaan: values.nama_perusahaan,
       username: values.email.split("@")[0],
       stakeholder_type: "vendor",
       is_active: true,

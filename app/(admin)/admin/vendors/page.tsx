@@ -97,7 +97,7 @@ export default async function AdminVendorsPage() {
                         className="hover:text-primary hover:underline"
                       >
                         {companyInfo?.nama_perusahaan ||
-                          vendor.user_nama ||
+                          vendor.user_nama_perusahaan ||
                           "Unknown"}
                       </Link>
                     </TableCell>

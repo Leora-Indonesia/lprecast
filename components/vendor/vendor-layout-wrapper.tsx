@@ -11,7 +11,11 @@ interface VendorLayoutWrapperProps {
   }
 }
 
-const PUBLIC_ROUTES = ["/vendor/register", "/vendor/login"]
+const PUBLIC_ROUTES = [
+  "/vendor/register",
+  "/vendor/login",
+  "/vendor/onboarding",
+]
 
 export function VendorLayoutWrapper({
   children,

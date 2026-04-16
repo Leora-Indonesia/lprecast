@@ -55,8 +55,7 @@ export default function RegisterSuccessPage() {
                 2
               </span>
               <span>
-                Masuk ke akun Anda dengan email dan password yang sudah
-                didaftarkan
+                Anda akan otomatis masuk dan melihat halaman verifikasi berhasil
               </span>
             </li>
             <li className="flex items-start gap-3">

@@ -31,15 +31,7 @@ export async function getPendingVendorRegistrations() {
 
   const { data: registrations, error } = await supabase
     .from("vendor_registrations")
-    .select(
-      `
-      *,
-      user:users!user_id (
-        email,
-        nama
-      )
-    `
-    )
+    .select("*")
     .in("status", ["submitted", "under_review"])
     .order("submitted_at", { ascending: false })
 
@@ -48,18 +40,38 @@ export async function getPendingVendorRegistrations() {
     return []
   }
 
-  const { data: drafts } = await supabase
-    .from("vendor_onboarding_drafts")
-    .select("user_id, draft_data")
+  if (!registrations || registrations.length === 0) {
+    return []
+  }
 
-  const draftMap = new Map(drafts?.map((d) => [d.user_id, d.draft_data]) || [])
+  const userIds = registrations.map((r) => r.user_id).filter(Boolean)
 
-  return (registrations || []).map((reg) => ({
-    ...reg,
-    user_email: (reg.user as { email?: string } | null)?.email || null,
-    user_nama: (reg.user as { nama?: string } | null)?.nama || null,
-    draft_data: draftMap.get(reg.user_id) || null,
-  }))
+  const [usersResult, draftsResult] = await Promise.all([
+    supabase
+      .from("users")
+      .select("id, email, nama, nama_perusahaan")
+      .in("id", userIds),
+    supabase
+      .from("vendor_onboarding_drafts")
+      .select("user_id, draft_data")
+      .in("user_id", userIds),
+  ])
+
+  const userMap = new Map((usersResult.data || []).map((u) => [u.id, u]))
+  const draftMap = new Map(
+    (draftsResult.data || []).map((d) => [d.user_id, d.draft_data])
+  )
+
+  return (registrations || []).map((reg) => {
+    const user = userMap.get(reg.user_id)
+    return {
+      ...reg,
+      user_email: user?.email || null,
+      user_nama: user?.nama || null,
+      user_nama_perusahaan: user?.nama_perusahaan || null,
+      draft_data: draftMap.get(reg.user_id) || null,
+    }
+  })
 }
 
 export async function getVendorRegistrationById(registrationId: string) {
@@ -67,16 +79,7 @@ export async function getVendorRegistrationById(registrationId: string) {
 
   const { data: registration, error } = await supabase
     .from("vendor_registrations")
-    .select(
-      `
-      *,
-      user:users!user_id (
-        id,
-        email,
-        nama
-      )
-    `
-    )
+    .select("*")
     .eq("id", registrationId)
     .single()
 
@@ -88,6 +91,7 @@ export async function getVendorRegistrationById(registrationId: string) {
   const userId = registration.user_id
 
   const [
+    userResult,
     drafts,
     documents,
     contacts,
@@ -99,6 +103,11 @@ export async function getVendorRegistrationById(registrationId: string) {
     additionalCosts,
     profiles,
   ] = await Promise.all([
+    supabase
+      .from("users")
+      .select("id, email, nama, nama_perusahaan")
+      .eq("id", userId)
+      .single(),
     supabase
       .from("vendor_onboarding_drafts")
       .select("draft_data")
@@ -122,9 +131,9 @@ export async function getVendorRegistrationById(registrationId: string) {
   return {
     registration: {
       ...registration,
-      user_email:
-        (registration.user as { email?: string } | null)?.email || null,
-      user_nama: (registration.user as { nama?: string } | null)?.nama || null,
+      user_email: userResult.data?.email || null,
+      user_nama: userResult.data?.nama || null,
+      user_nama_perusahaan: userResult.data?.nama_perusahaan || null,
     },
     draft_data: drafts.data as {
       company_info?: Record<string, unknown>
@@ -172,6 +181,17 @@ export async function approveVendor(
     console.error("Error approving vendor:", updateError)
     return { success: false, error: "Failed to approve vendor" }
   }
+
+  await supabase.from("vendor_profiles").upsert(
+    {
+      user_id: registration.user_id,
+      status: "approved",
+      approved_at: new Date().toISOString(),
+      approved_by: adminUserId,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" }
+  )
 
   revalidatePath("/admin/vendors")
   revalidatePath(`/admin/vendors/${registrationId}`)

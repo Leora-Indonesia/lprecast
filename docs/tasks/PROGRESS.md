@@ -22,22 +22,25 @@ Tracking semua tasks untuk MVP LPrecast.
 
 ---
 
-**Last updated:** April 15, 2026
+**Last updated:** April 16, 2026
 
-| #   | Task                                                                 | Status      | Due Date     | Notes                                                                                                            |
-| --- | -------------------------------------------------------------------- | ----------- | ------------ | ---------------------------------------------------------------------------------------------------------------- |
-| 1   | Admin - Buat aksi approve / revisi / tolak vendor                    | Not started | Apr 15, 2026 | -                                                                                                                |
-| 2   | Vendor - Refactor registration: signup-first + PKCE flow             | Done        | Apr 15, 2026 | Refactored to signup-first flow with PKCE. Removed dead code, added /auth/callback, simplified Supabase clients. |
-| 3   | Admin - Buat form project tender (via admin)                         | Not started | Apr 15, 2026 | -                                                                                                                |
-| 4   | Admin - Buat fitur evaluasi & pilih pemenang (comparison table)      | Not started | Apr 15, 2026 | -                                                                                                                |
-| 5   | Vendor - Buat halaman daftar tender yang available                   | Not started | Apr 15, 2026 | -                                                                                                                |
-| 6   | Vendor - Buat halaman upload progres harian (foto, deskripsi, bobot) | Not started | Apr 16, 2026 | -                                                                                                                |
-| 7   | Sistem - Buat notifikasi hasil tender ke pemenang & non-pemenang     | Not started | Apr 16, 2026 | -                                                                                                                |
-| 8   | Admin/Sistem - Buat generate dokumen SPK sederhana                   | Not started | Apr 16, 2026 | -                                                                                                                |
-| 9   | SPV - Buat autentikasi & layout dashboard khusus SPV                 | Not started | Apr 17, 2026 | -                                                                                                                |
-| 10  | Semua Role - Buat dashboard monitoring overview proyek               | Not started | Apr 17, 2026 | -                                                                                                                |
-| 11  | SPV - Buat fitur verifikasi progress (approve/reject + catatan)      | Not started | Apr 17, 2026 | -                                                                                                                |
-| 12  | Vendor - Buat form submit penawaran (items, pricing, metode kerja)   | Not started | Apr 17, 2026 | -                                                                                                                |
-| 13  | Sistem - Buat logic tracking deadline & flag keterlambatan           | Not started | Apr 18, 2026 | -                                                                                                                |
-| 14  | Tim Dev - Lakukan testing & bug fixes end-to-end MVP                 | Not started | Apr 21, 2026 | -                                                                                                                |
-| 15  | Tim Dev - Lakukan polish final, dokumentasi, & code cleanup          | Not started | Apr 23, 2026 | -                                                                                                                |
+| #   | Task                                                                 | Status      | Due Date     | Notes |
+| --- | -------------------------------------------------------------------- | ----------- | ------------ | ----- |
+| 1   | Vendor - Perbaikan fungsi email registration                         | In progress | Apr 16, 2026 | -     |
+| 2   | Vendor - Perbaikan SMTP email webmail                                | In progress | Apr 16, 2026 | -     |
+| 3   | Admin - Buat aksi approve / revisi / tolak vendor                    | Not started | Apr 16, 2026 | -     |
+| 4   | Admin - Buat form project tender (via admin)                         | Not started | Apr 17, 2026 | -     |
+| 5   | Vendor - Buat halaman daftar tender yang available                   | Not started | Apr 17, 2026 | -     |
+| 6   | Admin - Buat fitur evaluasi & pilih pemenang (comparison table)      | Not started | Apr 18, 2026 | -     |
+| 7   | Admin/Sistem - Buat generate dokumen SPK sederhana                   | Not started | Apr 18, 2026 | -     |
+| 8   | Semua Role - Buat dashboard monitoring overview proyek               | Not started | Apr 18, 2026 | -     |
+| 9   | Vendor - Buat form submit penawaran (items, pricing, metode kerja)   | Not started | Apr 18, 2026 | -     |
+| 10  | Sistem - Buat logic tracking deadline & flag keterlambatan           | Not started | Apr 18, 2026 | -     |
+| 11  | Vendor - Buat halaman upload progres harian (foto, deskripsi, bobot) | Not started | Apr 20, 2026 | -     |
+| 12  | Sistem - Buat notifikasi hasil tender ke pemenang & non-pemenang     | Not started | Apr 21, 2026 | -     |
+| 13  | SPV - Buat autentikasi & layout dashboard khusus SPV                 | Not started | Apr 21, 2026 | -     |
+| 14  | SPV - Buat fitur verifikasi progress (approve/reject + catatan)      | Not started | Apr 21, 2026 | -     |
+| 15  | Tim Dev - Lakukan testing & bug fixes end-to-end MVP                 | Not started | Apr 21, 2026 | -     |
+| 16  | Tim Dev - Lakukan polish final, dokumentasi, & code cleanup          | Not started | Apr 23, 2026 | -     |
+
+(End of file - total 30 lines)

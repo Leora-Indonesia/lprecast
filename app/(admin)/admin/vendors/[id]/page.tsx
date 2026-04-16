@@ -160,7 +160,10 @@ export default async function VendorDetailPage({
         </Button>
         <div>
           <h1 className="text-2xl font-bold">
-            {companyInfo?.nama_perusahaan || registration.user_nama || "Vendor"}
+            {companyInfo?.nama_perusahaan ||
+              registration.user_nama_perusahaan ||
+              registration.user_nama ||
+              "Vendor"}
           </h1>
           <p className="text-muted-foreground">Detail informasi vendor</p>
         </div>
@@ -172,14 +175,22 @@ export default async function VendorDetailPage({
             <ApproveVendorDialog
               registrationId={registration.id}
               adminUserId={adminUserId || ""}
-              companyName={companyInfo?.nama_perusahaan || "Vendor"}
+              companyName={
+                companyInfo?.nama_perusahaan ||
+                registration.user_nama_perusahaan ||
+                "Vendor"
+              }
             />
           )}
           {canReject && (
             <RejectVendorDialog
               registrationId={registration.id}
               adminUserId={adminUserId || ""}
-              companyName={companyInfo?.nama_perusahaan || "Vendor"}
+              companyName={
+                companyInfo?.nama_perusahaan ||
+                registration.user_nama_perusahaan ||
+                "Vendor"
+              }
             />
           )}
           <Button variant="destructive" asChild>

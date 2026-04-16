@@ -14,23 +14,28 @@ CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER
 SET search_path = ''
 AS $$
+DECLARE
+  user_stakeholder_type TEXT;
 BEGIN
-  INSERT INTO users (id, email, nama, username, stakeholder_type, is_active)
+  user_stakeholder_type := COALESCE(NEW.raw_user_meta_data->>'stakeholder_type', 'vendor');
+
+  INSERT INTO public.users (id, email, nama, username, stakeholder_type, is_active)
   VALUES (
     NEW.id,
     NEW.email,
-    COALESCE(
-      NEW.raw_user_meta_data->>'nama',
-      split_part(NEW.email, '@', 1)
-    ),
+    COALESCE(NEW.raw_user_meta_data->>'nama', split_part(NEW.email, '@', 1)),
     split_part(NEW.email, '@', 1),
-    COALESCE(
-      NEW.raw_user_meta_data->>'stakeholder_type',
-      'vendor'
-    ),
+    user_stakeholder_type,
     true
   )
   ON CONFLICT (id) DO NOTHING;
+
+  -- Auto-create vendor registration record for new vendors
+  IF user_stakeholder_type = 'vendor' THEN
+    INSERT INTO public.vendor_registrations (user_id, status)
+    VALUES (NEW.id, 'draft')
+    ON CONFLICT (user_id) DO NOTHING;
+  END IF;
 
   RETURN NEW;
 

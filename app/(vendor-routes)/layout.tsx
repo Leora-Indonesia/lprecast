@@ -1,7 +1,16 @@
 import { redirect } from "next/navigation"
+import type { Metadata } from "next"
 import { getCurrentUser } from "@/lib/auth"
-import { createClient } from "@/lib/supabase/server"
 import { VendorLayoutWrapper } from "@/components/vendor/vendor-layout-wrapper"
+
+export const metadata: Metadata = {
+  title: {
+    default: "Vendor Portal | LPrecast",
+    template: "%s | LPrecast Vendor Portal",
+  },
+  description:
+    "Portal vendor untuk LPrecast - Kelola tender, proyek, dan progres",
+}
 
 export default async function VendorLayout({
   children,
@@ -18,24 +27,8 @@ export default async function VendorLayout({
     redirect("/unauthorized")
   }
 
-  const supabase = await createClient()
-  const { data: registration } = await supabase
-    .from("vendor_registrations")
-    .select("status")
-    .eq("vendor_id", user.id)
-    .in("status", ["draft", "submitted"])
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single()
-
-  const pathname = typeof window !== "undefined" ? window.location.pathname : ""
-
-  if (
-    registration?.status === "draft" &&
-    !pathname.startsWith("/vendor/onboarding")
-  ) {
-    redirect("/vendor/onboarding")
-  }
+  // Registration check is now handled in proxy.ts middleware
+  // Layout hanya handle auth + role check
 
   const userData = user.profile
 

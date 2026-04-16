@@ -15,6 +15,7 @@ import { StatCard } from "@/components/admin/stat-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { getPendingVendorRegistrations } from "@/app/(admin)/admin/vendors/actions"
 
 export const metadata = {
   title: "Dashboard Admin | LPrecast",
@@ -26,13 +27,14 @@ export default async function AdminDashboard() {
   const supabase = await createClient()
 
   const [
-    { data: vendorsData },
+    { count: vendorCount },
     { count: pendingCount },
     { data: recentNotifications },
   ] = await Promise.all([
     supabase
-      .from("vendor_profiles")
-      .select("*", { count: "exact", head: true }),
+      .from("users")
+      .select("*", { count: "exact", head: true })
+      .eq("stakeholder_type", "vendor"),
     supabase
       .from("vendor_registrations")
       .select("*", { count: "exact", head: true })
@@ -54,12 +56,7 @@ export default async function AdminDashboard() {
     .from("projects")
     .select("*", { count: "exact", head: true })
 
-  const { data: recentVendors } = await supabase
-    .from("vendor_registrations")
-    .select("*, vendor_company_info(*)")
-    .eq("status", "submitted")
-    .order("created_at", { ascending: false })
-    .limit(5)
+  const recentVendors = await getPendingVendorRegistrations()
 
   const unreadNotificationCount =
     recentNotifications?.filter((n) => !n.is_read).length ?? 0
@@ -86,7 +83,7 @@ export default async function AdminDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Vendor"
-          value={vendorsData?.length ?? 0}
+          value={vendorCount ?? 0}
           description="Vendor aktif"
           icon={Building2}
         />
@@ -206,10 +203,14 @@ export default async function AdminDashboard() {
           <CardContent>
             {recentVendors && recentVendors.length > 0 ? (
               <div className="space-y-4">
-                {recentVendors.map((vendor) => {
-                  const companyInfo = Array.isArray(vendor.vendor_company_info)
-                    ? vendor.vendor_company_info[0]
-                    : vendor.vendor_company_info
+                {recentVendors.slice(0, 5).map((vendor) => {
+                  const companyInfo = vendor.draft_data?.company_info as
+                    | {
+                        nama_perusahaan?: string
+                        nama_pic?: string
+                        email?: string
+                      }
+                    | undefined
 
                   return (
                     <Link
@@ -220,7 +221,9 @@ export default async function AdminDashboard() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">
-                            {companyInfo?.nama_perusahaan || "N/A"}
+                            {companyInfo?.nama_perusahaan ||
+                              vendor.user_nama_perusahaan ||
+                              "N/A"}
                           </p>
                           <p className="text-sm text-muted-foreground">
                             PIC: {companyInfo?.nama_pic || "N/A"}
@@ -234,9 +237,9 @@ export default async function AdminDashboard() {
                             Pending
                           </Badge>
                           <p className="mt-1 text-xs text-muted-foreground">
-                            {vendor.created_at
+                            {vendor.submitted_at
                               ? formatDistanceToNow(
-                                  new Date(vendor.created_at),
+                                  new Date(vendor.submitted_at),
                                   {
                                     addSuffix: true,
                                     locale: id,

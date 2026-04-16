@@ -81,6 +81,28 @@ export default async function proxy(request: NextRequest) {
     if (stakeholderType !== "vendor") {
       return NextResponse.redirect(new URL("/unauthorized", request.url))
     }
+    // Check vendor registration status for onboarding redirect
+    const { data: registration, error: registrationError } = await supabase
+      .from("vendor_registrations")
+      .select("status")
+      .eq("user_id", user.id)
+      .single()
+
+    const isOnboardingPage = pathname === "/vendor/onboarding"
+
+    // Onboarding needed only if: no registration OR status is "draft"
+    const needsOnboarding =
+      !registration || registrationError || registration.status === "draft"
+
+    // Redirect to onboarding if: not on onboarding page AND needs onboarding
+    if (!isOnboardingPage && needsOnboarding) {
+      return NextResponse.redirect(new URL("/vendor/onboarding", request.url))
+    }
+
+    // Redirect away from onboarding if: on onboarding page AND has submitted registration
+    if (isOnboardingPage && registration?.status === "submitted") {
+      return NextResponse.redirect(new URL("/vendor/dashboard", request.url))
+    }
   } else if (pathname.startsWith("/client/")) {
     if (stakeholderType !== "client") {
       return NextResponse.redirect(new URL("/unauthorized", request.url))

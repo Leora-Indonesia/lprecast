@@ -1,28 +1,25 @@
 -- ============================================================
--- SIMPLIFIED: Only insert to users table on vendor signup
--- Previous complex trigger caused 504 errors
--- Date: 2026-04-15
+-- UPDATE: Auto-create vendor registration on signup
+-- Date: 2026-04-16
+-- Purpose: Update handle_new_user trigger to also insert into vendor_registrations
 -- ============================================================
 
--- 1. Drop the complex trigger
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-DROP FUNCTION IF EXISTS handle_vendor_registration();
-
--- 2. Create simplified trigger - insert to users and vendor_registrations
+-- Update the trigger function to auto-create vendor registration
 CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SET search_path = ''
+AS $$
 DECLARE
   user_stakeholder_type TEXT;
 BEGIN
   user_stakeholder_type := COALESCE(NEW.raw_user_meta_data->>'stakeholder_type', 'vendor');
 
   -- Insert to users table (lightweight operation)
-  INSERT INTO public.users (id, email, nama, nama_perusahaan, username, stakeholder_type, is_active)
+  INSERT INTO public.users (id, email, nama, username, stakeholder_type, is_active)
   VALUES (
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'nama', split_part(NEW.email, '@', 1)),
-    NEW.raw_user_meta_data->>'nama_perusahaan',
     split_part(NEW.email, '@', 1),
     user_stakeholder_type,
     true
@@ -45,15 +42,28 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 3. Create trigger on auth.users
-CREATE TRIGGER on_auth_user_created
-AFTER INSERT ON auth.users
-FOR EACH ROW
-EXECUTE FUNCTION handle_new_user();
-
--- 4. Grant permissions
-GRANT EXECUTE ON FUNCTION handle_new_user() TO authenticated;
-GRANT EXECUTE ON FUNCTION handle_new_user() TO anon;
-
+-- Update comment
 COMMENT ON FUNCTION handle_new_user() IS
 'Lightweight trigger: Inserts into users table on signup. Also auto-creates vendor registration record for vendor users.';
+
+-- ============================================================
+-- MIGRATE EXISTING VENDORS
+-- Create vendor_registrations record for existing vendors that don't have one
+-- ============================================================
+
+INSERT INTO public.vendor_registrations (user_id, status)
+SELECT u.id, 'draft'
+FROM public.users u
+LEFT JOIN public.vendor_registrations vr ON vr.user_id = u.id
+WHERE u.stakeholder_type = 'vendor'
+AND vr.id IS NULL
+ON CONFLICT (user_id) DO NOTHING;
+
+-- Log migration result
+DO $$
+DECLARE
+  inserted_count INTEGER;
+BEGIN
+  GET DIAGNOSTICS inserted_count = ROW_COUNT;
+  RAISE NOTICE 'Created vendor_registrations for % existing vendors', inserted_count;
+END $$;

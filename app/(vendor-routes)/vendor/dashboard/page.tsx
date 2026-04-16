@@ -90,6 +90,13 @@ export default async function VendorDashboard() {
           icon: Clock,
           description: "Menunggu review dari admin",
         }
+      case "submitted":
+        return {
+          label: "Menunggu Review",
+          variant: "secondary" as const,
+          icon: Clock,
+          description: "Data telah dikirim, menunggu review dari admin",
+        }
       case "rejected":
         return {
           label: "Ditolak",

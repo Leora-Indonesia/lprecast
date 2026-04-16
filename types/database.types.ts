@@ -559,6 +559,7 @@ export type Database = {
           is_active: boolean | null
           last_login_at: string | null
           nama: string
+          nama_perusahaan: string | null
           no_hp: string | null
           signature_image: string | null
           stakeholder_type: Database["public"]["Enums"]["stakeholder_type"]
@@ -573,6 +574,7 @@ export type Database = {
           is_active?: boolean | null
           last_login_at?: string | null
           nama: string
+          nama_perusahaan?: string | null
           no_hp?: string | null
           signature_image?: string | null
           stakeholder_type?: Database["public"]["Enums"]["stakeholder_type"]
@@ -587,6 +589,7 @@ export type Database = {
           is_active?: boolean | null
           last_login_at?: string | null
           nama?: string
+          nama_perusahaan?: string | null
           no_hp?: string | null
           signature_image?: string | null
           stakeholder_type?: Database["public"]["Enums"]["stakeholder_type"]
