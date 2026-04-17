@@ -40,7 +40,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  getVendorRegistrationById,
+  getVendorProfileByUserId,
   checkVendorTransactions,
   approveVendor,
   rejectVendor,
@@ -68,8 +68,11 @@ const statusLabels: Record<string, string> = {
   draft: "Draft",
   submitted: "Diajukan",
   under_review: "Ditinjau",
-  approved: "Disetujui",
+  revision_requested: "Revisi",
   rejected: "Ditolak",
+  active: "Aktif",
+  suspended: "Ditangguhkan",
+  blacklisted: "Diblokir",
 }
 
 const statusVariants: Record<
@@ -79,8 +82,11 @@ const statusVariants: Record<
   draft: "secondary",
   submitted: "default",
   under_review: "default",
-  approved: "outline",
+  revision_requested: "outline",
   rejected: "destructive",
+  active: "outline",
+  suspended: "secondary",
+  blacklisted: "destructive",
 }
 
 const documentTypeLabels: Record<string, string> = {
@@ -108,14 +114,14 @@ export default async function VendorDetailPage({
   const supabase = await createClient()
   const adminUserId = (await supabase.auth.getUser()).data.user?.id
 
-  const data = await getVendorRegistrationById(id)
+  const data = await getVendorProfileByUserId(id)
 
   if (!data) {
     notFound()
   }
 
   const {
-    registration,
+    profile,
     draft_data,
     documents,
     contacts,
@@ -125,7 +131,6 @@ export default async function VendorDetailPage({
     delivery_areas,
     cost_inclusions,
     additional_costs,
-    profile,
   } = data
 
   const companyInfo = draft_data?.company_info as
@@ -141,14 +146,12 @@ export default async function VendorDetailPage({
       }
     | undefined
 
-  const transactionStatus = await checkVendorTransactions(registration.user_id)
+  const transactionStatus = await checkVendorTransactions(profile.user_id)
 
   const canApprove =
-    registration.status === "submitted" ||
-    registration.status === "under_review"
+    profile.status === "submitted" || profile.status === "under_review"
   const canReject =
-    registration.status === "submitted" ||
-    registration.status === "under_review"
+    profile.status === "submitted" || profile.status === "under_review"
 
   return (
     <div className="space-y-6">
@@ -161,40 +164,40 @@ export default async function VendorDetailPage({
         <div>
           <h1 className="text-2xl font-bold">
             {companyInfo?.nama_perusahaan ||
-              registration.user_nama_perusahaan ||
-              registration.user_nama ||
+              profile.nama_perusahaan ||
+              profile.user_nama ||
               "Vendor"}
           </h1>
           <p className="text-muted-foreground">Detail informasi vendor</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Badge variant={statusVariants[registration.status]}>
-            {statusLabels[registration.status] || registration.status}
+          <Badge variant={statusVariants[profile.status]}>
+            {statusLabels[profile.status] || profile.status}
           </Badge>
           {canApprove && (
             <ApproveVendorDialog
-              registrationId={registration.id}
+              userId={profile.user_id}
               adminUserId={adminUserId || ""}
               companyName={
                 companyInfo?.nama_perusahaan ||
-                registration.user_nama_perusahaan ||
+                profile.nama_perusahaan ||
                 "Vendor"
               }
             />
           )}
           {canReject && (
             <RejectVendorDialog
-              registrationId={registration.id}
+              userId={profile.user_id}
               adminUserId={adminUserId || ""}
               companyName={
                 companyInfo?.nama_perusahaan ||
-                registration.user_nama_perusahaan ||
+                profile.nama_perusahaan ||
                 "Vendor"
               }
             />
           )}
           <Button variant="destructive" asChild>
-            <Link href={`/admin/vendors/${registration.id}/delete`}>Hapus</Link>
+            <Link href={`/admin/vendors/${profile.user_id}/delete`}>Hapus</Link>
           </Button>
         </div>
       </div>
@@ -290,28 +293,28 @@ export default async function VendorDetailPage({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="text-muted-foreground">Status</div>
                   <div className="font-medium">
-                    <Badge variant={statusVariants[registration.status]}>
-                      {statusLabels[registration.status]}
+                    <Badge variant={statusVariants[profile.status]}>
+                      {statusLabels[profile.status]}
                     </Badge>
                   </div>
 
                   <div className="text-muted-foreground">Tanggal Dibuat</div>
                   <div className="font-medium">
-                    {formatDate(registration.created_at)}
+                    {formatDate(profile.created_at)}
                   </div>
 
                   <div className="text-muted-foreground">Tanggal Submit</div>
                   <div className="font-medium">
-                    {formatDate(registration.submitted_at)}
+                    {formatDate(profile.submitted_at)}
                   </div>
 
                   <div className="text-muted-foreground">Tanggal Review</div>
                   <div className="font-medium">
-                    {formatDate(registration.reviewed_at)}
+                    {formatDate(profile.reviewed_at)}
                   </div>
                 </div>
 
-                {registration.approval_notes && (
+                {profile.approval_notes && (
                   <>
                     <Separator />
                     <div className="space-y-2">
@@ -319,13 +322,13 @@ export default async function VendorDetailPage({
                         Catatan Approval
                       </div>
                       <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
-                        {registration.approval_notes}
+                        {profile.approval_notes}
                       </div>
                     </div>
                   </>
                 )}
 
-                {registration.rejection_reason && (
+                {profile.rejection_reason && (
                   <>
                     <Separator />
                     <div className="space-y-2">
@@ -333,7 +336,7 @@ export default async function VendorDetailPage({
                         Alasan Penolakan
                       </div>
                       <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                        {registration.rejection_reason}
+                        {profile.rejection_reason}
                       </div>
                     </div>
                   </>
@@ -367,8 +370,8 @@ export default async function VendorDetailPage({
                   <div>
                     <div className="text-muted-foreground">Approved</div>
                     <div className="mt-1 font-medium">
-                      {profile.approved_at
-                        ? formatDate(profile.approved_at)
+                      {profile.reviewed_at
+                        ? formatDate(profile.reviewed_at)
                         : "Belum"}
                     </div>
                   </div>

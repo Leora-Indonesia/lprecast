@@ -18,13 +18,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 
 interface ApproveVendorDialogProps {
-  registrationId: string
+  userId: string
   adminUserId: string
   companyName: string
 }
 
 export function ApproveVendorDialog({
-  registrationId,
+  userId,
   adminUserId,
   companyName,
 }: ApproveVendorDialogProps) {
@@ -36,7 +36,7 @@ export function ApproveVendorDialog({
   async function handleApprove() {
     setIsLoading(true)
     try {
-      const res = await fetch(`/admin/vendors/${registrationId}/actions`, {
+      const res = await fetch(`/admin/vendors/${userId}/actions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

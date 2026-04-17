@@ -61,7 +61,7 @@ const validFormData: VendorRegistrationFormData = {
         dimensions: "100x50x50",
         material: "Baja",
         finishing: "Cat",
-        berat: 25,
+        weight_kg: 25,
         lead_time_days: 7,
         moq: 10,
       },
@@ -75,10 +75,10 @@ const validFormData: VendorRegistrationFormData = {
       },
     ],
     cost_inclusions: {
-      mobilisasi: true,
-      penginapan: false,
-      pengiriman: true,
-      langsir: false,
+      mobilisasi_demobilisasi: true,
+      penginapan_tukang: false,
+      biaya_pengiriman: true,
+      biaya_langsir: false,
       instalasi: false,
       ppn: true,
     },
@@ -157,10 +157,10 @@ const formDataWithOptionalFieldsEmpty = {
       },
     ],
     cost_inclusions: {
-      mobilisasi: false,
-      penginapan: false,
-      pengiriman: false,
-      langsir: false,
+      mobilisasi_demobilisasi: false,
+      penginapan_tukang: false,
+      biaya_pengiriman: false,
+      biaya_langsir: false,
       instalasi: false,
       ppn: false,
     },
@@ -283,7 +283,7 @@ describe("transformToDraftData", () => {
     ).toHaveLength(2)
   })
 
-  it("should map cost_inclusions keys correctly (mobilisasi -> mobilisasi_demobilisasi, etc)", () => {
+  it("should pass cost_inclusions keys through directly to DB format", () => {
     const result = transformToDraftData(validFormData)
 
     expect(result.operational.cost_inclusions.mobilisasi_demobilisasi).toBe(

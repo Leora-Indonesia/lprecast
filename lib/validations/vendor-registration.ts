@@ -13,10 +13,11 @@ const maxFileSize = 5 * 1024 * 1024 // 5MB
 const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"]
 
 // Validasi file untuk required field (KTP)
-// Menggunakan optional + refine untuk allow undefined di defaultValues
+// IMPORTANT: refine() MUST come before optional() in zod v4
+// because optional() allows undefined, but refine() runs after optional()
+// and would receive undefined, failing the instanceof File check.
 const requiredFileValidation = z
   .file()
-  .optional()
   .refine((file) => file instanceof File && file.size > 0, {
     message: "File wajib diupload",
   })
@@ -26,6 +27,7 @@ const requiredFileValidation = z
   .refine((file) => !file || allowedFileTypes.includes(file.type), {
     message: "Format file harus JPG, PNG, atau PDF",
   })
+  .optional()
 
 // Validasi file untuk optional field
 const optionalFileValidation = z
@@ -103,7 +105,7 @@ export const companyInfoSchema = z.object({
   nama_pic: z.string().min(1, "Nama PIC wajib diisi"),
   kontak_pic: z
     .string()
-    .min(1, "Kontak PIC wajib diisi")
+    .min(1, "Nomor HP PIC wajib diisi")
     .refine((val) => validatePhone(val), {
       message:
         "Format nomor HP tidak valid. Gunakan format 08xx, 62xx, atau +62xx",
@@ -193,7 +195,7 @@ export const productSchema = z.object({
   dimensions: z.string().optional(),
   material: z.string().optional(),
   finishing: z.string().optional(),
-  berat: z.number().optional(),
+  weight_kg: z.number().optional(),
   lead_time_days: z.number().optional(),
   moq: z.number().optional(),
   description: z.string().optional(),
@@ -232,10 +234,10 @@ export const operationalSchema = z.object({
     .array(deliveryAreaSchema)
     .min(1, "Minimal harus ada 1 area pengiriman"),
   cost_inclusions: z.object({
-    mobilisasi: z.boolean().default(false),
-    penginapan: z.boolean().default(false),
-    pengiriman: z.boolean().default(false),
-    langsir: z.boolean().default(false),
+    mobilisasi_demobilisasi: z.boolean().default(false),
+    penginapan_tukang: z.boolean().default(false),
+    biaya_pengiriman: z.boolean().default(false),
+    biaya_langsir: z.boolean().default(false),
     instalasi: z.boolean().default(false),
     ppn: z.boolean().default(false),
   }),

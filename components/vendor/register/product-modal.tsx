@@ -64,7 +64,7 @@ const initialProduct: ProductFormData = {
   dimensions: "",
   material: "",
   finishing: "",
-  berat: undefined,
+  weight_kg: undefined,
   lead_time_days: undefined,
   moq: undefined,
   description: "",
@@ -288,20 +288,20 @@ export function ProductModal({
                 </div>
                 <div className="space-y-2">
                   <Label
-                    htmlFor="prod_berat"
+                    htmlFor="prod_weight_kg"
                     className="text-xs font-bold text-gray-500"
                   >
                     Berat per Unit (kg)
                   </Label>
                   <Input
-                    id="prod_berat"
+                    id="prod_weight_kg"
                     type="number"
                     placeholder="45"
-                    value={product.berat || ""}
+                    value={product.weight_kg || ""}
                     onChange={(e) =>
                       setProduct({
                         ...product,
-                        berat: e.target.value
+                        weight_kg: e.target.value
                           ? Number(e.target.value)
                           : undefined,
                       })

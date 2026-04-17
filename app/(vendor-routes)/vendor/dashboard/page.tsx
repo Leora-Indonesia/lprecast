@@ -39,7 +39,7 @@ export default async function VendorDashboard() {
 
   const { data: vendorProfile } = await supabase
     .from("vendor_profiles")
-    .select("*, vendor_registrations(*)")
+    .select("status, nama_perusahaan")
     .eq("user_id", user?.id)
     .single()
 
@@ -76,19 +76,19 @@ export default async function VendorDashboard() {
 
   const getStatusConfig = (status: string | null) => {
     switch (status) {
-      case "approved":
+      case "active":
         return {
           label: "Aktif",
           variant: "default" as const,
           icon: CheckCircle,
           description: "Akun vendor Anda telah aktif",
         }
-      case "suspended":
+      case "draft":
         return {
-          label: "Pending Review",
+          label: "Draft",
           variant: "secondary" as const,
           icon: Clock,
-          description: "Menunggu review dari admin",
+          description: "Belum submisi",
         }
       case "submitted":
         return {
@@ -97,12 +97,40 @@ export default async function VendorDashboard() {
           icon: Clock,
           description: "Data telah dikirim, menunggu review dari admin",
         }
+      case "under_review":
+        return {
+          label: "Sedang Direview",
+          variant: "default" as const,
+          icon: Clock,
+          description: "Tim kami sedang mereview data Anda",
+        }
+      case "revision_requested":
+        return {
+          label: "Perlu Revisi",
+          variant: "secondary" as const,
+          icon: AlertCircle,
+          description: "Silakan lengkapi data yang diperlukan",
+        }
       case "rejected":
         return {
           label: "Ditolak",
           variant: "destructive" as const,
           icon: XCircle,
           description: "Pendaftaran ditolak",
+        }
+      case "suspended":
+        return {
+          label: "Ditangguhkan",
+          variant: "secondary" as const,
+          icon: AlertCircle,
+          description: "Akun ditangguhkan sementara",
+        }
+      case "blacklisted":
+        return {
+          label: "Diblokir",
+          variant: "destructive" as const,
+          icon: XCircle,
+          description: "Akun diblokir",
         }
       default:
         return {
@@ -146,7 +174,7 @@ export default async function VendorDashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          {vendorProfile?.status === "suspended" && (
+          {vendorProfile?.status === "under_review" && (
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Progress Review</span>
@@ -159,7 +187,7 @@ export default async function VendorDashboard() {
               </p>
             </div>
           )}
-          {vendorProfile?.status === "approved" && (
+          {vendorProfile?.status === "active" && (
             <div className="flex items-center gap-4">
               <CheckCircle className="h-8 w-8 text-green-500" />
               <div>

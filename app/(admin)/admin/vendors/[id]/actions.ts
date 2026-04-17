@@ -14,55 +14,31 @@ export type VendorTransactionStatus = {
 }
 
 export async function checkVendorTransactions(
-  registrationId: string
+  userId: string
 ): Promise<VendorTransactionStatus> {
   const supabase = createAdminClient()
 
-  // Get vendor_id from registration
-  const { data: registration } = await supabase
-    .from("vendor_registrations")
-    .select("vendor_id")
-    .eq("id", registrationId)
-    .single()
-
-  if (!registration?.vendor_id) {
-    return {
-      hasTransactions: false,
-      tenderSubmissions: 0,
-      vendorSpk: 0,
-      vendorKpiScores: 0,
-      paymentRequests: 0,
-      details: [],
-    }
-  }
-
-  const vendorId = registration.vendor_id
-
-  // Check tender submissions
   const { count: tenderSubmissions } = await supabase
     .from("tender_submissions")
     .select("*", { count: "exact", head: true })
-    .eq("vendor_id", vendorId)
+    .eq("vendor_id", userId)
 
-  // Check vendor SPK
   const { count: vendorSpk } = await supabase
     .from("vendor_spk")
     .select("*", { count: "exact", head: true })
-    .eq("vendor_id", vendorId)
+    .eq("vendor_id", userId)
 
-  // Check vendor KPI scores
   const { count: vendorKpiScores } = await supabase
     .from("vendor_kpi_scores")
     .select("*", { count: "exact", head: true })
-    .eq("vendor_id", vendorId)
+    .eq("vendor_id", userId)
 
-  // Check payment requests (via vendor_spk)
   let paymentRequests = 0
   if (vendorSpk && vendorSpk > 0) {
     const { data: spkIds } = await supabase
       .from("vendor_spk")
       .select("id")
-      .eq("vendor_id", vendorId)
+      .eq("vendor_id", userId)
 
     if (spkIds && spkIds.length > 0) {
       const { count: prCount } = await supabase
@@ -104,11 +80,10 @@ export async function checkVendorTransactions(
   }
 }
 
-export async function deleteVendor(registrationId: string) {
+export async function deleteVendor(userId: string) {
   const supabase = createAdminClient()
 
-  // Check if vendor has transactions
-  const transactionStatus = await checkVendorTransactions(registrationId)
+  const transactionStatus = await checkVendorTransactions(userId)
 
   if (transactionStatus.hasTransactions) {
     return {
@@ -117,48 +92,26 @@ export async function deleteVendor(registrationId: string) {
     }
   }
 
-  // Get vendor_id to delete user later
-  const { data: registration } = await supabase
-    .from("vendor_registrations")
-    .select("vendor_id")
-    .eq("id", registrationId)
-    .single()
+  const tablesToDelete = [
+    "vendor_onboarding_drafts",
+    "vendor_documents",
+    "vendor_contacts",
+    "vendor_bank_accounts",
+    "vendor_factory_addresses",
+    "vendor_products",
+    "vendor_delivery_areas",
+    "vendor_cost_inclusions",
+    "vendor_additional_costs",
+    "vendor_profiles",
+  ]
 
-  const vendorId = registration?.vendor_id
-
-  // Delete vendor_profiles first (no ON DELETE CASCADE on registration_id FK)
-  if (vendorId) {
-    const { error: profileDeleteError } = await supabase
-      .from("vendor_profiles")
-      .delete()
-      .eq("user_id", vendorId)
-    if (profileDeleteError) {
-      console.error("Error deleting vendor_profiles:", profileDeleteError)
-      return { success: false, error: "Gagal menghapus profil vendor." }
-    }
+  for (const table of tablesToDelete) {
+    await supabase.from(table).delete().eq("user_id", userId)
   }
 
-  // Delete vendor registration (ON DELETE CASCADE will handle related tables)
-  const { error: deleteError } = await supabase
-    .from("vendor_registrations")
-    .delete()
-    .eq("id", registrationId)
-
-  if (deleteError) {
-    console.error("Error deleting vendor_registrations:", deleteError)
-    return {
-      success: false,
-      error: "Gagal menghapus vendor. Silakan coba lagi.",
-    }
-  }
-
-  // Delete auth user if exists
-  if (vendorId) {
-    const { error: authError } = await supabase.auth.admin.deleteUser(vendorId)
-    if (authError) {
-      console.error("Error deleting auth user:", authError)
-      // Continue even if auth deletion fails - registration is already deleted
-    }
+  const { error: authError } = await supabase.auth.admin.deleteUser(userId)
+  if (authError) {
+    console.error("Error deleting auth user:", authError)
   }
 
   revalidatePath("/admin/vendors")

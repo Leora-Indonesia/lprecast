@@ -1,12 +1,5 @@
 import type { Database } from "@/types/database.types"
 
-export type VendorRegistration =
-  Database["public"]["Tables"]["vendor_registrations"]["Row"]
-export type VendorRegistrationInsert =
-  Database["public"]["Tables"]["vendor_registrations"]["Insert"]
-export type VendorRegistrationUpdate =
-  Database["public"]["Tables"]["vendor_registrations"]["Update"]
-
 export type VendorOnboardingDraft =
   Database["public"]["Tables"]["vendor_onboarding_drafts"]["Row"]
 export type VendorOnboardingDraftInsert =

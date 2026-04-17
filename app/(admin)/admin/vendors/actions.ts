@@ -2,11 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
 import { createAdminClient } from "@/lib/supabase/admin"
 
-export interface VendorRegistrationWithUser {
-  id: string
+export interface VendorProfileWithUser {
   user_id: string
   status: string
   created_at: string | null
@@ -17,6 +15,7 @@ export interface VendorRegistrationWithUser {
   approval_notes: string | null
   user_email: string | null
   user_nama: string | null
+  nama_perusahaan: string | null
   draft_data: {
     company_info?: {
       nama_perusahaan?: string
@@ -29,8 +28,8 @@ export interface VendorRegistrationWithUser {
 export async function getPendingVendorRegistrations() {
   const supabase = await createAdminClient()
 
-  const { data: registrations, error } = await supabase
-    .from("vendor_registrations")
+  const { data: profiles, error } = await supabase
+    .from("vendor_profiles")
     .select("*")
     .in("status", ["submitted", "under_review"])
     .order("submitted_at", { ascending: false })
@@ -40,11 +39,11 @@ export async function getPendingVendorRegistrations() {
     return []
   }
 
-  if (!registrations || registrations.length === 0) {
+  if (!profiles || profiles.length === 0) {
     return []
   }
 
-  const userIds = registrations.map((r) => r.user_id).filter(Boolean)
+  const userIds = profiles.map((p) => p.user_id).filter(Boolean)
 
   const [usersResult, draftsResult] = await Promise.all([
     supabase
@@ -62,33 +61,38 @@ export async function getPendingVendorRegistrations() {
     (draftsResult.data || []).map((d) => [d.user_id, d.draft_data])
   )
 
-  return (registrations || []).map((reg) => {
-    const user = userMap.get(reg.user_id)
+  return (profiles || []).map((profile) => {
+    const user = userMap.get(profile.user_id)
     return {
-      ...reg,
+      user_id: profile.user_id,
+      status: profile.status,
+      created_at: profile.created_at,
+      submitted_at: profile.submitted_at,
+      reviewed_at: profile.reviewed_at,
+      reviewed_by: profile.reviewed_by,
+      rejection_reason: profile.rejection_reason,
+      approval_notes: profile.approval_notes,
       user_email: user?.email || null,
       user_nama: user?.nama || null,
-      user_nama_perusahaan: user?.nama_perusahaan || null,
-      draft_data: draftMap.get(reg.user_id) || null,
+      nama_perusahaan: profile.nama_perusahaan || null,
+      draft_data: draftMap.get(profile.user_id) || null,
     }
   })
 }
 
-export async function getVendorRegistrationById(registrationId: string) {
+export async function getVendorProfileByUserId(userId: string) {
   const supabase = await createAdminClient()
 
-  const { data: registration, error } = await supabase
-    .from("vendor_registrations")
+  const { data: profile, error } = await supabase
+    .from("vendor_profiles")
     .select("*")
-    .eq("id", registrationId)
+    .eq("user_id", userId)
     .single()
 
-  if (error || !registration) {
-    console.error("Error fetching registration:", error)
+  if (error || !profile) {
+    console.error("Error fetching profile:", error)
     return null
   }
-
-  const userId = registration.user_id
 
   const [
     userResult,
@@ -101,7 +105,6 @@ export async function getVendorRegistrationById(registrationId: string) {
     deliveryAreas,
     costInclusions,
     additionalCosts,
-    profiles,
   ] = await Promise.all([
     supabase
       .from("users")
@@ -125,15 +128,13 @@ export async function getVendorRegistrationById(registrationId: string) {
     supabase.from("vendor_delivery_areas").select("*").eq("user_id", userId),
     supabase.from("vendor_cost_inclusions").select("*").eq("user_id", userId),
     supabase.from("vendor_additional_costs").select("*").eq("user_id", userId),
-    supabase.from("vendor_profiles").select("*").eq("user_id", userId).single(),
   ])
 
   return {
-    registration: {
-      ...registration,
+    profile: {
+      ...profile,
       user_email: userResult.data?.email || null,
       user_nama: userResult.data?.nama || null,
-      user_nama_perusahaan: userResult.data?.nama_perusahaan || null,
     },
     draft_data: drafts.data as {
       company_info?: Record<string, unknown>
@@ -146,75 +147,53 @@ export async function getVendorRegistrationById(registrationId: string) {
     delivery_areas: deliveryAreas.data || [],
     cost_inclusions: costInclusions.data || [],
     additional_costs: additionalCosts.data || [],
-    profile: profiles.data || null,
   }
 }
 
 export async function approveVendor(
-  registrationId: string,
+  userId: string,
   adminUserId: string,
   notes?: string
 ) {
   const supabase = await createAdminClient()
 
-  const { data: registration, error: regError } = await supabase
-    .from("vendor_registrations")
-    .select("user_id")
-    .eq("id", registrationId)
-    .single()
-
-  if (regError || !registration) {
-    return { success: false, error: "Registration not found" }
-  }
-
   const { error: updateError } = await supabase
-    .from("vendor_registrations")
+    .from("vendor_profiles")
     .update({
-      status: "approved",
+      status: "active",
       reviewed_at: new Date().toISOString(),
       reviewed_by: adminUserId,
       approval_notes: notes || null,
     })
-    .eq("id", registrationId)
+    .eq("user_id", userId)
 
   if (updateError) {
     console.error("Error approving vendor:", updateError)
     return { success: false, error: "Failed to approve vendor" }
   }
 
-  await supabase.from("vendor_profiles").upsert(
-    {
-      user_id: registration.user_id,
-      status: "approved",
-      approved_at: new Date().toISOString(),
-      approved_by: adminUserId,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id" }
-  )
-
   revalidatePath("/admin/vendors")
-  revalidatePath(`/admin/vendors/${registrationId}`)
+  revalidatePath(`/admin/vendors/${userId}`)
 
   return { success: true }
 }
 
 export async function rejectVendor(
-  registrationId: string,
+  userId: string,
   adminUserId: string,
   reason: string
 ) {
   const supabase = await createAdminClient()
 
   const { error: updateError } = await supabase
-    .from("vendor_registrations")
+    .from("vendor_profiles")
     .update({
       status: "rejected",
       reviewed_at: new Date().toISOString(),
       reviewed_by: adminUserId,
       rejection_reason: reason,
     })
-    .eq("id", registrationId)
+    .eq("user_id", userId)
 
   if (updateError) {
     console.error("Error rejecting vendor:", updateError)
@@ -222,22 +201,59 @@ export async function rejectVendor(
   }
 
   revalidatePath("/admin/vendors")
-  revalidatePath(`/admin/vendors/${registrationId}`)
+  revalidatePath(`/admin/vendors/${userId}`)
 
   return { success: true }
 }
 
-export async function setUnderReview(registrationId: string) {
+export async function setUnderReview(userId: string) {
   const supabase = await createAdminClient()
 
   const { error } = await supabase
-    .from("vendor_registrations")
+    .from("vendor_profiles")
     .update({ status: "under_review" })
-    .eq("id", registrationId)
+    .eq("user_id", userId)
 
   if (error) {
     console.error("Error updating status:", error)
     return { success: false, error: "Failed to update status" }
+  }
+
+  revalidatePath("/admin/vendors")
+  return { success: true }
+}
+
+export async function setRevisionRequested(userId: string) {
+  const supabase = await createAdminClient()
+
+  const { error } = await supabase
+    .from("vendor_profiles")
+    .update({ status: "revision_requested" })
+    .eq("user_id", userId)
+
+  if (error) {
+    console.error("Error setting revision requested:", error)
+    return { success: false, error: "Failed to request revision" }
+  }
+
+  revalidatePath("/admin/vendors")
+  return { success: true }
+}
+
+export async function updateVendorStatus(
+  userId: string,
+  newStatus: "active" | "suspended" | "blacklisted"
+) {
+  const supabase = await createAdminClient()
+
+  const { error } = await supabase
+    .from("vendor_profiles")
+    .update({ status: newStatus })
+    .eq("user_id", userId)
+
+  if (error) {
+    console.error("Error updating vendor status:", error)
+    return { success: false, error: "Failed to update vendor status" }
   }
 
   revalidatePath("/admin/vendors")
@@ -320,7 +336,7 @@ export async function checkVendorTransactions(
   }
 }
 
-export async function deleteVendor(registrationId: string, userId: string) {
+export async function deleteVendor(userId: string) {
   const supabase = await createAdminClient()
 
   const transactionStatus = await checkVendorTransactions(userId)
@@ -343,17 +359,10 @@ export async function deleteVendor(registrationId: string, userId: string) {
     "vendor_cost_inclusions",
     "vendor_additional_costs",
     "vendor_profiles",
-    "vendor_registrations",
   ]
 
   for (const table of tablesToDelete) {
-    if (table === "vendor_registrations") {
-      await supabase.from(table).delete().eq("id", registrationId)
-    } else if (table === "vendor_onboarding_drafts") {
-      await supabase.from(table).delete().eq("user_id", userId)
-    } else {
-      await supabase.from(table).delete().eq("user_id", userId)
-    }
+    await supabase.from(table).delete().eq("user_id", userId)
   }
 
   const { error: authError } = await supabase.auth.admin.deleteUser(userId)

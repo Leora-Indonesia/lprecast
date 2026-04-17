@@ -36,9 +36,9 @@ export default async function AdminDashboard() {
       .select("*", { count: "exact", head: true })
       .eq("stakeholder_type", "vendor"),
     supabase
-      .from("vendor_registrations")
+      .from("vendor_profiles")
       .select("*", { count: "exact", head: true })
-      .eq("status", "submitted"),
+      .in("status", ["submitted", "under_review"]),
     supabase
       .from("notifications")
       .select("*, users(nama)")
@@ -214,15 +214,15 @@ export default async function AdminDashboard() {
 
                   return (
                     <Link
-                      key={vendor.id}
-                      href={`/admin/vendors/${vendor.id}`}
+                      key={vendor.user_id}
+                      href={`/admin/vendors/${vendor.user_id}`}
                       className="block rounded-lg border p-3 transition hover:bg-muted/50"
                     >
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">
                             {companyInfo?.nama_perusahaan ||
-                              vendor.user_nama_perusahaan ||
+                              vendor.nama_perusahaan ||
                               "N/A"}
                           </p>
                           <p className="text-sm text-muted-foreground">

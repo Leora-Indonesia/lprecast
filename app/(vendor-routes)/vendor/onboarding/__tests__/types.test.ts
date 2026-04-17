@@ -103,6 +103,12 @@ const minimalValidPayload = {
         no_hp: "081234567891",
         jabatan: "Manager",
       },
+      {
+        sequence: 2,
+        nama: "Contact 2",
+        no_hp: "081234567892",
+        jabatan: "Staff",
+      },
     ],
   },
   documents: {

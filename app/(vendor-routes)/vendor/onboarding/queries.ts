@@ -48,25 +48,25 @@ export async function getRegistrationStatus(): Promise<RegistrationStatus> {
     return { status: "none", hasDraft: false, hasRegistration: false }
   }
 
-  const [draftResult, registrationResult] = await Promise.all([
+  const [draftResult, profileResult] = await Promise.all([
     supabase
       .from("vendor_onboarding_drafts")
       .select("id")
       .eq("user_id", user.id)
       .single(),
     supabase
-      .from("vendor_registrations")
+      .from("vendor_profiles")
       .select("status")
       .eq("user_id", user.id)
       .single(),
   ])
 
   const hasDraft = !draftResult.error && !!draftResult.data
-  const hasRegistration = !registrationResult.error && !!registrationResult.data
+  const hasRegistration = !profileResult.error && !!profileResult.data
 
   return {
     status: hasRegistration
-      ? (registrationResult.data!.status as RegistrationStatus["status"])
+      ? (profileResult.data!.status as RegistrationStatus["status"])
       : "none",
     hasDraft,
     hasRegistration,

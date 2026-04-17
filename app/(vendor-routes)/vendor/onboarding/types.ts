@@ -26,7 +26,7 @@ export const companyInfoSchema = z.object({
   nama_pic: z.string().min(1, "Nama PIC wajib diisi"),
   kontak_pic: z
     .string()
-    .min(1, "Kontak PIC wajib diisi")
+    .min(1, "Nomor HP PIC wajib diisi")
     .refine((val) => validatePhone(val), {
       message: "Format nomor HP tidak valid",
     }),
@@ -218,8 +218,11 @@ export interface RegistrationStatus {
     | "draft"
     | "submitted"
     | "under_review"
-    | "approved"
+    | "revision_requested"
     | "rejected"
+    | "active"
+    | "suspended"
+    | "blacklisted"
   hasDraft: boolean
   hasRegistration: boolean
 }

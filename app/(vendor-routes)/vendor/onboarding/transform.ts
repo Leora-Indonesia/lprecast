@@ -9,8 +9,11 @@ export function transformToDraftData(
     company_info: {
       nama_perusahaan: formData.company_info.nama_perusahaan,
       email: formData.company_info.email,
-      nama_pic: formData.company_info.nama_pic,
-      kontak_pic: formData.company_info.kontak_pic,
+      nama_pic:
+        formData.company_info.nama_pic || formData.company_info.contact_1.nama,
+      kontak_pic:
+        formData.company_info.kontak_pic ||
+        formData.company_info.contact_1.no_hp,
       website: formData.company_info.website || "",
       instagram: formData.company_info.instagram || "",
       facebook: formData.company_info.facebook || "",
@@ -54,7 +57,7 @@ export function transformToDraftData(
         dimensions: p.dimensions || "",
         material: p.material || "",
         finishing: p.finishing || "",
-        weight_kg: (p as { berat?: number }).berat || 0,
+        weight_kg: p.weight_kg || 0,
         lead_time_days: p.lead_time_days || 0,
         moq: p.moq || 0,
       })),
@@ -65,10 +68,11 @@ export function transformToDraftData(
       },
       cost_inclusions: {
         mobilisasi_demobilisasi:
-          formData.operational.cost_inclusions.mobilisasi,
-        penginapan_tukang: formData.operational.cost_inclusions.penginapan,
-        biaya_pengiriman: formData.operational.cost_inclusions.pengiriman,
-        biaya_langsir: formData.operational.cost_inclusions.langsir,
+          formData.operational.cost_inclusions.mobilisasi_demobilisasi,
+        penginapan_tukang:
+          formData.operational.cost_inclusions.penginapan_tukang,
+        biaya_pengiriman: formData.operational.cost_inclusions.biaya_pengiriman,
+        biaya_langsir: formData.operational.cost_inclusions.biaya_langsir,
         instalasi: formData.operational.cost_inclusions.instalasi,
         ppn: formData.operational.cost_inclusions.ppn,
       },

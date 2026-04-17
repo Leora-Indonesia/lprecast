@@ -4,8 +4,8 @@ export async function checkVendorData() {
   const supabase = await createClient()
 
   const { data, error } = await supabase
-    .from("vendor_registrations")
-    .select("*, vendor_company_info(*)")
+    .from("vendor_profiles")
+    .select("*")
     .order("created_at", { ascending: false })
     .limit(5)
 
@@ -14,7 +14,7 @@ export async function checkVendorData() {
     return []
   }
 
-  console.log("Vendor registrations found:", data?.length || 0)
+  console.log("Vendor profiles found:", data?.length || 0)
   console.log("Sample data:", data?.[0])
 
   return data

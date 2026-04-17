@@ -1048,11 +1048,13 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
                 checked={
-                  watch("operational.cost_inclusions.mobilisasi") === true
+                  watch(
+                    "operational.cost_inclusions.mobilisasi_demobilisasi"
+                  ) === true
                 }
                 onCheckedChange={(checked) =>
                   setValue(
-                    "operational.cost_inclusions.mobilisasi",
+                    "operational.cost_inclusions.mobilisasi_demobilisasi",
                     checked === true
                   )
                 }
@@ -1062,11 +1064,12 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
                 checked={
-                  watch("operational.cost_inclusions.penginapan") === true
+                  watch("operational.cost_inclusions.penginapan_tukang") ===
+                  true
                 }
                 onCheckedChange={(checked) =>
                   setValue(
-                    "operational.cost_inclusions.penginapan",
+                    "operational.cost_inclusions.penginapan_tukang",
                     checked === true
                   )
                 }
@@ -1076,11 +1079,11 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
                 checked={
-                  watch("operational.cost_inclusions.pengiriman") === true
+                  watch("operational.cost_inclusions.biaya_pengiriman") === true
                 }
                 onCheckedChange={(checked) =>
                   setValue(
-                    "operational.cost_inclusions.pengiriman",
+                    "operational.cost_inclusions.biaya_pengiriman",
                     checked === true
                   )
                 }
@@ -1089,10 +1092,12 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
             </label>
             <label className="flex cursor-pointer items-center gap-2.5 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100">
               <Checkbox
-                checked={watch("operational.cost_inclusions.langsir") === true}
+                checked={
+                  watch("operational.cost_inclusions.biaya_langsir") === true
+                }
                 onCheckedChange={(checked) =>
                   setValue(
-                    "operational.cost_inclusions.langsir",
+                    "operational.cost_inclusions.biaya_langsir",
                     checked === true
                   )
                 }

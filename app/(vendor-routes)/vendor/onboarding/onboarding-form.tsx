@@ -16,6 +16,7 @@ import { OperationalForm } from "@/components/vendor/register/operational-form"
 import { ReviewSubmit } from "@/components/vendor/register/review-submit"
 
 import { saveDraft, submitOnboarding } from "./mutations"
+import { transformToDraftData } from "./transform"
 import type { OnboardingDraftData, UserRegistrationData } from "./types"
 
 import { Button } from "@/components/ui/button"
@@ -64,10 +65,10 @@ const defaultValues: VendorRegistrationFormData = {
     products: [],
     delivery_areas: [],
     cost_inclusions: {
-      mobilisasi: false,
-      penginapan: false,
-      pengiriman: false,
-      langsir: false,
+      mobilisasi_demobilisasi: false,
+      penginapan_tukang: false,
+      biaya_pengiriman: false,
+      biaya_langsir: false,
       instalasi: false,
       ppn: false,
     },
@@ -76,86 +77,6 @@ const defaultValues: VendorRegistrationFormData = {
   review: {
     legal_agreement: false,
   },
-}
-
-export function transformToDraftData(
-  formData: VendorRegistrationFormData
-): OnboardingDraftData {
-  return {
-    currentStep: 1,
-    company_info: {
-      nama_perusahaan: formData.company_info.nama_perusahaan,
-      email: formData.company_info.email,
-      nama_pic: formData.company_info.nama_pic,
-      kontak_pic: formData.company_info.kontak_pic,
-      website: formData.company_info.website || "",
-      instagram: formData.company_info.instagram || "",
-      facebook: formData.company_info.facebook || "",
-      linkedin: formData.company_info.linkedin || "",
-      contacts: [
-        { sequence: 1, ...formData.company_info.contact_1 },
-        { sequence: 2, ...formData.company_info.contact_2 },
-        formData.company_info.contact_3?.nama
-          ? { sequence: 3, ...formData.company_info.contact_3 }
-          : null,
-      ].filter(Boolean) as OnboardingDraftData["company_info"]["contacts"],
-    },
-    documents: {
-      ktp_path: null,
-      ktp_number: null,
-      npwp_path: null,
-      npwp_number: formData.legal_documents.npwp_nomor || null,
-      nib_path: null,
-      nib_number: formData.legal_documents.nib_nomor || null,
-      siup_sbu_path: null,
-      company_profile_path: null,
-    },
-    operational: {
-      factory_address: {
-        address: formData.operational.factory_address.alamat_detail || "",
-        province: formData.operational.factory_address.provinsi_name || "",
-        kabupaten: formData.operational.factory_address.kabupaten_name || "",
-        kecamatan: formData.operational.factory_address.kecamatan || "",
-        postal_code: formData.operational.factory_address.kode_pos || "",
-      },
-      delivery_areas: formData.operational.delivery_areas.map((area) => ({
-        province_id: area.province_id || "",
-        province_name: area.province_name || "",
-        city_id: area.city_id || "",
-        city_name: area.city_name || "",
-      })),
-      products: formData.operational.products.map((p) => ({
-        name: p.name,
-        satuan: p.satuan,
-        price: p.price,
-        dimensions: p.dimensions || "",
-        material: p.material || "",
-        finishing: p.finishing || "",
-        weight_kg: (p as { berat?: number }).berat || 0,
-        lead_time_days: p.lead_time_days || 0,
-        moq: p.moq || 0,
-      })),
-      bank_account: {
-        bank_name: formData.operational.bank.bank_nama,
-        account_number: formData.operational.bank.bank_nomor,
-        account_holder_name: formData.operational.bank.bank_atas_nama,
-      },
-      cost_inclusions: {
-        mobilisasi_demobilisasi:
-          formData.operational.cost_inclusions.mobilisasi,
-        penginapan_tukang: formData.operational.cost_inclusions.penginapan,
-        biaya_pengiriman: formData.operational.cost_inclusions.pengiriman,
-        biaya_langsir: formData.operational.cost_inclusions.langsir,
-        instalasi: formData.operational.cost_inclusions.instalasi,
-        ppn: formData.operational.cost_inclusions.ppn,
-      },
-      additional_costs: formData.operational.additional_costs.map((c) => ({
-        description: c.description || "",
-        amount: c.amount || 0,
-        unit: c.unit || "",
-      })),
-    },
-  }
 }
 
 interface OnboardingFormProps {
@@ -172,23 +93,54 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
   const [isSaving, setIsSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [uploadedDocPaths, setUploadedDocPaths] = useState<
+    | {
+        ktp_path?: string | null
+        npwp_path?: string | null
+        nib_path?: string | null
+        siup_sbu_path?: string | null
+        company_profile_path?: string | null
+      }
+    | undefined
+  >(draftData?.documents)
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null)
   const isDirtyRef = useRef(false)
+  const isSavingRef = useRef(false)
+  const isInitializingRef = useRef(false)
+  const persistSaveRef = useRef<
+    ((options?: { isAutoSave?: boolean }) => Promise<void>) | null
+  >(null)
+  const draftDataRef = useRef(draftData)
 
   const form = useForm<VendorRegistrationFormData>({
+    // Zod v4 + RHF v7 type incompatibility: z.boolean().refine() produces
+    // `boolean | undefined` which conflicts with RHF's expected `boolean`.
+    // This is a known upstream type gap between Zod v4 and @hookform/resolvers v5.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(vendorRegistrationSchema) as any,
     defaultValues,
     mode: "onTouched",
   })
 
-  const { watch, reset, getValues, trigger } = form
-  const formValues = watch()
+  const { reset, getValues, trigger, watch } = form
+
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault()
+    if (currentStep < 3) {
+      handleNext()
+    }
+  }
 
   useEffect(() => {
-    isDirtyRef.current = true
-    setHasUnsavedChanges(true)
-  }, [formValues])
+    if (isInitializingRef.current) return
+
+    const subscription = watch(() => {
+      isDirtyRef.current = true
+      setHasUnsavedChanges(true)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch])
 
   useEffect(() => {
     if (draftData) {
@@ -255,11 +207,13 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
             city_name: a.city_name,
           })),
           cost_inclusions: {
-            mobilisasi:
+            mobilisasi_demobilisasi:
               draftData.operational.cost_inclusions.mobilisasi_demobilisasi,
-            penginapan: draftData.operational.cost_inclusions.penginapan_tukang,
-            pengiriman: draftData.operational.cost_inclusions.biaya_pengiriman,
-            langsir: draftData.operational.cost_inclusions.biaya_langsir,
+            penginapan_tukang:
+              draftData.operational.cost_inclusions.penginapan_tukang,
+            biaya_pengiriman:
+              draftData.operational.cost_inclusions.biaya_pengiriman,
+            biaya_langsir: draftData.operational.cost_inclusions.biaya_langsir,
             instalasi: draftData.operational.cost_inclusions.instalasi,
             ppn: draftData.operational.cost_inclusions.ppn,
           },
@@ -273,21 +227,29 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
           legal_agreement: false,
         },
       }
+      isInitializingRef.current = true
       reset(transformedValues)
+      isInitializingRef.current = false
+      isDirtyRef.current = false
+      setHasUnsavedChanges(false)
       toast.info("Draft ditemukan", {
         description: "Data Anda telah dimuat dari penyimpanan.",
       })
     } else if (userData) {
+      isInitializingRef.current = true
       reset({
         ...getValues(),
         company_info: {
           ...getValues().company_info,
           nama_perusahaan: userData.nama_perusahaan,
-          nama_pic: userData.nama_pic,
           email: userData.email,
+          nama_pic: userData.nama_pic || "",
           kontak_pic: userData.kontak_pic || "",
         },
       })
+      isInitializingRef.current = false
+      isDirtyRef.current = false
+      setHasUnsavedChanges(false)
       toast.info("Data dari registrasi dimuat", {
         description: "Nama perusahaan dan PIC telah terisi otomatis.",
       })
@@ -295,27 +257,72 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const persistSave = useCallback(async () => {
-    if (isSaving) return
-    if (!isDirtyRef.current) return
+  const persistSave = useCallback(
+    async (options: { isAutoSave?: boolean } = {}) => {
+      if (isSavingRef.current) return
+      if (!isDirtyRef.current) return
 
-    setIsSaving(true)
-    try {
-      const currentValues = getValues()
-      const draft = transformToDraftData(currentValues)
-      const result = await saveDraft(draft, currentStep + 1)
+      isSavingRef.current = true
+      setIsSaving(true)
+      try {
+        const currentValues = form.getValues()
+        const draft = transformToDraftData(currentValues)
 
-      if (result.success) {
-        isDirtyRef.current = false
-        setHasUnsavedChanges(false)
-        setLastSaved(new Date())
+        if (draftDataRef.current?.documents) {
+          draft.documents = {
+            ...draft.documents,
+            ktp_path: draftDataRef.current.documents.ktp_path,
+            npwp_path: draftDataRef.current.documents.npwp_path,
+            nib_path: draftDataRef.current.documents.nib_path,
+            siup_sbu_path: draftDataRef.current.documents.siup_sbu_path,
+            company_profile_path:
+              draftDataRef.current.documents.company_profile_path,
+          }
+        }
+
+        const files = new Map<string, File>()
+        const fileFields: [string, File | null | undefined][] = [
+          ["ktp_file", currentValues.legal_documents.ktp_file],
+          ["npwp_file", currentValues.legal_documents.npwp_file],
+          ["nib_file", currentValues.legal_documents.nib_file],
+          ["siup_file", currentValues.legal_documents.siup_file],
+          ["compro_file", currentValues.legal_documents.compro_file],
+        ]
+
+        for (const [key, file] of fileFields) {
+          if (file && file.size > 0) {
+            files.set(key, file as File)
+          }
+        }
+
+        const result = await saveDraft(draft, currentStep + 1, files)
+
+        if (result.success) {
+          isDirtyRef.current = false
+          setHasUnsavedChanges(false)
+          setLastSaved(new Date())
+          if (draftDataRef.current?.documents) {
+            draftDataRef.current = {
+              ...draftDataRef.current,
+              documents: draft.documents,
+            }
+          }
+          setUploadedDocPaths({ ...draft.documents })
+          if (options.isAutoSave) {
+            toast.success("Draft tersimpan otomatis")
+          }
+        }
+      } catch (err) {
+        console.error("Error saving draft:", err)
+      } finally {
+        isSavingRef.current = false
+        setIsSaving(false)
       }
-    } catch (err) {
-      console.error("Error saving draft:", err)
-    } finally {
-      setIsSaving(false)
-    }
-  }, [currentStep, getValues, isSaving])
+    },
+    [currentStep, form.control]
+  )
+
+  persistSaveRef.current = persistSave
 
   useEffect(() => {
     if (autoSaveTimerRef.current) {
@@ -323,8 +330,8 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
     }
 
     autoSaveTimerRef.current = setTimeout(() => {
-      if (isDirtyRef.current) {
-        persistSave()
+      if (isDirtyRef.current && persistSaveRef.current) {
+        persistSaveRef.current({ isAutoSave: true })
       }
     }, 30000)
 
@@ -333,7 +340,7 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
         clearTimeout(autoSaveTimerRef.current)
       }
     }
-  }, [persistSave, formValues])
+  }, [])
 
   const handleNext = async () => {
     let isValid = false
@@ -345,15 +352,27 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
         "company_info.nama_pic",
         "company_info.kontak_pic",
         "company_info.contact_1",
+        "company_info.contact_2",
       ])
     } else if (currentStep === 1) {
-      isValid = await trigger("legal_documents.ktp_file")
+      const hasKtpFromDraft = draftData?.documents?.ktp_path
+      if (hasKtpFromDraft) {
+        isValid = true
+      } else {
+        isValid = await trigger("legal_documents.ktp_file")
+      }
     } else if (currentStep === 2) {
       isValid = await trigger([
         "operational.bank.bank_nama",
         "operational.bank.bank_nomor",
         "operational.bank.bank_atas_nama",
         "operational.factory_address.alamat_detail",
+        "operational.factory_address.provinsi_id",
+        "operational.factory_address.kabupaten_id",
+        "operational.factory_address.kecamatan",
+        "operational.factory_address.kode_pos",
+        "operational.products",
+        "operational.delivery_areas",
       ])
     }
 
@@ -377,8 +396,22 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
     }
   }
 
-  const handleSubmit = async () => {
-    const isValid = await trigger()
+  const onFormSubmit = async () => {
+    const hasKtpFromDraft = draftData?.documents?.ktp_path
+    let isValid = false
+
+    if (hasKtpFromDraft) {
+      isValid = await trigger([
+        "company_info",
+        "legal_documents.npwp_nomor",
+        "legal_documents.nib_nomor",
+        "operational",
+        "review.legal_agreement",
+      ])
+    } else {
+      isValid = await trigger()
+    }
+
     if (!isValid) {
       toast.error("Lengkapi semua field yang diperlukan")
       return
@@ -411,6 +444,18 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
       }
 
       const payload = transformToDraftData(data)
+
+      if (draftData?.documents) {
+        payload.documents = {
+          ...payload.documents,
+          ktp_path: draftData.documents.ktp_path,
+          npwp_path: draftData.documents.npwp_path,
+          nib_path: draftData.documents.nib_path,
+          siup_sbu_path: draftData.documents.siup_sbu_path,
+          company_profile_path: draftData.documents.company_profile_path,
+        }
+      }
+
       formDataToSubmit.append("payload", JSON.stringify(payload))
 
       const result = await submitOnboarding(formDataToSubmit)
@@ -515,10 +560,15 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
           </div>
 
           <div className="p-10">
-            <form>
+            <form onSubmit={onSubmit}>
               <div className="space-y-8">
                 {currentStep === 0 && <CompanyInfoForm form={form} />}
-                {currentStep === 1 && <LegalDocumentsForm form={form} />}
+                {currentStep === 1 && (
+                  <LegalDocumentsForm
+                    form={form}
+                    uploadedFiles={uploadedDocPaths}
+                  />
+                )}
                 {currentStep === 2 && (
                   <OperationalForm form={form} onForceSave={persistSave} />
                 )}
@@ -529,7 +579,7 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={persistSave}
+                  onClick={() => persistSave()}
                   disabled={isSaving || !hasUnsavedChanges}
                 >
                   {isSaving ? (
@@ -559,7 +609,7 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
 
                   <Button
                     type="button"
-                    onClick={currentStep < 3 ? handleNext : handleSubmit}
+                    onClick={currentStep < 3 ? handleNext : onFormSubmit}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (

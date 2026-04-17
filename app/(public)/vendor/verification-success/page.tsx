@@ -31,16 +31,16 @@ export default function VerificationSuccessPage() {
         return
       }
 
-      const { data: registration } = await supabase
-        .from("vendor_registrations")
+      const { data: profile } = await supabase
+        .from("vendor_profiles")
         .select("status")
         .eq("user_id", user.id)
         .single()
 
       const needsOnboarding =
-        !registration ||
+        !profile ||
         ["draft", "submitted"].includes(
-          (registration as { status?: string }).status ?? ""
+          (profile as { status?: string }).status ?? ""
         )
 
       setRedirectTo(

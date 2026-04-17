@@ -3,12 +3,19 @@
 import { UseFormReturn, Controller, FieldErrors } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Check, X } from "lucide-react"
+import { Check, X, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { VendorRegistrationFormData } from "@/lib/validations/vendor-registration"
 
 export interface LegalDocumentsFormProps {
   form: UseFormReturn<VendorRegistrationFormData>
+  uploadedFiles?: {
+    ktp_path?: string | null
+    npwp_path?: string | null
+    nib_path?: string | null
+    siup_sbu_path?: string | null
+    company_profile_path?: string | null
+  }
 }
 
 type FileFieldPath =
@@ -24,6 +31,7 @@ interface FileInputProps {
   control: LegalDocumentsFormProps["form"]["control"]
   errors?: FieldErrors<VendorRegistrationFormData>
   required?: boolean
+  uploadedPath?: string | null
 }
 
 function FileInputField({
@@ -32,6 +40,7 @@ function FileInputField({
   control,
   errors,
   required,
+  uploadedPath,
 }: FileInputProps) {
   const fieldName = name.split(
     "."
@@ -46,6 +55,8 @@ function FileInputField({
         const fieldError = errors?.legal_documents?.[fieldName] as
           | { message?: string }
           | undefined
+        const hasFileSelected = file && file.size > 0
+        const hasUploadedFile = uploadedPath && !hasFileSelected
 
         return (
           <div>
@@ -66,7 +77,7 @@ function FileInputField({
                 className="flex w-full cursor-pointer text-sm text-gray-500 file:mr-3 file:rounded file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-gray-900 hover:file:bg-primary/20"
               />
             </div>
-            {file && (
+            {hasFileSelected ? (
               <div className="mt-2 flex items-center gap-2 text-sm text-green-600">
                 <Check className="h-4 w-4" />
                 <span>{file.name}</span>
@@ -78,7 +89,17 @@ function FileInputField({
                   <X className="h-3 w-3" />
                 </button>
               </div>
-            )}
+            ) : hasUploadedFile ? (
+              <div className="mt-2 flex items-center gap-2 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+                <FileText className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">
+                  {uploadedPath.split("/").pop() || "File sudah diupload"}
+                </span>
+                <span className="ml-auto text-xs text-green-600">
+                  Tersimpan di draft
+                </span>
+              </div>
+            ) : null}
             {fieldError?.message && (
               <p className="mt-2 text-xs text-destructive">
                 {fieldError.message}
@@ -91,7 +112,10 @@ function FileInputField({
   )
 }
 
-export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
+export function LegalDocumentsForm({
+  form,
+  uploadedFiles,
+}: LegalDocumentsFormProps) {
   const {
     register,
     control,
@@ -115,6 +139,7 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
             control={control}
             errors={errors}
             required
+            uploadedPath={uploadedFiles?.ktp_path}
           />
         </div>
 
@@ -144,6 +169,7 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
             name="legal_documents.npwp_file"
             control={control}
             errors={errors}
+            uploadedPath={uploadedFiles?.npwp_path}
           />
         </div>
 
@@ -175,6 +201,7 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
             control={control}
             errors={errors}
             required
+            uploadedPath={uploadedFiles?.nib_path}
           />
         </div>
 
@@ -184,6 +211,7 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
             name="legal_documents.siup_file"
             control={control}
             errors={errors}
+            uploadedPath={uploadedFiles?.siup_sbu_path}
           />
         </div>
 
@@ -193,6 +221,7 @@ export function LegalDocumentsForm({ form }: LegalDocumentsFormProps) {
             name="legal_documents.compro_file"
             control={control}
             errors={errors}
+            uploadedPath={uploadedFiles?.company_profile_path}
           />
         </div>
       </div>

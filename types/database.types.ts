@@ -727,29 +727,23 @@ export type Database = {
       vendor_delivery_areas: {
         Row: {
           city_id: string | null
-          city_name: string | null
           created_at: string | null
           id: string
           province_id: string | null
-          province_name: string | null
           user_id: string
         }
         Insert: {
           city_id?: string | null
-          city_name?: string | null
           created_at?: string | null
           id?: string
           province_id?: string | null
-          province_name?: string | null
           user_id: string
         }
         Update: {
           city_id?: string | null
-          city_name?: string | null
           created_at?: string | null
           id?: string
           province_id?: string | null
-          province_name?: string | null
           user_id?: string
         }
         Relationships: []
@@ -1031,49 +1025,52 @@ export type Database = {
       }
       vendor_profiles: {
         Row: {
-          approved_at: string | null
-          approved_by: string | null
+          approval_notes: string | null
           created_at: string | null
           email_perusahaan: string | null
           facebook: string | null
           instagram: string | null
-          kontak_pic: string | null
           linkedin: string | null
           nama_perusahaan: string
-          nama_pic: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: string
+          submitted_at: string | null
           updated_at: string | null
           user_id: string
           website: string | null
         }
         Insert: {
-          approved_at?: string | null
-          approved_by?: string | null
+          approval_notes?: string | null
           created_at?: string | null
           email_perusahaan?: string | null
           facebook?: string | null
           instagram?: string | null
-          kontak_pic?: string | null
           linkedin?: string | null
           nama_perusahaan: string
-          nama_pic: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string
+          submitted_at?: string | null
           updated_at?: string | null
           user_id: string
           website?: string | null
         }
         Update: {
-          approved_at?: string | null
-          approved_by?: string | null
+          approval_notes?: string | null
           created_at?: string | null
           email_perusahaan?: string | null
           facebook?: string | null
           instagram?: string | null
-          kontak_pic?: string | null
           linkedin?: string | null
           nama_perusahaan?: string
-          nama_pic?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string
+          submitted_at?: string | null
           updated_at?: string | null
           user_id?: string
           website?: string | null
@@ -1132,53 +1129,6 @@ export type Database = {
             foreignKeyName: "vendor_progress_verified_by_fkey"
             columns: ["verified_by"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      vendor_registrations: {
-        Row: {
-          approval_notes: string | null
-          created_at: string | null
-          id: string
-          rejection_reason: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string
-          submitted_at: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          approval_notes?: string | null
-          created_at?: string | null
-          id?: string
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          submitted_at?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          approval_notes?: string | null
-          created_at?: string | null
-          id?: string
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          submitted_at?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "vendor_registrations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },

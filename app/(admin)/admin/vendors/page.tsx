@@ -23,8 +23,11 @@ const statusLabels: Record<string, string> = {
   draft: "Draft",
   submitted: "Baru",
   under_review: "Ditinjau",
-  approved: "Disetujui",
+  revision_requested: "Revisi",
   rejected: "Ditolak",
+  active: "Aktif",
+  suspended: "Ditangguhkan",
+  blacklisted: "Diblokir",
 }
 
 const statusVariants: Record<
@@ -34,8 +37,11 @@ const statusVariants: Record<
   draft: "secondary",
   submitted: "default",
   under_review: "default",
-  approved: "outline",
+  revision_requested: "outline",
   rejected: "destructive",
+  active: "outline",
+  suspended: "secondary",
+  blacklisted: "destructive",
 }
 
 export default async function AdminVendorsPage() {
@@ -90,14 +96,14 @@ export default async function AdminVendorsPage() {
                   | undefined
 
                 return (
-                  <TableRow key={vendor.id}>
+                  <TableRow key={vendor.user_id}>
                     <TableCell className="font-medium">
                       <Link
-                        href={`/admin/vendors/${vendor.id}`}
+                        href={`/admin/vendors/${vendor.user_id}`}
                         className="hover:text-primary hover:underline"
                       >
                         {companyInfo?.nama_perusahaan ||
-                          vendor.user_nama_perusahaan ||
+                          vendor.nama_perusahaan ||
                           "Unknown"}
                       </Link>
                     </TableCell>
@@ -117,7 +123,7 @@ export default async function AdminVendorsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/admin/vendors/${vendor.id}`}>
+                        <Link href={`/admin/vendors/${vendor.user_id}`}>
                           Lihat Detail
                         </Link>
                       </Button>

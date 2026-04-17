@@ -1,16 +1,48 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
-import { randomUUID } from "crypto"
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { OnboardingDraftData, SaveDraftResult } from "./types"
 import { submitPayloadSchema } from "./types"
 
+type DraftDocumentType = "ktp" | "npwp" | "nib" | "siup_sbu" | "company_profile"
+
+async function uploadDraftFile(
+  adminClient: ReturnType<typeof createAdminClient>,
+  userId: string,
+  documentType: DraftDocumentType,
+  file: File
+): Promise<string | null> {
+  const fileExt = file.name.split(".").pop() || "pdf"
+  const fileName = `${documentType}-${Date.now()}.${fileExt}`
+  const filePath = `${userId}/drafts/${documentType}/${fileName}`
+
+  const arrayBuffer = await file.arrayBuffer()
+
+  const { error } = await adminClient.storage
+    .from("vendor-documents")
+    .upload(filePath, arrayBuffer, {
+      contentType: file.type,
+      upsert: true,
+    })
+
+  if (error) {
+    console.error(`Upload error for ${documentType}:`, error)
+    return null
+  }
+
+  const { data: urlData } = adminClient.storage
+    .from("vendor-documents")
+    .getPublicUrl(filePath)
+
+  return urlData.publicUrl
+}
+
 export async function saveDraft(
   draftData: OnboardingDraftData,
-  currentStep: number
+  currentStep: number,
+  files?: Map<string, File>
 ): Promise<SaveDraftResult> {
   const supabase = await createClient()
 
@@ -22,10 +54,42 @@ export async function saveDraft(
     return { success: false, error: "Unauthorized" }
   }
 
+  const updatedDraftData = { ...draftData }
+  const adminClient = createAdminClient()
+
+  if (files && files.size > 0) {
+    const documentMapping: Record<string, DraftDocumentType> = {
+      ktp_file: "ktp",
+      npwp_file: "npwp",
+      nib_file: "nib",
+      siup_file: "siup_sbu",
+      compro_file: "company_profile",
+    }
+
+    for (const [fileKey, file] of files) {
+      const docType = documentMapping[fileKey]
+      if (docType) {
+        const uploadedUrl = await uploadDraftFile(
+          adminClient,
+          user.id,
+          docType,
+          file
+        )
+        if (uploadedUrl) {
+          const pathKey =
+            `${docType}_path` as keyof typeof updatedDraftData.documents
+          ;(updatedDraftData.documents as Record<string, string | null>)[
+            pathKey
+          ] = uploadedUrl
+        }
+      }
+    }
+  }
+
   const { error } = await supabase.from("vendor_onboarding_drafts").upsert(
     {
       user_id: user.id,
-      draft_data: draftData,
+      draft_data: updatedDraftData,
       current_step: currentStep,
       last_saved_at: new Date().toISOString(),
     },
@@ -124,15 +188,22 @@ export async function submitOnboarding(
     const payload = parseResult.data
 
     const adminClient = createAdminClient()
-    const registrationId = randomUUID()
     const uploadedPaths: string[] = []
 
     const documentTypes = [
-      { key: "ktp", fileKey: "ktp_file" },
-      { key: "npwp", fileKey: "npwp_file" },
-      { key: "nib", fileKey: "nib_file" },
-      { key: "siup_sbu", fileKey: "siup_sbu_file" },
-      { key: "company_profile", fileKey: "company_profile_file" },
+      { key: "ktp", fileKey: "ktp_file", pathKey: "ktp_path" as const },
+      { key: "npwp", fileKey: "npwp_file", pathKey: "npwp_path" as const },
+      { key: "nib", fileKey: "nib_file", pathKey: "nib_path" as const },
+      {
+        key: "siup_sbu",
+        fileKey: "siup_file",
+        pathKey: "siup_sbu_path" as const,
+      },
+      {
+        key: "company_profile",
+        fileKey: "compro_file",
+        pathKey: "company_profile_path" as const,
+      },
     ]
 
     for (const docType of documentTypes) {
@@ -163,47 +234,43 @@ export async function submitOnboarding(
       }
     }
 
-    const created = { registration: false, profile: false }
+    const created = { profile: false }
 
     try {
-      const { error: registrationError } = await supabase
-        .from("vendor_registrations")
+      const { error: profileError } = await supabase
+        .from("vendor_profiles")
         .upsert(
           {
-            id: registrationId,
             user_id: user.id,
+            nama_perusahaan: payload.company_info.nama_perusahaan,
+            email_perusahaan: payload.company_info.email,
+            website: payload.company_info.website || null,
+            instagram: payload.company_info.instagram || null,
+            facebook: payload.company_info.facebook || null,
+            linkedin: payload.company_info.linkedin || null,
             status: "submitted",
             submitted_at: new Date().toISOString(),
           },
           { onConflict: "user_id" }
         )
 
-      if (registrationError) {
-        throw new Error(`vendor_registrations: ${registrationError.message}`)
-      }
-      created.registration = true
-
-      const { error: profileError } = await supabase
-        .from("vendor_profiles")
-        .insert({
-          user_id: user.id,
-          nama_perusahaan: payload.company_info.nama_perusahaan,
-          nama_pic: payload.company_info.nama_pic,
-          email_perusahaan: payload.company_info.email,
-          kontak_pic: payload.company_info.kontak_pic,
-          website: payload.company_info.website || null,
-          instagram: payload.company_info.instagram || null,
-          facebook: payload.company_info.facebook || null,
-          linkedin: payload.company_info.linkedin || null,
-          status: "pending_review",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-
       if (profileError) {
         throw new Error(`vendor_profiles: ${profileError.message}`)
       }
       created.profile = true
+
+      // Update user's PIC data
+      const { error: userError } = await supabase
+        .from("users")
+        .update({
+          nama: payload.company_info.nama_pic,
+          no_hp: payload.company_info.kontak_pic,
+        })
+        .eq("id", user.id)
+
+      if (userError) {
+        throw new Error(`users: ${userError.message}`)
+      }
 
       if (payload.company_info.contacts.length > 0) {
         const { error: contactsError } = await supabase
@@ -226,27 +293,28 @@ export async function submitOnboarding(
       const docsToInsert = [
         {
           type: "ktp",
-          path: uploadedPaths[0] || null,
+          path: uploadedPaths[0] || payload.documents.ktp_path || null,
           number: payload.documents.ktp_number,
         },
         {
           type: "npwp",
-          path: uploadedPaths[1] || null,
+          path: uploadedPaths[1] || payload.documents.npwp_path || null,
           number: payload.documents.npwp_number,
         },
         {
           type: "nib",
-          path: uploadedPaths[2] || null,
+          path: uploadedPaths[2] || payload.documents.nib_path || null,
           number: payload.documents.nib_number,
         },
         {
           type: "siup_sbu",
-          path: uploadedPaths[3] || null,
+          path: uploadedPaths[3] || payload.documents.siup_sbu_path || null,
           number: null,
         },
         {
           type: "company_profile",
-          path: uploadedPaths[4] || null,
+          path:
+            uploadedPaths[4] || payload.documents.company_profile_path || null,
           number: null,
         },
       ].filter((doc) => doc.path)
@@ -329,9 +397,7 @@ export async function submitOnboarding(
             payload.operational.delivery_areas.map((a) => ({
               user_id: user.id,
               province_id: a.province_id,
-              province_name: a.province_name,
               city_id: a.city_id,
-              city_name: a.city_name,
             }))
           )
         if (areasError) {
@@ -436,7 +502,7 @@ async function cleanupUploadedFiles(
 async function rollbackInserts(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
-  created: { registration: boolean; profile: boolean }
+  created: { profile: boolean }
 ) {
   try {
     const tables = [
@@ -456,10 +522,6 @@ async function rollbackInserts(
 
     if (created.profile) {
       await supabase.from("vendor_profiles").delete().eq("user_id", userId)
-    }
-
-    if (created.registration) {
-      await supabase.from("vendor_registrations").delete().eq("user_id", userId)
     }
   } catch (rollbackErr) {
     console.error("Rollback error:", rollbackErr)
