@@ -56,7 +56,9 @@ export async function getRegistrationStatus(): Promise<RegistrationStatus> {
       .single(),
     supabase
       .from("vendor_profiles")
-      .select("status")
+      .select(
+        "registration_status, status, approval_score, profile_completeness_pct"
+      )
       .eq("user_id", user.id)
       .single(),
   ])
@@ -68,6 +70,11 @@ export async function getRegistrationStatus(): Promise<RegistrationStatus> {
     status: hasRegistration
       ? (profileResult.data!.status as RegistrationStatus["status"])
       : "none",
+    registrationStatus: profileResult.data?.registration_status,
+    profileStatus: profileResult.data?.status,
+    approvalScore: profileResult.data?.approval_score ?? undefined,
+    profileCompleteness:
+      profileResult.data?.profile_completeness_pct ?? undefined,
     hasDraft,
     hasRegistration,
   }

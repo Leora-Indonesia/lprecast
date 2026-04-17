@@ -751,7 +751,7 @@ export type Database = {
       vendor_documents: {
         Row: {
           document_number: string | null
-          document_type: string
+          document_type: Database["public"]["Enums"]["vendor_document_type"]
           file_name: string | null
           file_path: string
           file_size: number | null
@@ -764,7 +764,7 @@ export type Database = {
         }
         Insert: {
           document_number?: string | null
-          document_type: string
+          document_type: Database["public"]["Enums"]["vendor_document_type"]
           file_name?: string | null
           file_path: string
           file_size?: number | null
@@ -777,7 +777,7 @@ export type Database = {
         }
         Update: {
           document_number?: string | null
-          document_type?: string
+          document_type?: Database["public"]["Enums"]["vendor_document_type"]
           file_name?: string | null
           file_path?: string
           file_size?: number | null
@@ -1026,16 +1026,20 @@ export type Database = {
       vendor_profiles: {
         Row: {
           approval_notes: string | null
+          approval_score: number | null
+          approval_tier: string | null
           created_at: string | null
           email_perusahaan: string | null
           facebook: string | null
           instagram: string | null
           linkedin: string | null
           nama_perusahaan: string
+          profile_completeness_pct: number | null
+          registration_status: Database["public"]["Enums"]["vendor_registration_status"]
           rejection_reason: string | null
           reviewed_at: string | null
           reviewed_by: string | null
-          status: string
+          status: Database["public"]["Enums"]["vendor_profile_status"] | null
           submitted_at: string | null
           updated_at: string | null
           user_id: string
@@ -1043,16 +1047,20 @@ export type Database = {
         }
         Insert: {
           approval_notes?: string | null
+          approval_score?: number | null
+          approval_tier?: string | null
           created_at?: string | null
           email_perusahaan?: string | null
           facebook?: string | null
           instagram?: string | null
           linkedin?: string | null
           nama_perusahaan: string
+          profile_completeness_pct?: number | null
+          registration_status?: Database["public"]["Enums"]["vendor_registration_status"]
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          status?: string
+          status?: Database["public"]["Enums"]["vendor_profile_status"] | null
           submitted_at?: string | null
           updated_at?: string | null
           user_id: string
@@ -1060,16 +1068,20 @@ export type Database = {
         }
         Update: {
           approval_notes?: string | null
+          approval_score?: number | null
+          approval_tier?: string | null
           created_at?: string | null
           email_perusahaan?: string | null
           facebook?: string | null
           instagram?: string | null
           linkedin?: string | null
           nama_perusahaan?: string
+          profile_completeness_pct?: number | null
+          registration_status?: Database["public"]["Enums"]["vendor_registration_status"]
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          status?: string
+          status?: Database["public"]["Enums"]["vendor_profile_status"] | null
           submitted_at?: string | null
           updated_at?: string | null
           user_id?: string
@@ -1196,49 +1208,6 @@ export type Database = {
       is_vendor: { Args: never; Returns: boolean }
     }
     Enums: {
-      cost_inclusion_type:
-        | "mobilisasi_demobilisasi"
-        | "penginapan_tukang"
-        | "biaya_pengiriman"
-        | "biaya_langsir"
-        | "instalasi"
-        | "ppn"
-      customer_payment_termin: "dp" | "term" | "final"
-      document_verification_status: "pending" | "verified" | "rejected"
-      kebutuhan_type:
-        | "Pagar"
-        | "Gudang"
-        | "Kos/Kontrakan"
-        | "Toko/Ruko"
-        | "Rumah"
-        | "Villa"
-        | "Hotel"
-        | "Rumah Sakit"
-        | "Panel Saja"
-        | "U-Ditch"
-        | "Plastik Board"
-        | "Lapangan"
-        | "Sekolah"
-        | "Kantor"
-        | "Tahu Beton"
-      letter_action_type:
-        | "CREATED"
-        | "SUBMITTED"
-        | "APPROVED_REVIEW"
-        | "APPROVED_FINAL"
-        | "REJECTED"
-        | "REVISION_REQUESTED"
-        | "REVISED"
-        | "CANCELLED"
-      letter_status:
-        | "DRAFT"
-        | "SUBMITTED_TO_REVIEW"
-        | "REVIEWED"
-        | "APPROVED"
-        | "REJECTED"
-        | "REVISION_REQUESTED"
-      meeting_status_enum: "draft" | "published"
-      meeting_type_enum: "internal" | "external"
       milestone_status: "pending" | "completed" | "overdue"
       notification_category:
         | "vendor"
@@ -1254,18 +1223,6 @@ export type Database = {
         | "client_approved"
         | "paid"
         | "rejected"
-      produk_type:
-        | "Panel Beton"
-        | "Pagar Beton"
-        | "Sandwich Panel"
-        | "Panel Surya"
-        | "Plastik Board"
-        | "Ponton Terapung"
-        | "Jasa Konstruksi"
-        | "Jasa Renovasi"
-        | "Jasa RAB/Gambar"
-        | "U-Ditch"
-        | "Tahu Beton"
       progress_status: "submitted" | "approved" | "rejected"
       project_status:
         | "draft"
@@ -1273,15 +1230,6 @@ export type Database = {
         | "in_progress"
         | "completed"
         | "cancelled"
-      sales_stage:
-        | "IG_Lead"
-        | "WA_Negotiation"
-        | "Quotation_Sent"
-        | "Follow_Up"
-        | "Invoice_Deal"
-        | "WIP"
-        | "Finish"
-        | "Cancelled"
       stakeholder_type: "internal" | "vendor" | "client"
       tender_status: "open" | "closed" | "cancelled" | "awarded"
       tender_submission_status: "submitted" | "won" | "lost"
@@ -1297,9 +1245,10 @@ export type Database = {
         | "draft"
         | "submitted"
         | "under_review"
-        | "approved"
-        | "rejected"
         | "revision_requested"
+        | "approved"
+        | "conditional"
+        | "rejected"
       vendor_spk_status: "active" | "completed"
     }
     CompositeTypes: {
@@ -1428,53 +1377,6 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      cost_inclusion_type: [
-        "mobilisasi_demobilisasi",
-        "penginapan_tukang",
-        "biaya_pengiriman",
-        "biaya_langsir",
-        "instalasi",
-        "ppn",
-      ],
-      customer_payment_termin: ["dp", "term", "final"],
-      document_verification_status: ["pending", "verified", "rejected"],
-      kebutuhan_type: [
-        "Pagar",
-        "Gudang",
-        "Kos/Kontrakan",
-        "Toko/Ruko",
-        "Rumah",
-        "Villa",
-        "Hotel",
-        "Rumah Sakit",
-        "Panel Saja",
-        "U-Ditch",
-        "Plastik Board",
-        "Lapangan",
-        "Sekolah",
-        "Kantor",
-        "Tahu Beton",
-      ],
-      letter_action_type: [
-        "CREATED",
-        "SUBMITTED",
-        "APPROVED_REVIEW",
-        "APPROVED_FINAL",
-        "REJECTED",
-        "REVISION_REQUESTED",
-        "REVISED",
-        "CANCELLED",
-      ],
-      letter_status: [
-        "DRAFT",
-        "SUBMITTED_TO_REVIEW",
-        "REVIEWED",
-        "APPROVED",
-        "REJECTED",
-        "REVISION_REQUESTED",
-      ],
-      meeting_status_enum: ["draft", "published"],
-      meeting_type_enum: ["internal", "external"],
       milestone_status: ["pending", "completed", "overdue"],
       notification_category: [
         "vendor",
@@ -1492,19 +1394,6 @@ export const Constants = {
         "paid",
         "rejected",
       ],
-      produk_type: [
-        "Panel Beton",
-        "Pagar Beton",
-        "Sandwich Panel",
-        "Panel Surya",
-        "Plastik Board",
-        "Ponton Terapung",
-        "Jasa Konstruksi",
-        "Jasa Renovasi",
-        "Jasa RAB/Gambar",
-        "U-Ditch",
-        "Tahu Beton",
-      ],
       progress_status: ["submitted", "approved", "rejected"],
       project_status: [
         "draft",
@@ -1512,16 +1401,6 @@ export const Constants = {
         "in_progress",
         "completed",
         "cancelled",
-      ],
-      sales_stage: [
-        "IG_Lead",
-        "WA_Negotiation",
-        "Quotation_Sent",
-        "Follow_Up",
-        "Invoice_Deal",
-        "WIP",
-        "Finish",
-        "Cancelled",
       ],
       stakeholder_type: ["internal", "vendor", "client"],
       tender_status: ["open", "closed", "cancelled", "awarded"],
@@ -1539,9 +1418,10 @@ export const Constants = {
         "draft",
         "submitted",
         "under_review",
-        "approved",
-        "rejected",
         "revision_requested",
+        "approved",
+        "conditional",
+        "rejected",
       ],
       vendor_spk_status: ["active", "completed"],
     },

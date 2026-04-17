@@ -156,24 +156,7 @@ export default async function VendorDashboard() {
       </div>
 
       <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                Status Pendaftaran
-                <profileStatus.icon className="h-5 w-5" />
-              </CardTitle>
-              <CardDescription>{profileStatus.description}</CardDescription>
-            </div>
-            <Badge
-              variant={profileStatus.variant}
-              className="px-3 py-1 text-sm"
-            >
-              {profileStatus.label}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {vendorProfile?.status === "under_review" && (
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">

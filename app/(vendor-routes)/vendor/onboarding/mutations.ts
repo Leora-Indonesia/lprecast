@@ -188,7 +188,7 @@ export async function submitOnboarding(
     const payload = parseResult.data
 
     const adminClient = createAdminClient()
-    const uploadedPaths: string[] = []
+    const uploadedPaths: Record<string, string> = {}
 
     const documentTypes = [
       { key: "ktp", fileKey: "ktp_file", pathKey: "ktp_path" as const },
@@ -223,14 +223,14 @@ export async function submitOnboarding(
 
         if (error) {
           console.error(`Upload error for ${docType.key}:`, error)
-          await cleanupUploadedFiles(uploadedPaths, adminClient)
+          await cleanupUploadedFiles(Object.values(uploadedPaths), adminClient)
           return {
             success: false,
             error: `Gagal upload dokumen ${docType.key}`,
           }
         }
 
-        uploadedPaths.push(filePath)
+        uploadedPaths[docType.key] = filePath
       }
     }
 
@@ -248,7 +248,8 @@ export async function submitOnboarding(
             instagram: payload.company_info.instagram || null,
             facebook: payload.company_info.facebook || null,
             linkedin: payload.company_info.linkedin || null,
-            status: "submitted",
+            registration_status: "submitted",
+            status: "active",
             submitted_at: new Date().toISOString(),
           },
           { onConflict: "user_id" }
@@ -293,28 +294,31 @@ export async function submitOnboarding(
       const docsToInsert = [
         {
           type: "ktp",
-          path: uploadedPaths[0] || payload.documents.ktp_path || null,
+          path: uploadedPaths.ktp || payload.documents.ktp_path || null,
           number: payload.documents.ktp_number,
         },
         {
           type: "npwp",
-          path: uploadedPaths[1] || payload.documents.npwp_path || null,
+          path: uploadedPaths.npwp || payload.documents.npwp_path || null,
           number: payload.documents.npwp_number,
         },
         {
           type: "nib",
-          path: uploadedPaths[2] || payload.documents.nib_path || null,
+          path: uploadedPaths.nib || payload.documents.nib_path || null,
           number: payload.documents.nib_number,
         },
         {
           type: "siup_sbu",
-          path: uploadedPaths[3] || payload.documents.siup_sbu_path || null,
+          path:
+            uploadedPaths.siup_sbu || payload.documents.siup_sbu_path || null,
           number: null,
         },
         {
           type: "company_profile",
           path:
-            uploadedPaths[4] || payload.documents.company_profile_path || null,
+            uploadedPaths.company_profile ||
+            payload.documents.company_profile_path ||
+            null,
           number: null,
         },
       ].filter((doc) => doc.path)
@@ -487,10 +491,11 @@ export async function submitOnboarding(
 }
 
 async function cleanupUploadedFiles(
-  paths: string[],
+  paths: string[] | Record<string, string>,
   adminClient: ReturnType<typeof createAdminClient>
 ) {
-  for (const path of paths) {
+  const pathsArray = Array.isArray(paths) ? paths : Object.values(paths)
+  for (const path of pathsArray) {
     try {
       await adminClient.storage.from("vendor-documents").remove([path])
     } catch (cleanupErr) {

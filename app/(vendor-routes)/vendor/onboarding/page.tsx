@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Loader2 } from "lucide-react"
+import { redirect } from "next/navigation"
 
 import { getInitialOnboardingData } from "./queries"
 import { OnboardingForm } from "./onboarding-form"
@@ -11,21 +11,35 @@ export const metadata: Metadata = {
 }
 
 export default async function VendorOnboardingPage() {
-  const { status, userData, draft } = await getInitialOnboardingData()
+  let status, userData, draft
 
-  if (
-    status.hasRegistration &&
-    status.status !== "draft" &&
-    status.status !== "none"
-  ) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Memuat...</p>
-        </div>
-      </div>
-    )
+  try {
+    const result = await getInitialOnboardingData()
+    status = result.status
+    userData = result.userData
+    draft = result.draft
+  } catch (error) {
+    console.error("Error loading onboarding data:", error)
+    throw new Error("Gagal memuat data registrasi")
+  }
+
+  if (status.hasRegistration) {
+    const regStatus = status.registrationStatus
+
+    if (regStatus === "draft" || regStatus === "revision_requested") {
+      return (
+        <OnboardingForm
+          userData={userData}
+          draftData={draft.success ? (draft.data ?? null) : null}
+        />
+      )
+    }
+
+    if (regStatus === "rejected") {
+      redirect("/vendor/dashboard?message=rejected")
+    }
+
+    redirect("/vendor/dashboard")
   }
 
   return (

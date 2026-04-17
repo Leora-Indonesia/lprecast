@@ -87,13 +87,19 @@ export default async function AdminVendorsPage() {
             </TableHeader>
             <TableBody>
               {vendors.map((vendor) => {
-                const companyInfo = vendor.draft_data?.company_info as
-                  | {
-                      nama_perusahaan?: string
-                      nama_pic?: string
-                      email?: string
-                    }
-                  | undefined
+                const companyInfo = {
+                  ...(vendor.draft_data?.company_info as Record<
+                    string,
+                    unknown
+                  >),
+                  ...(vendor.nama_perusahaan && {
+                    nama_perusahaan: vendor.nama_perusahaan,
+                  }),
+                  ...(vendor.email_perusahaan && {
+                    email: vendor.email_perusahaan,
+                  }),
+                  ...(vendor.user_nama && { nama_pic: vendor.user_nama }),
+                }
 
                 return (
                   <TableRow key={vendor.user_id}>
@@ -102,14 +108,12 @@ export default async function AdminVendorsPage() {
                         href={`/admin/vendors/${vendor.user_id}`}
                         className="hover:text-primary hover:underline"
                       >
-                        {companyInfo?.nama_perusahaan ||
-                          vendor.nama_perusahaan ||
-                          "Unknown"}
+                        {companyInfo.nama_perusahaan || "Unknown"}
                       </Link>
                     </TableCell>
-                    <TableCell>{companyInfo?.nama_pic || "-"}</TableCell>
+                    <TableCell>{companyInfo.nama_pic || "-"}</TableCell>
                     <TableCell>
-                      {companyInfo?.email || vendor.user_email || "-"}
+                      {companyInfo.email || vendor.user_email || "-"}
                     </TableCell>
                     <TableCell>
                       <Badge variant={statusVariants[vendor.status]}>

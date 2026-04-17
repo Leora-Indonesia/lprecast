@@ -18,48 +18,34 @@ export async function checkVendorTransactions(
 ): Promise<VendorTransactionStatus> {
   const supabase = createAdminClient()
 
-  const { count: tenderSubmissions } = await supabase
-    .from("tender_submissions")
-    .select("*", { count: "exact", head: true })
-    .eq("vendor_id", userId)
+  const [{ data: tenderData }, { data: spkData }, { data: kpiData }] =
+    await Promise.all([
+      supabase.from("tender_submissions").select("id").eq("vendor_id", userId),
+      supabase.from("vendor_spk").select("id").eq("vendor_id", userId),
+      supabase.from("vendor_kpi_scores").select("id").eq("vendor_id", userId),
+    ])
 
-  const { count: vendorSpk } = await supabase
-    .from("vendor_spk")
-    .select("*", { count: "exact", head: true })
-    .eq("vendor_id", userId)
-
-  const { count: vendorKpiScores } = await supabase
-    .from("vendor_kpi_scores")
-    .select("*", { count: "exact", head: true })
-    .eq("vendor_id", userId)
+  const tenderSubmissions = tenderData?.length ?? 0
+  const vendorSpk = spkData?.length ?? 0
+  const vendorKpiScores = kpiData?.length ?? 0
 
   let paymentRequests = 0
-  if (vendorSpk && vendorSpk > 0) {
-    const { data: spkIds } = await supabase
-      .from("vendor_spk")
+  if (vendorSpk > 0) {
+    const { data: prData } = await supabase
+      .from("payment_requests")
       .select("id")
-      .eq("vendor_id", userId)
-
-    if (spkIds && spkIds.length > 0) {
-      const { count: prCount } = await supabase
-        .from("payment_requests")
-        .select("*", { count: "exact", head: true })
-        .in(
-          "vendor_spk_id",
-          spkIds.map((s) => s.id)
-        )
-      paymentRequests = prCount ?? 0
-    }
+      .in("vendor_spk_id", spkData?.map((s) => s.id) || [])
+    paymentRequests = prData?.length ?? 0
   }
 
   const details: string[] = []
-  if ((tenderSubmissions ?? 0) > 0) {
+  if (tenderSubmissions > 0) {
     details.push(`${tenderSubmissions} pengajuan tender`)
   }
-  if ((vendorSpk ?? 0) > 0) {
+  if (vendorSpk > 0) {
     details.push(`${vendorSpk} kontrak SPK`)
   }
-  if ((vendorKpiScores ?? 0) > 0) {
+  if (vendorKpiScores > 0) {
     details.push(`${vendorKpiScores} record KPI`)
   }
   if (paymentRequests > 0) {
@@ -68,13 +54,13 @@ export async function checkVendorTransactions(
 
   return {
     hasTransactions:
-      (tenderSubmissions ?? 0) > 0 ||
-      (vendorSpk ?? 0) > 0 ||
-      (vendorKpiScores ?? 0) > 0 ||
+      tenderSubmissions > 0 ||
+      vendorSpk > 0 ||
+      vendorKpiScores > 0 ||
       paymentRequests > 0,
-    tenderSubmissions: tenderSubmissions ?? 0,
-    vendorSpk: vendorSpk ?? 0,
-    vendorKpiScores: vendorKpiScores ?? 0,
+    tenderSubmissions,
+    vendorSpk,
+    vendorKpiScores,
     paymentRequests,
     details,
   }

@@ -12,30 +12,34 @@ const validatePhone = (value: string) =>
 const maxFileSize = 5 * 1024 * 1024 // 5MB
 const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"]
 
-// Validasi file untuk required field (KTP)
-// IMPORTANT: refine() MUST come before optional() in zod v4
-// because optional() allows undefined, but refine() runs after optional()
-// and would receive undefined, failing the instanceof File check.
+const validateFileSize = (file: File | undefined) =>
+  !file || file.size <= maxFileSize
+
+const validateFileType = (file: File | undefined) =>
+  !file || allowedFileTypes.includes(file.type)
+
+// Required file validation - file MUST be present and valid
+// Type is File | undefined to match form default values, refine enforces presence
 const requiredFileValidation = z
   .file()
+  .optional()
   .refine((file) => file instanceof File && file.size > 0, {
     message: "File wajib diupload",
   })
+  .refine(validateFileSize, { message: "File maksimal 5MB" })
+  .refine(validateFileType, { message: "Format file harus JPG, PNG, atau PDF" })
+
+// Optional file validation - file can be undefined or null
+const optionalFileValidation = z
+  .file()
+  .optional()
+  .nullable()
   .refine((file) => !file || file.size <= maxFileSize, {
     message: "File maksimal 5MB",
   })
   .refine((file) => !file || allowedFileTypes.includes(file.type), {
     message: "Format file harus JPG, PNG, atau PDF",
   })
-  .optional()
-
-// Validasi file untuk optional field
-const optionalFileValidation = z
-  .file()
-  .max(maxFileSize, { message: "File maksimal 5MB" })
-  .mime(allowedFileTypes, { message: "Format file harus JPG, PNG, atau PDF" })
-  .optional()
-  .nullable()
 
 // Validasi NPWP (16 digit angka tanpa titik)
 const npwpRegex = /^\d{16}$/

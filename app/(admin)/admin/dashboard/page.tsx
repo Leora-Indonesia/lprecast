@@ -27,34 +27,33 @@ export default async function AdminDashboard() {
   const supabase = await createClient()
 
   const [
-    { count: vendorCount },
-    { count: pendingCount },
+    { data: vendorUsers },
+    { data: pendingProfiles },
     { data: recentNotifications },
   ] = await Promise.all([
-    supabase
-      .from("users")
-      .select("*", { count: "exact", head: true })
-      .eq("stakeholder_type", "vendor"),
+    supabase.from("users").select("id").eq("stakeholder_type", "vendor"),
     supabase
       .from("vendor_profiles")
-      .select("*", { count: "exact", head: true })
+      .select("user_id")
       .in("status", ["submitted", "under_review"]),
     supabase
       .from("notifications")
-      .select("*, users(nama)")
+      .select("*")
       .eq("category", "vendor")
       .order("created_at", { ascending: false })
       .limit(5),
   ])
 
-  const { count: clientCount } = await supabase
-    .from("users")
-    .select("*", { count: "exact", head: true })
-    .eq("stakeholder_type", "client")
+  const vendorCount = vendorUsers?.length ?? 0
+  const pendingCount = pendingProfiles?.length ?? 0
 
-  const { count: projectCount } = await supabase
-    .from("projects")
-    .select("*", { count: "exact", head: true })
+  const [{ data: clientData }, { data: projectData }] = await Promise.all([
+    supabase.from("users").select("id").eq("stakeholder_type", "client"),
+    supabase.from("projects").select("id"),
+  ])
+
+  const clientCount = clientData?.length ?? 0
+  const projectCount = projectData?.length ?? 0
 
   const recentVendors = await getPendingVendorRegistrations()
 
@@ -204,13 +203,19 @@ export default async function AdminDashboard() {
             {recentVendors && recentVendors.length > 0 ? (
               <div className="space-y-4">
                 {recentVendors.slice(0, 5).map((vendor) => {
-                  const companyInfo = vendor.draft_data?.company_info as
-                    | {
-                        nama_perusahaan?: string
-                        nama_pic?: string
-                        email?: string
-                      }
-                    | undefined
+                  const companyInfo = {
+                    ...(vendor.draft_data?.company_info as Record<
+                      string,
+                      unknown
+                    >),
+                    ...(vendor.nama_perusahaan && {
+                      nama_perusahaan: vendor.nama_perusahaan,
+                    }),
+                    ...(vendor.email_perusahaan && {
+                      email: vendor.email_perusahaan,
+                    }),
+                    ...(vendor.user_nama && { nama_pic: vendor.user_nama }),
+                  }
 
                   return (
                     <Link
@@ -221,12 +226,10 @@ export default async function AdminDashboard() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">
-                            {companyInfo?.nama_perusahaan ||
-                              vendor.nama_perusahaan ||
-                              "N/A"}
+                            {companyInfo.nama_perusahaan || "N/A"}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            PIC: {companyInfo?.nama_pic || "N/A"}
+                            PIC: {companyInfo.nama_pic || "N/A"}
                           </p>
                         </div>
                         <div className="text-right">

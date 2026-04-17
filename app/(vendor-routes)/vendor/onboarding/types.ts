@@ -1,4 +1,5 @@
 import { z } from "zod"
+import type { Database } from "@/types/database.types"
 
 export const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{7,10}$/
 const npwpRegex = /^\d{16}$/
@@ -213,18 +214,13 @@ export interface LoadDraftResult {
 }
 
 export interface RegistrationStatus {
-  status:
-    | "none"
-    | "draft"
-    | "submitted"
-    | "under_review"
-    | "revision_requested"
-    | "rejected"
-    | "active"
-    | "suspended"
-    | "blacklisted"
+  status: "none" | "active" | "suspended" | "blacklisted"
+  registrationStatus?: Database["public"]["Enums"]["vendor_registration_status"]
+  profileStatus?: Database["public"]["Enums"]["vendor_profile_status"]
   hasDraft: boolean
   hasRegistration: boolean
+  approvalScore?: number
+  profileCompleteness?: number
 }
 
 export interface UserRegistrationData {

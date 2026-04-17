@@ -12,7 +12,6 @@ import {
   Contact,
   CheckCircle,
   XCircle,
-  Clock,
   Eye,
   MapPin,
   Truck,
@@ -42,13 +41,11 @@ import {
 import {
   getVendorProfileByUserId,
   checkVendorTransactions,
-  approveVendor,
-  rejectVendor,
   deleteVendor,
+  type VendorProductDetail,
 } from "../actions"
 import { DocumentViewerDialog } from "@/components/vendor/DocumentViewerDialog"
-import { RejectVendorDialog } from "@/components/admin/reject-vendor-dialog"
-import { ApproveVendorDialog } from "@/components/admin/approve-vendor-dialog"
+import { ProductDetailDialog } from "@/components/admin/product-detail-dialog"
 
 export const metadata = {
   title: "Detail Vendor | LPrecast",
@@ -133,34 +130,36 @@ export default async function VendorDetailPage({
     additional_costs,
   } = data
 
-  const companyInfo = draft_data?.company_info as
-    | {
-        nama_perusahaan?: string
-        nama_pic?: string
-        email?: string
-        kontak_pic?: string
-        website?: string
-        instagram?: string
-        facebook?: string
-        linkedin?: string
-      }
-    | undefined
+  const companyInfo = {
+    ...(draft_data?.company_info as Record<string, unknown>),
+    ...(profile.nama_perusahaan && {
+      nama_perusahaan: profile.nama_perusahaan,
+    }),
+    ...(profile.email_perusahaan && { email: profile.email_perusahaan }),
+    ...(profile.website && { website: profile.website }),
+    ...(profile.instagram && { instagram: profile.instagram }),
+    ...(profile.facebook && { facebook: profile.facebook }),
+    ...(profile.linkedin && { linkedin: profile.linkedin }),
+    ...(profile.user_nama && { nama_pic: profile.user_nama }),
+    ...(profile.user_no_hp && { kontak_pic: profile.user_no_hp }),
+  } as {
+    nama_perusahaan?: string
+    nama_pic?: string
+    email?: string
+    kontak_pic?: string
+    website?: string
+    instagram?: string
+    facebook?: string
+    linkedin?: string
+  }
+
+  const primaryContact = contacts.find((c) => c.is_primary) || contacts[0]
 
   const transactionStatus = await checkVendorTransactions(profile.user_id)
-
-  const canApprove =
-    profile.status === "submitted" || profile.status === "under_review"
-  const canReject =
-    profile.status === "submitted" || profile.status === "under_review"
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/admin/vendors">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </Button>
         <div>
           <h1 className="text-2xl font-bold">
             {companyInfo?.nama_perusahaan ||
@@ -174,28 +173,6 @@ export default async function VendorDetailPage({
           <Badge variant={statusVariants[profile.status]}>
             {statusLabels[profile.status] || profile.status}
           </Badge>
-          {canApprove && (
-            <ApproveVendorDialog
-              userId={profile.user_id}
-              adminUserId={adminUserId || ""}
-              companyName={
-                companyInfo?.nama_perusahaan ||
-                profile.nama_perusahaan ||
-                "Vendor"
-              }
-            />
-          )}
-          {canReject && (
-            <RejectVendorDialog
-              userId={profile.user_id}
-              adminUserId={adminUserId || ""}
-              companyName={
-                companyInfo?.nama_perusahaan ||
-                profile.nama_perusahaan ||
-                "Vendor"
-              }
-            />
-          )}
           <Button variant="destructive" asChild>
             <Link href={`/admin/vendors/${profile.user_id}/delete`}>Hapus</Link>
           </Button>
@@ -205,8 +182,6 @@ export default async function VendorDetailPage({
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="contacts">Kontak</TabsTrigger>
-          <TabsTrigger value="accounts">Rekening</TabsTrigger>
           <TabsTrigger value="products">Produk</TabsTrigger>
           <TabsTrigger value="operational">Operasional</TabsTrigger>
           <TabsTrigger value="documents">Dokumen</TabsTrigger>
@@ -230,12 +205,12 @@ export default async function VendorDetailPage({
 
                   <div className="text-muted-foreground">Nama PIC</div>
                   <div className="font-medium">
-                    {companyInfo?.nama_pic ?? "-"}
+                    {primaryContact?.nama || companyInfo.nama_pic || "-"}
                   </div>
 
                   <div className="text-muted-foreground">Kontak PIC</div>
                   <div className="font-medium">
-                    {companyInfo?.kontak_pic ?? "-"}
+                    {primaryContact?.no_hp || companyInfo.kontak_pic || "-"}
                   </div>
 
                   <div className="text-muted-foreground">Email</div>
@@ -346,139 +321,151 @@ export default async function VendorDetailPage({
           </div>
 
           {profile && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Profil Vendor
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
-                  <div>
-                    <div className="text-muted-foreground">Status Profil</div>
-                    <div className="mt-1 font-medium">
-                      <Badge
-                        variant={
-                          profile.status === "active" ? "default" : "secondary"
-                        }
-                      >
-                        {profile.status || "Tidak Aktif"}
-                      </Badge>
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Profil Vendor
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+                    <div>
+                      <div className="text-muted-foreground">Status Profil</div>
+                      <div className="mt-1 font-medium">
+                        <Badge
+                          variant={
+                            profile.status === "active"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {profile.status || "Tidak Aktif"}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Approved</div>
+                      <div className="mt-1 font-medium">
+                        {profile.reviewed_at
+                          ? formatDate(profile.reviewed_at)
+                          : "Belum"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Jumlah Kontak</div>
+                      <div className="mt-1 font-medium">{contacts.length}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Jumlah Produk</div>
+                      <div className="mt-1 font-medium">{products.length}</div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Tender Submit</div>
+                      <div className="mt-1 font-medium">
+                        {transactionStatus.tenderSubmissions}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Kontrak SPK</div>
+                      <div className="mt-1 font-medium">
+                        {transactionStatus.vendorSpk}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">Pembayaran</div>
+                      <div className="mt-1 font-medium">
+                        {transactionStatus.paymentRequests}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-muted-foreground">KPI Scores</div>
+                      <div className="mt-1 font-medium">
+                        {transactionStatus.vendorKpiScores}
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <div className="text-muted-foreground">Approved</div>
-                    <div className="mt-1 font-medium">
-                      {profile.reviewed_at
-                        ? formatDate(profile.reviewed_at)
-                        : "Belum"}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Contact className="h-5 w-5" />
+                    Daftar Kontak
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {contacts.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>No</TableHead>
+                          <TableHead>Nama</TableHead>
+                          <TableHead>Jabatan</TableHead>
+                          <TableHead>No. HP</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {contacts.map((contact) => (
+                          <TableRow key={contact.id}>
+                            <TableCell>{contact.sequence}</TableCell>
+                            <TableCell className="font-medium">
+                              {contact.nama}
+                            </TableCell>
+                            <TableCell>{contact.jabatan}</TableCell>
+                            <TableCell>{contact.no_hp}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="py-8 text-center text-muted-foreground">
+                      Tidak ada kontak
                     </div>
-                  </div>
-                  <div>
-                    <div className="text-muted-foreground">Jumlah Kontak</div>
-                    <div className="mt-1 font-medium">{contacts.length}</div>
-                  </div>
-                  <div>
-                    <div className="text-muted-foreground">Jumlah Produk</div>
-                    <div className="mt-1 font-medium">{products.length}</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5" />
+                    Rekening Bank
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {bank_accounts.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Bank</TableHead>
+                          <TableHead>No. Rekening</TableHead>
+                          <TableHead>Nama Rekening</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bank_accounts.map((account) => (
+                          <TableRow key={account.id}>
+                            <TableCell className="font-medium">
+                              {account.bank_name}
+                            </TableCell>
+                            <TableCell>{account.account_number}</TableCell>
+                            <TableCell>{account.account_holder_name}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="py-8 text-center text-muted-foreground">
+                      Tidak ada rekening
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </>
           )}
-        </TabsContent>
-
-        <TabsContent value="contacts">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Contact className="h-5 w-5" />
-                Daftar Kontak
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {contacts.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>No</TableHead>
-                      <TableHead>Nama</TableHead>
-                      <TableHead>Jabatan</TableHead>
-                      <TableHead>No. HP</TableHead>
-                      <TableHead>Utama</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {contacts.map((contact) => (
-                      <TableRow key={contact.id}>
-                        <TableCell>{contact.sequence}</TableCell>
-                        <TableCell className="font-medium">
-                          {contact.nama}
-                        </TableCell>
-                        <TableCell>{contact.jabatan}</TableCell>
-                        <TableCell>{contact.no_hp}</TableCell>
-                        <TableCell>
-                          {contact.is_primary && (
-                            <Badge variant="default">Utama</Badge>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada kontak
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="accounts">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                Rekening Bank
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {bank_accounts.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Bank</TableHead>
-                      <TableHead>No. Rekening</TableHead>
-                      <TableHead>Nama Rekening</TableHead>
-                      <TableHead>Utama</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {bank_accounts.map((account) => (
-                      <TableRow key={account.id}>
-                        <TableCell className="font-medium">
-                          {account.bank_name}
-                        </TableCell>
-                        <TableCell>{account.account_number}</TableCell>
-                        <TableCell>{account.account_holder_name}</TableCell>
-                        <TableCell>
-                          {account.is_primary && (
-                            <Badge variant="default">Utama</Badge>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <div className="py-8 text-center text-muted-foreground">
-                  Tidak ada rekening
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="products">
@@ -499,6 +486,7 @@ export default async function VendorDetailPage({
                       <TableHead>Dimensi</TableHead>
                       <TableHead className="text-right">Harga</TableHead>
                       <TableHead>Satuan</TableHead>
+                      <TableHead className="text-right">Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -513,6 +501,32 @@ export default async function VendorDetailPage({
                           {formatCurrency(product.price)}
                         </TableCell>
                         <TableCell>{product.satuan}</TableCell>
+                        <TableCell className="text-right">
+                          <ProductDetailDialog
+                            product={
+                              {
+                                ...product,
+                                vendor: {
+                                  user_id: profile.user_id,
+                                  nama_perusahaan:
+                                    profile.nama_perusahaan || null,
+                                  email_perusahaan:
+                                    profile.email_perusahaan || null,
+                                  status: profile.status,
+                                  user_nama: profile.user_nama,
+                                  user_no_hp: profile.user_no_hp,
+                                  user_email: profile.user_email,
+                                },
+                              } as VendorProductDetail
+                            }
+                            trigger={
+                              <Button variant="ghost" size="sm">
+                                <Eye className="mr-1 h-4 w-4" />
+                                Detail
+                              </Button>
+                            }
+                          />
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

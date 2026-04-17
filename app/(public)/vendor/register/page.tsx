@@ -60,6 +60,10 @@ export default function VendorRegisterPage() {
     setIsLoading(true)
 
     try {
+      toast.success("Mendaftarkan akun...", {
+        description: "Sedang memproses pendaftaran vendor",
+      })
+
       const result = await signupAction(values)
 
       // If no result, redirect should have happened

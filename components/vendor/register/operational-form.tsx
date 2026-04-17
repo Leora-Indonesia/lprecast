@@ -212,14 +212,51 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
   const alamatDetail = watch("operational.factory_address.alamat_detail")
   const kodePos = watch("operational.factory_address.kode_pos")
 
-  const selectedProvince = provinces.find((p) => p.id === selectedProvinsiId)
-  const selectedCity = cities.find((c) => c.id === selectedKabupatenId)
+  const selectedProvinceName = watch(
+    "operational.factory_address.provinsi_name"
+  )
+  const selectedKabupatenName = watch(
+    "operational.factory_address.kabupaten_name"
+  )
+
+  const selectedProvince =
+    provinces.find((p) => p.id === selectedProvinsiId) ??
+    provinces.find((p) => p.name === selectedProvinceName)
+  const selectedCity =
+    cities.find((c) => c.id === selectedKabupatenId) ??
+    cities.find((c) => c.name === selectedKabupatenName)
 
   const prevProvinsiIdRef = useRef<string | null>(null)
 
   useEffect(() => {
     fetchProvinces()
   }, [])
+
+  // Auto-fill province ID from name (when loading from draft)
+  useEffect(() => {
+    if (selectedProvinsiId || !selectedProvinceName || provinces.length === 0) {
+      return
+    }
+    const matched = provinces.find((p) => p.name === selectedProvinceName)
+    if (matched) {
+      setValue("operational.factory_address.provinsi_id", matched.id, {
+        shouldValidate: true,
+      })
+    }
+  }, [provinces, selectedProvinceName, selectedProvinsiId, setValue])
+
+  // Auto-fill city ID from name (when loading from draft)
+  useEffect(() => {
+    if (selectedKabupatenId || !selectedKabupatenName || cities.length === 0) {
+      return
+    }
+    const matched = cities.find((c) => c.name === selectedKabupatenName)
+    if (matched) {
+      setValue("operational.factory_address.kabupaten_id", matched.id, {
+        shouldValidate: true,
+      })
+    }
+  }, [cities, selectedKabupatenName, selectedKabupatenId, setValue])
 
   useEffect(() => {
     if (!selectedProvinsiId) return
@@ -249,7 +286,7 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
         .order("name")
 
       if (error) throw error
-      setProvinces(data || [])
+      setProvinces(data ?? [])
     } catch (error) {
       console.error("Error fetching provinces:", error)
     } finally {
@@ -271,7 +308,7 @@ export function OperationalForm({ form, onForceSave }: OperationalFormProps) {
         setCities([])
         return
       }
-      setCities(data || [])
+      setCities(data ?? [])
     } catch (error) {
       console.error("Error fetching cities:", error)
       setCities([])

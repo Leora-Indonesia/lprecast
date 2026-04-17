@@ -43,7 +43,15 @@ export default async function VendorApprovalWorkspacePage({
 
   const { profile, draft_data, documents, factory_addresses } = data
 
-  const companyInfo = draft_data?.company_info as
+  const companyInfo = {
+    ...(draft_data?.company_info as Record<string, unknown>),
+    ...(profile.nama_perusahaan && {
+      nama_perusahaan: profile.nama_perusahaan,
+    }),
+    ...(profile.email_perusahaan && { email: profile.email_perusahaan }),
+    ...(profile.user_nama && { nama_pic: profile.user_nama }),
+    ...(profile.user_no_hp && { kontak_pic: profile.user_no_hp }),
+  } as
     | {
         nama_perusahaan?: string
         nama_pic?: string
