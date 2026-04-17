@@ -23,7 +23,7 @@ interface NotificationBellProps {
 }
 
 export function NotificationBell({
-  userId,
+  userId: _userId,
   initialNotifications = [],
   initialUnreadCount = 0,
 }: NotificationBellProps) {

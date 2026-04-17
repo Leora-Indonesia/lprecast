@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
-import { Building2, Loader2 } from "lucide-react"
+import { Building2, Loader2, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 
 import { signupAction } from "./actions"
@@ -24,16 +24,26 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormProvider,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
 const signupSchema = z
   .object({
-    email: z.string().email("Email tidak valid"),
-    password: z.string().min(8, "Password minimal 8 karakter"),
-    confirmPassword: z.string(),
-    nama_perusahaan: z.string().min(2, "Nama perusahaan minimal 2 karakter"),
-    nama_pic: z.string().min(2, "Nama PIC minimal 2 karakter"),
+    email: z.string().min(1, "Email wajib diisi").email("Email tidak valid"),
+    password: z
+      .string()
+      .min(1, "Password wajib diisi")
+      .min(8, "Password minimal 8 karakter"),
+    confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi"),
+    nama_perusahaan: z
+      .string()
+      .min(1, "Nama perusahaan wajib diisi")
+      .min(2, "Nama perusahaan minimal 2 karakter"),
+    nama_pic: z
+      .string()
+      .min(1, "Nama PIC wajib diisi")
+      .min(2, "Nama PIC minimal 2 karakter"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password tidak cocok",
@@ -44,9 +54,12 @@ type SignupForm = z.infer<typeof signupSchema>
 
 export default function VendorRegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const form = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
+    mode: "onBlur",
     defaultValues: {
       email: "",
       password: "",
@@ -123,95 +136,125 @@ export default function VendorRegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="nama_perusahaan"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nama Perusahaan</FormLabel>
-                  <FormControl>
-                    <Input placeholder="PT Contoh Indonesia" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="nama_pic"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nama PIC</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Budi Santoso" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="budi@contoh.com"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Minimal 8 karakter"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Konfirmasi Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Ulangi password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Mendaftar...
-                </>
-              ) : (
-                "Daftar"
-              )}
-            </Button>
-          </Form>
+          <FormProvider {...form}>
+            <Form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="nama_perusahaan"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nama Perusahaan</FormLabel>
+                    <FormControl>
+                      <Input placeholder="PT Contoh Indonesia" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="nama_pic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nama PIC</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Budi Santoso" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="budi@contoh.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Minimal 8 karakter"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Konfirmasi Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Ulangi password"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Mendaftar...
+                  </>
+                ) : (
+                  "Daftar"
+                )}
+              </Button>
+            </Form>
+          </FormProvider>
           <div className="mt-6 text-center text-sm text-muted-foreground">
             Sudah punya akun?{" "}
             <Link href="/login" className="text-primary hover:underline">

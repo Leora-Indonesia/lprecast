@@ -16,6 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { getPendingVendorRegistrations } from "@/app/(admin)/admin/vendors/actions"
+import { getVendorRegistrationSetting } from "./actions"
+import { RegistrationToggle } from "./registration-toggle"
 
 export const metadata = {
   title: "Dashboard Admin | LPrecast",
@@ -56,6 +58,7 @@ export default async function AdminDashboard() {
   const projectCount = projectData?.length ?? 0
 
   const recentVendors = await getPendingVendorRegistrations()
+  const registrationSetting = await getVendorRegistrationSetting()
 
   const unreadNotificationCount =
     recentNotifications?.filter((n) => !n.is_read).length ?? 0
@@ -267,6 +270,8 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <RegistrationToggle enabled={registrationSetting.enabled} />
     </div>
   )
 }

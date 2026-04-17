@@ -5,9 +5,11 @@ import * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"
 import {
   Controller,
+  FormProvider,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
+  useFormContext,
 } from "react-hook-form"
 
 import { Label } from "@/components/ui/label"
@@ -134,8 +136,19 @@ const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
-  const { formMessageId } = useFormField()
-  const body = children
+  const { formMessageId, name } = useFormField()
+
+  // Try to get form context errors, fallback if not wrapped in FormProvider
+  let error: { message?: string } | undefined
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { formState } = useFormContext()
+    error = formState.errors[name] as { message?: string } | undefined
+  } catch {
+    // FormProvider not available, will use children prop
+  }
+
+  const body = children || (error?.message ? String(error.message) : null)
 
   if (!body) {
     return null
@@ -171,4 +184,5 @@ export {
   FormDescription,
   FormMessage,
   FormField,
+  FormProvider,
 }

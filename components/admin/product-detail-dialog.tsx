@@ -3,8 +3,6 @@
 import { useState } from "react"
 import {
   Package,
-  Ruler,
-  Weight,
   Clock,
   Box,
   DollarSign,

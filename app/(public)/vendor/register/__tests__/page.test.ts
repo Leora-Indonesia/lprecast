@@ -3,11 +3,20 @@ import { z } from "zod"
 
 const signupSchema = z
   .object({
-    email: z.string().email("Email tidak valid"),
-    password: z.string().min(8, "Password minimal 8 karakter"),
-    confirmPassword: z.string(),
-    nama_perusahaan: z.string().min(2, "Nama perusahaan minimal 2 karakter"),
-    nama_pic: z.string().min(2, "Nama PIC minimal 2 karakter"),
+    email: z.string().min(1, "Email wajib diisi").email("Email tidak valid"),
+    password: z
+      .string()
+      .min(1, "Password wajib diisi")
+      .min(8, "Password minimal 8 karakter"),
+    confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi"),
+    nama_perusahaan: z
+      .string()
+      .min(1, "Nama perusahaan wajib diisi")
+      .min(2, "Nama perusahaan minimal 2 karakter"),
+    nama_pic: z
+      .string()
+      .min(1, "Nama PIC wajib diisi")
+      .min(2, "Nama PIC minimal 2 karakter"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password tidak cocok",

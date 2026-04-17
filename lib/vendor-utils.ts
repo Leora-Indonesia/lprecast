@@ -16,7 +16,7 @@ export function canVendorJoinTender(
   registrationStatus: VendorRegistrationStatus | null | undefined,
   profileStatus: VendorProfileStatus | null | undefined,
   profileCompleteness: number | null | undefined,
-  approvalScore: number | null | undefined
+  _approvalScore: number | null | undefined
 ): VendorTenderEligibility {
   const statusReasons: Record<string, string> = {
     draft: "Lengkapi formulir pendaftaran terlebih dahulu",

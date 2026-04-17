@@ -3,7 +3,6 @@ import { formatDate } from "@/lib/datetime"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import {
-  ArrowLeft,
   Building2,
   User,
   FileText,
@@ -21,13 +20,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -41,7 +34,6 @@ import {
 import {
   getVendorProfileByUserId,
   checkVendorTransactions,
-  deleteVendor,
   type VendorProductDetail,
 } from "../actions"
 import { DocumentViewerDialog } from "@/components/vendor/DocumentViewerDialog"
@@ -109,7 +101,7 @@ export default async function VendorDetailPage({
 }) {
   const { id } = await params
   const supabase = await createClient()
-  const adminUserId = (await supabase.auth.getUser()).data.user?.id
+  const _adminUserId = (await supabase.auth.getUser()).data.user?.id
 
   const data = await getVendorProfileByUserId(id)
 

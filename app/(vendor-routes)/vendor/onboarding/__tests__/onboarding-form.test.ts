@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { transformToDraftData } from "../transform"
 import type { VendorRegistrationFormData } from "@/lib/validations/vendor-registration"
-import type { OnboardingDraftData } from "../types"
 
 const validFormData: VendorRegistrationFormData = {
   company_info: {

@@ -14,13 +14,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { formatDateTime } from "@/lib/datetime"
 import { StatCard } from "@/components/admin/stat-card"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -142,7 +136,7 @@ export default async function VendorDashboard() {
     }
   }
 
-  const profileStatus = getStatusConfig(vendorProfile?.status ?? null)
+  const _profileStatus = getStatusConfig(vendorProfile?.status ?? null)
 
   return (
     <div className="space-y-6">

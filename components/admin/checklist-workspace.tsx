@@ -7,7 +7,9 @@ interface ChecklistWorkspaceProps {
   userId: string
 }
 
-export function ChecklistWorkspace({ userId }: ChecklistWorkspaceProps) {
+export function ChecklistWorkspace({
+  userId: _userId,
+}: ChecklistWorkspaceProps) {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({})
 
   const handleCheck = (id: string, checked: boolean) => {

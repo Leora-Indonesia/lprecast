@@ -319,7 +319,7 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
         setIsSaving(false)
       }
     },
-    [currentStep, form.control]
+    [currentStep, form]
   )
 
   persistSaveRef.current = persistSave

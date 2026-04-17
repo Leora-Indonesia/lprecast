@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
-import { Check, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const Popover = PopoverPrimitive.Root

@@ -17,7 +17,7 @@ export async function uploadVendorDocument(
 
   const filePath = `${registrationId}/${fileName}`
 
-  const { data, error } = await supabase.storage
+  const { data: _data, error } = await supabase.storage
     .from("vendor-documents")
     .upload(filePath, file)
 
