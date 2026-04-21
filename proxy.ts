@@ -84,15 +84,18 @@ export default async function proxy(request: NextRequest) {
     // Check vendor registration status for onboarding redirect
     const { data: profile, error: profileError } = await supabase
       .from("vendor_profiles")
-      .select("status")
+      .select("status, registration_status")
       .eq("user_id", user.id)
       .single()
 
     const isOnboardingPage = pathname === "/vendor/onboarding"
 
-    // Onboarding needed only if: no profile OR status is "draft"
+    // Onboarding needed only if: no profile OR registration still editable
     const needsOnboarding =
-      !profile || profileError || profile.status === "draft"
+      !profile ||
+      profileError ||
+      profile.registration_status === "draft" ||
+      profile.registration_status === "revision_requested"
 
     // Redirect to onboarding if: not on onboarding page AND needs onboarding
     if (!isOnboardingPage && needsOnboarding) {
@@ -100,7 +103,11 @@ export default async function proxy(request: NextRequest) {
     }
 
     // Redirect away from onboarding if: on onboarding page AND has submitted profile
-    if (isOnboardingPage && profile?.status === "submitted") {
+    if (
+      isOnboardingPage &&
+      profile?.registration_status &&
+      !["draft", "revision_requested"].includes(profile.registration_status)
+    ) {
       return NextResponse.redirect(new URL("/vendor/dashboard", request.url))
     }
   } else if (pathname.startsWith("/client/")) {

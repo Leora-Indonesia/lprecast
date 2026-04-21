@@ -122,3 +122,4 @@ export async function selectWinner(...) {
 - Notifikasi real-time via Supabase Realtime (sudah setup)
 - Bisa tambah email notification: post-MVP
 - Mark as read: sudah ada fungsi
+# tes Tue Apr 21 12:35:40 +07 2026

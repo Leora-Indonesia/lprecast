@@ -113,3 +113,4 @@ Jika mau auto-scoring:
 - Minimal 2 vendor requirement wajib
 - SPK generation bisa async (background)
 - Bisa tutup tender tanpa pemenang (jika tidak ada yang cocok)
+# Tue Apr 21 12:40:49 +07 2026

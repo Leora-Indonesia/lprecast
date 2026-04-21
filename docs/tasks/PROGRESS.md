@@ -22,13 +22,13 @@ Tracking semua tasks untuk MVP LPrecast.
 
 ---
 
-**Last updated:** April 16, 2026
+**Last updated:** April 21, 2026
 
 | #   | Task                                                                 | Status      | Due Date     | Notes |
 | --- | -------------------------------------------------------------------- | ----------- | ------------ | ----- |
 | 1   | Vendor - Perbaikan fungsi email registration                         | In progress | Apr 16, 2026 | -     |
 | 2   | Vendor - Perbaikan SMTP email webmail                                | In progress | Apr 16, 2026 | -     |
-| 3   | Admin - Buat aksi approve / revisi / tolak vendor                    | Not started | Apr 16, 2026 | -     |
+| 3   | Admin - Buat aksi approve / revisi / tolak vendor                    | Done        | Apr 16, 2026 | Approval flow + status badge normalization |
 | 4   | Admin - Buat form project tender (via admin)                         | Not started | Apr 17, 2026 | -     |
 | 5   | Vendor - Buat halaman daftar tender yang available                   | Not started | Apr 17, 2026 | -     |
 | 6   | Admin - Buat fitur evaluasi & pilih pemenang (comparison table)      | Not started | Apr 18, 2026 | -     |
@@ -40,7 +40,9 @@ Tracking semua tasks untuk MVP LPrecast.
 | 12  | Sistem - Buat notifikasi hasil tender ke pemenang & non-pemenang     | Not started | Apr 21, 2026 | -     |
 | 13  | SPV - Buat autentikasi & layout dashboard khusus SPV                 | Not started | Apr 21, 2026 | -     |
 | 14  | SPV - Buat fitur verifikasi progress (approve/reject + catatan)      | Not started | Apr 21, 2026 | -     |
-| 15  | Tim Dev - Lakukan testing & bug fixes end-to-end MVP                 | Not started | Apr 21, 2026 | -     |
+| 15  | Tim Dev - Lakukan testing & bug fixes end-to-end MVP                 | Done        | Apr 21, 2026 | `vendor_approval_drafts` remote schema sudah beres. Approval workspace dipolish: tombol approve jadi 1 tombol dinamis (`Approve` jika skor >= 85, `Approve (Bersyarat)` jika 70-84, disabled jika < 70), types database sudah dipull ulang, dan typecheck lulus. |
 | 16  | Tim Dev - Lakukan polish final, dokumentasi, & code cleanup          | Not started | Apr 23, 2026 | -     |
+| 17  | Admin - Tambah tombol approval checklist di detail vendor            | Done        | Apr 21, 2026 | Button menuju `/admin/vendors/[id]/approval` untuk review ulang |
+| 18  | Admin - Samakan approval workspace + scoring checklist              | Done        | Apr 21, 2026 | Samakan layout dengan `vendors/checklist-preview` + scoring berbobot + red flag auto reject. Polish: header cards pindah ke baris bawah + mobile stack |
 
 (End of file - total 30 lines)

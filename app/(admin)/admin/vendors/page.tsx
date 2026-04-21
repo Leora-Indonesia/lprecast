@@ -1,7 +1,7 @@
 import { getPendingVendorRegistrations } from "./actions"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/ui/status-badge"
 import {
   Table,
   TableBody,
@@ -16,31 +16,6 @@ import { Building2, Plus } from "lucide-react"
 export const metadata = {
   title: "Kelola Vendor | LPrecast",
   description: "Kelola dan verifikasi vendor mitra LPrecast",
-}
-
-const statusLabels: Record<string, string> = {
-  draft: "Draft",
-  submitted: "Baru",
-  under_review: "Ditinjau",
-  revision_requested: "Revisi",
-  rejected: "Ditolak",
-  active: "Aktif",
-  suspended: "Ditangguhkan",
-  blacklisted: "Diblokir",
-}
-
-const statusVariants: Record<
-  string,
-  "secondary" | "default" | "destructive" | "outline"
-> = {
-  draft: "secondary",
-  submitted: "default",
-  under_review: "default",
-  revision_requested: "outline",
-  rejected: "destructive",
-  active: "outline",
-  suspended: "secondary",
-  blacklisted: "destructive",
 }
 
 export default async function AdminVendorsPage() {
@@ -115,9 +90,7 @@ export default async function AdminVendorsPage() {
                       {companyInfo.email || vendor.user_email || "-"}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={statusVariants[vendor.status]}>
-                        {statusLabels[vendor.status] || vendor.status}
-                      </Badge>
+                      <StatusBadge status={vendor.registration_status} />
                     </TableCell>
                     <TableCell>
                       {vendor.submitted_at

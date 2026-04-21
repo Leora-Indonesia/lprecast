@@ -1,6 +1,5 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -182,22 +181,25 @@ interface VendorApprovalChecklistProps {
 
 export function VendorApprovalChecklistPreview({ checkedItems, onCheck }: VendorApprovalChecklistProps) {
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0 max-w-full">
       <Tabs defaultValue="admin">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full max-w-full grid-cols-2">
           <TabsTrigger value="admin">A. Berkas / Administratif</TabsTrigger>
           <TabsTrigger value="survey">B. Survey Workshop</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="admin" className="space-y-4 mt-6">
+        <TabsContent value="admin" className="mt-6 w-full max-w-full space-y-4">
           {adminChecklist.map((section) => (
-            <Card key={section.id}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{section.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-3 sm:grid-cols-2">
+            <section
+              key={section.id}
+              className="box-border w-full min-w-0 max-w-full space-y-3 overflow-hidden rounded-lg border bg-background p-4"
+            >
+              <div>
+                <h3 className="text-base font-semibold">{section.title}</h3>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
                 {section.items.map((item) => (
-                  <div key={item.id} className="flex items-start space-x-2">
+                  <div key={item.id} className="flex min-w-0 items-start space-x-2">
                     <Checkbox
                       id={item.id}
                       checked={checkedItems[item.id] || false}
@@ -205,31 +207,37 @@ export function VendorApprovalChecklistPreview({ checkedItems, onCheck }: Vendor
                     />
                     <Label
                       htmlFor={item.id}
-                      className="text-sm font-normal leading-snug cursor-pointer"
+                      className="min-w-0 cursor-pointer break-words text-sm font-normal leading-snug"
                     >
                       {item.label}
                       {item.isRedFlag && (
-                        <Badge variant="outline" className="ml-2 text-[10px] text-red-500 border-red-200 bg-red-50">
+                        <Badge
+                          variant="outline"
+                          className="ml-2 border-red-200 bg-red-50 text-[10px] text-red-500"
+                        >
                           Wajib
                         </Badge>
                       )}
                     </Label>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </section>
           ))}
         </TabsContent>
 
-        <TabsContent value="survey" className="space-y-4 mt-6">
+        <TabsContent value="survey" className="mt-6 w-full max-w-full space-y-4">
           {surveyChecklist.map((section) => (
-            <Card key={section.id}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">{section.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-3 sm:grid-cols-2">
+            <section
+              key={section.id}
+              className="box-border w-full min-w-0 max-w-full space-y-3 overflow-hidden rounded-lg border bg-background p-4"
+            >
+              <div>
+                <h3 className="text-base font-semibold">{section.title}</h3>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
                 {section.items.map((item) => (
-                  <div key={item.id} className="flex items-start space-x-2">
+                  <div key={item.id} className="flex min-w-0 items-start space-x-2">
                     <Checkbox
                       id={item.id}
                       checked={checkedItems[item.id] || false}
@@ -237,19 +245,22 @@ export function VendorApprovalChecklistPreview({ checkedItems, onCheck }: Vendor
                     />
                     <Label
                       htmlFor={item.id}
-                      className="text-sm font-normal leading-snug cursor-pointer"
+                      className="min-w-0 cursor-pointer break-words text-sm font-normal leading-snug"
                     >
                       {item.label}
                       {item.isRedFlag && (
-                        <Badge variant="outline" className="ml-2 text-[10px] text-red-500 border-red-200 bg-red-50">
+                        <Badge
+                          variant="outline"
+                          className="ml-2 border-red-200 bg-red-50 text-[10px] text-red-500"
+                        >
                           Kritikal
                         </Badge>
                       )}
                     </Label>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </section>
           ))}
         </TabsContent>
       </Tabs>

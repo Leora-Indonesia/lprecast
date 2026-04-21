@@ -666,6 +666,39 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_approval_drafts: {
+        Row: {
+          checked_items: Json
+          notes: string | null
+          red_flags: Json
+          score: number | null
+          tier: string | null
+          updated_at: string
+          updated_by: string | null
+          vendor_id: string
+        }
+        Insert: {
+          checked_items?: Json
+          notes?: string | null
+          red_flags?: Json
+          score?: number | null
+          tier?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vendor_id: string
+        }
+        Update: {
+          checked_items?: Json
+          notes?: string | null
+          red_flags?: Json
+          score?: number | null
+          tier?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vendor_id?: string
+        }
+        Relationships: []
+      }
       vendor_bank_accounts: {
         Row: {
           account_holder_name: string

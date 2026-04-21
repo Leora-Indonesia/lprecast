@@ -20,6 +20,12 @@ const statusConfig: Record<string, StatusConfig> = {
     className:
       "bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300",
   },
+  conditional: {
+    label: "Bersyarat",
+    variant: "default",
+    className:
+      "bg-amber-50 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+  },
   rejected: { label: "Ditolak", variant: "destructive" },
   revision_requested: {
     label: "Revisi",
@@ -29,14 +35,15 @@ const statusConfig: Record<string, StatusConfig> = {
   },
 }
 
-type VendorStatus = keyof typeof statusConfig
-
 interface StatusBadgeProps {
-  status: VendorStatus
+  status: string
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const config = statusConfig[status]
+  const config = statusConfig[status] || {
+    label: status,
+    variant: "secondary",
+  }
   return (
     <Badge variant={config.variant} className={config.className}>
       {config.label}

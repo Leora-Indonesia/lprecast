@@ -5,6 +5,189 @@ import { redirect } from "next/navigation"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { Json } from "@/types/database.types"
 
+type VendorApprovalDraftRow = {
+  vendor_id: string
+  checked_items: Record<string, boolean>
+  red_flags: Record<string, boolean>
+  notes: string | null
+  score: number | null
+  tier: string | null
+  updated_by: string | null
+  updated_at: string
+}
+
+type VendorApprovalDraftPayload = {
+  checkedItems: Record<string, boolean>
+  redFlagFindings: Record<string, boolean>
+  notes: string | null
+  score: number | null
+  tier: string | null
+}
+
+function stableStringify(value: unknown): string {
+  if (value === null) return "null"
+  if (typeof value !== "object") return JSON.stringify(value)
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`
+  const obj = value as Record<string, unknown>
+  const keys = Object.keys(obj).sort()
+  return `{${keys
+    .map((k) => `${JSON.stringify(k)}:${stableStringify(obj[k])}`)
+    .join(",")}}`
+}
+
+function isDraftChanged(
+  existing:
+    | Pick<VendorApprovalDraftRow, "checked_items" | "red_flags" | "notes" | "score" | "tier">
+    | null,
+  next: VendorApprovalDraftPayload
+) {
+  const existingNormalized = {
+    checkedItems: existing?.checked_items ?? {},
+    redFlagFindings: existing?.red_flags ?? {},
+    notes: existing?.notes ?? null,
+    score: existing?.score ?? null,
+    tier: existing?.tier ?? null,
+  }
+
+  const nextNormalized = {
+    checkedItems: next.checkedItems ?? {},
+    redFlagFindings: next.redFlagFindings ?? {},
+    notes: next.notes ?? null,
+    score: next.score ?? null,
+    tier: next.tier ?? null,
+  }
+
+  return stableStringify(existingNormalized) !== stableStringify(nextNormalized)
+}
+
+export async function getVendorApprovalDraft(vendorId: string) {
+  const supabase = await createAdminClient()
+  const { data, error } = await supabase
+    .from("vendor_approval_drafts")
+    .select(
+      "vendor_id, checked_items, red_flags, notes, score, tier, updated_by, updated_at"
+    )
+    .eq("vendor_id", vendorId)
+    .maybeSingle()
+
+  if (error) {
+    console.error("Error fetching vendor approval draft:", error)
+    return null
+  }
+
+  return (data as unknown as VendorApprovalDraftRow | null) ?? null
+}
+
+export async function saveVendorApprovalDraft(
+  vendorId: string,
+  adminUserId: string,
+  draft: VendorApprovalDraftPayload
+) {
+  const supabase = await createAdminClient()
+
+  const { data: existing, error: existingError } = await supabase
+    .from("vendor_approval_drafts")
+    .select("checked_items, red_flags, notes, score, tier, updated_at, updated_by")
+    .eq("vendor_id", vendorId)
+    .maybeSingle()
+
+  if (existingError) {
+    console.error("Error fetching existing approval draft:", existingError)
+    return { success: false, error: "Failed to load existing draft" }
+  }
+
+  const existingDraftRaw = existing as unknown as {
+    checked_items?: Record<string, boolean> | null
+    red_flags?: Record<string, boolean> | null
+    notes?: string | null
+    score?: number | null
+    tier?: string | null
+    updated_by?: string | null
+    updated_at?: string | null
+  } | null
+
+  const existingDraft: VendorApprovalDraftRow | null = existingDraftRaw
+    ? {
+        vendor_id: vendorId,
+        checked_items: existingDraftRaw.checked_items ?? {},
+        red_flags: existingDraftRaw.red_flags ?? {},
+        notes: existingDraftRaw.notes ?? null,
+        score: existingDraftRaw.score ?? null,
+        tier: existingDraftRaw.tier ?? null,
+        updated_by: existingDraftRaw.updated_by ?? null,
+        updated_at: existingDraftRaw.updated_at ?? new Date().toISOString(),
+      }
+    : null
+
+  const changed = isDraftChanged(existingDraft, {
+    checkedItems: draft.checkedItems ?? {},
+    redFlagFindings: draft.redFlagFindings ?? {},
+    notes: draft.notes ?? null,
+    score: draft.score ?? null,
+    tier: draft.tier ?? null,
+  })
+
+  if (!changed) {
+    return {
+      success: true,
+      changed: false,
+      draft: existingDraft,
+    }
+  }
+
+  const upsertPayload = {
+    vendor_id: vendorId,
+    checked_items: draft.checkedItems ?? {},
+    red_flags: draft.redFlagFindings ?? {},
+    notes: draft.notes ?? null,
+    score: draft.score ?? null,
+    tier: draft.tier ?? null,
+    updated_by: adminUserId,
+  }
+
+  const { data: savedDraft, error: saveError } = await supabase
+    .from("vendor_approval_drafts")
+    .upsert(upsertPayload, { onConflict: "vendor_id" })
+    .select(
+      "vendor_id, checked_items, red_flags, notes, score, tier, updated_by, updated_at"
+    )
+    .single()
+
+  if (saveError) {
+    console.error("Error saving vendor approval draft:", saveError)
+    return { success: false, error: "Failed to save draft" }
+  }
+
+  // If draft changes after submission/revision/approval, vendor goes back to under_review.
+  const statusesToReReview = [
+    "submitted",
+    "revision_requested",
+    "approved",
+    "conditional",
+  ]
+
+  const { error: statusError } = await supabase
+    .from("vendor_profiles")
+    .update({ registration_status: "under_review" })
+    .eq("user_id", vendorId)
+    .in("registration_status", statusesToReReview)
+
+  if (statusError) {
+    console.error("Error setting vendor under_review:", statusError)
+    return { success: false, error: "Draft saved, but failed to update status" }
+  }
+
+  revalidatePath("/admin/vendors")
+  revalidatePath(`/admin/vendors/${vendorId}`)
+  revalidatePath(`/admin/vendors/${vendorId}/approval`)
+
+  return {
+    success: true,
+    changed: true,
+    draft: (savedDraft as unknown as VendorApprovalDraftRow) ?? null,
+  }
+}
+
 type DraftData = {
   currentStep?: number
   company_info?: {
@@ -74,9 +257,132 @@ function extractDraftData(raw: { draft_data: Json } | null): DraftData | null {
   return raw.draft_data as unknown as DraftData
 }
 
+type VendorRegistrationReviewResult =
+  | "approved"
+  | "conditional"
+  | "revision_requested"
+  | "rejected"
+
+async function getReviewerName(
+  supabase: Awaited<ReturnType<typeof createAdminClient>>,
+  reviewerId: string
+) {
+  const { data } = await supabase
+    .from("users")
+    .select("nama")
+    .eq("id", reviewerId)
+    .maybeSingle()
+
+  return data?.nama || "Admin"
+}
+
+async function createVendorReviewNotification(
+  supabase: Awaited<ReturnType<typeof createAdminClient>>,
+  params: {
+    userId: string
+    result: VendorRegistrationReviewResult
+    reviewerName: string
+    notes?: string | null
+  }
+) {
+  const copyMap: Record<
+    VendorRegistrationReviewResult,
+    { type: string; title: string; message: string }
+  > = {
+    approved: {
+      type: "vendor_approved",
+      title: "Pendaftaran Disetujui",
+      message: `Selamat! Pendaftaran vendor Anda telah disetujui oleh ${params.reviewerName}. Anda dapat mengikuti tender.`,
+    },
+    conditional: {
+      type: "vendor_approved",
+      title: "Pendaftaran Disetujui Bersyarat",
+      message: `Pendaftaran vendor Anda disetujui bersyarat oleh ${params.reviewerName}. ${params.notes ? `Catatan: ${params.notes}` : ""}`.trim(),
+    },
+    revision_requested: {
+      type: "vendor_rejected",
+      title: "Perlu Revisi",
+      message: `Pendaftaran vendor Anda perlu revisi dari ${params.reviewerName}. ${params.notes ? `Catatan: ${params.notes}` : "Silakan lengkapi data sesuai arahan admin."}`.trim(),
+    },
+    rejected: {
+      type: "vendor_rejected",
+      title: "Pendaftaran Ditolak",
+      message: `Maaf, pendaftaran vendor Anda ditolak oleh ${params.reviewerName}. ${params.notes ? `Alasan: ${params.notes}` : "Hubungi admin untuk detail."}`.trim(),
+    },
+  }
+
+  const payload = copyMap[params.result]
+
+  const { error } = await supabase.from("notifications").insert({
+    user_id: params.userId,
+    type: payload.type,
+    category: "vendor",
+    title: payload.title,
+    message: payload.message,
+    reference_id: params.userId,
+    reference_type: "vendor_registration",
+    is_read: false,
+  })
+
+  if (error) {
+    console.error("Error creating vendor review notification:", error)
+  }
+}
+
+async function reviewVendorRegistration(
+  userId: string,
+  adminUserId: string,
+  result: VendorRegistrationReviewResult,
+  options: {
+    notes?: string
+    score?: number | null
+    tier?: string | null
+  } = {}
+) {
+  const supabase = await createAdminClient()
+  const reviewerName = await getReviewerName(supabase, adminUserId)
+
+  const updatePayload = {
+    registration_status: result,
+    reviewed_at: new Date().toISOString(),
+    reviewed_by: adminUserId,
+    approval_notes: options.notes || null,
+    rejection_reason:
+      result === "revision_requested" || result === "rejected"
+        ? options.notes || null
+        : null,
+    approval_score: options.score ?? null,
+    approval_tier: options.tier ?? null,
+  }
+
+  const { error: updateError } = await supabase
+    .from("vendor_profiles")
+    .update(updatePayload)
+    .eq("user_id", userId)
+
+  if (updateError) {
+    console.error("Error updating vendor review:", updateError)
+    return { success: false, error: "Failed to update vendor review" }
+  }
+
+  await createVendorReviewNotification(supabase, {
+    userId,
+    result,
+    reviewerName,
+    notes: options.notes || null,
+  })
+
+  revalidatePath("/admin/vendors")
+  revalidatePath(`/admin/vendors/${userId}`)
+  revalidatePath(`/admin/vendors/${userId}/approval`)
+
+  return { success: true }
+}
+
 export interface VendorProfileWithUser {
   user_id: string
-  status: string
+  registration_status: string
+  status: string | null
   created_at: string | null
   submitted_at: string | null
   reviewed_at: string | null
@@ -136,6 +442,7 @@ export async function getPendingVendorRegistrations() {
     const draftData = draftMap.get(profile.user_id) || null
     return {
       user_id: profile.user_id,
+      registration_status: profile.registration_status,
       status: profile.status,
       created_at: profile.created_at,
       submitted_at: profile.submitted_at,
@@ -174,6 +481,7 @@ export async function getVendorProfileByUserId(userId: string) {
   const [
     userResult,
     drafts,
+    approvalDraft,
     documents,
     contacts,
     bankAccounts,
@@ -193,6 +501,13 @@ export async function getVendorProfileByUserId(userId: string) {
       .select("draft_data")
       .eq("user_id", userId)
       .single(),
+    supabase
+      .from("vendor_approval_drafts")
+      .select(
+        "vendor_id, checked_items, red_flags, notes, score, tier, updated_by, updated_at"
+      )
+      .eq("vendor_id", userId)
+      .maybeSingle(),
     supabase.from("vendor_documents").select("*").eq("user_id", userId),
     supabase
       .from("vendor_contacts")
@@ -208,6 +523,9 @@ export async function getVendorProfileByUserId(userId: string) {
   ])
 
   const draftData = drafts.data ? extractDraftData(drafts.data) : null
+  const approvalDraftData = approvalDraft.data
+    ? ((approvalDraft.data as unknown) as VendorApprovalDraftRow)
+    : null
 
   const areas = deliveryAreas.data || []
   const provinceIds = [
@@ -376,6 +694,7 @@ export async function getVendorProfileByUserId(userId: string) {
       user_no_hp: userResult.data?.no_hp || null,
     },
     draft_data: draftData,
+    approval_draft: approvalDraftData,
     documents: documents.data || [],
     contacts: contactsFallback,
     bank_accounts: bankAccountsFallback,
@@ -390,57 +709,57 @@ export async function getVendorProfileByUserId(userId: string) {
 export async function approveVendor(
   userId: string,
   adminUserId: string,
-  notes?: string
+  notes?: string,
+  score?: number | null,
+  tier?: string | null
 ) {
-  const supabase = await createAdminClient()
+  return reviewVendorRegistration(userId, adminUserId, "approved", {
+    notes,
+    score,
+    tier,
+  })
+}
 
-  const { error: updateError } = await supabase
-    .from("vendor_profiles")
-    .update({
-      status: "active",
-      reviewed_at: new Date().toISOString(),
-      reviewed_by: adminUserId,
-      approval_notes: notes || null,
-    })
-    .eq("user_id", userId)
-
-  if (updateError) {
-    console.error("Error approving vendor:", updateError)
-    return { success: false, error: "Failed to approve vendor" }
-  }
-
-  revalidatePath("/admin/vendors")
-  revalidatePath(`/admin/vendors/${userId}`)
-
-  return { success: true }
+export async function approveConditionalVendor(
+  userId: string,
+  adminUserId: string,
+  notes?: string,
+  score?: number | null,
+  tier?: string | null
+) {
+  return reviewVendorRegistration(userId, adminUserId, "conditional", {
+    notes,
+    score,
+    tier,
+  })
 }
 
 export async function rejectVendor(
   userId: string,
   adminUserId: string,
-  reason: string
+  reason: string,
+  score?: number | null,
+  tier?: string | null
 ) {
-  const supabase = await createAdminClient()
+  return reviewVendorRegistration(userId, adminUserId, "rejected", {
+    notes: reason,
+    score,
+    tier,
+  })
+}
 
-  const { error: updateError } = await supabase
-    .from("vendor_profiles")
-    .update({
-      status: "rejected",
-      reviewed_at: new Date().toISOString(),
-      reviewed_by: adminUserId,
-      rejection_reason: reason,
-    })
-    .eq("user_id", userId)
-
-  if (updateError) {
-    console.error("Error rejecting vendor:", updateError)
-    return { success: false, error: "Failed to reject vendor" }
-  }
-
-  revalidatePath("/admin/vendors")
-  revalidatePath(`/admin/vendors/${userId}`)
-
-  return { success: true }
+export async function requestVendorRevision(
+  userId: string,
+  adminUserId: string,
+  reason: string,
+  score?: number | null,
+  tier?: string | null
+) {
+  return reviewVendorRegistration(userId, adminUserId, "revision_requested", {
+    notes: reason,
+    score,
+    tier,
+  })
 }
 
 export async function setUnderReview(userId: string) {
@@ -448,12 +767,12 @@ export async function setUnderReview(userId: string) {
 
   const { error } = await supabase
     .from("vendor_profiles")
-    .update({ status: "under_review" })
+    .update({ registration_status: "under_review" })
     .eq("user_id", userId)
 
   if (error) {
-    console.error("Error updating status:", error)
-    return { success: false, error: "Failed to update status" }
+    console.error("Error setting revision requested:", error)
+    return { success: false, error: "Failed to request revision" }
   }
 
   revalidatePath("/admin/vendors")
@@ -465,7 +784,7 @@ export async function setRevisionRequested(userId: string) {
 
   const { error } = await supabase
     .from("vendor_profiles")
-    .update({ status: "revision_requested" })
+    .update({ registration_status: "revision_requested" })
     .eq("user_id", userId)
 
   if (error) {

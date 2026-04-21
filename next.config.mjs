@@ -16,8 +16,13 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV !== "production",
 })
 
+const customDistDir = process.env.NEXT_DIST_DIR
+const devDistDir = customDistDir || `.next-dev-${process.pid}`
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir:
+    customDistDir || (process.env.NODE_ENV === "development" ? devDistDir : ".next"),
   turbopack: {},
   images: {
     remotePatterns: [

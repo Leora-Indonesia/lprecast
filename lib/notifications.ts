@@ -151,7 +151,7 @@ export async function notifyAdminsNewVendor(
 export async function notifyVendorStatusChange(
   vendorUserId: string,
   vendorName: string,
-  status: "approved" | "rejected" | "revision_requested",
+  status: "approved" | "conditional" | "rejected" | "revision_requested",
   notes?: string
 ): Promise<{ success: boolean }> {
   const supabase = await createClient()
@@ -160,6 +160,10 @@ export async function notifyVendorStatusChange(
     approved: {
       title: "Pendaftaran Vendor Disetujui",
       message: `Selamat! Pendaftaran vendor "${vendorName}" telah disetujui. Anda sekarang dapat mengakses portal vendor.`,
+    },
+    conditional: {
+      title: "Pendaftaran Vendor Disetujui Bersyarat",
+      message: `Pendaftaran vendor "${vendorName}" disetujui bersyarat. ${notes || "Silakan periksa catatan admin."}`,
     },
     rejected: {
       title: "Pendaftaran Vendor Ditolak",
@@ -174,7 +178,7 @@ export async function notifyVendorStatusChange(
   const { error } = await supabase.from("notifications").insert({
     user_id: vendorUserId,
     type:
-      status === "approved"
+      status === "approved" || status === "conditional"
         ? "vendor_approved"
         : status === "rejected"
           ? "vendor_rejected"

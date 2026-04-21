@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 
 type VendorRegistration = {
   id: string
+  registration_status: string | null
   status: string | null
   created_at: string | null
   vendor_company_info: {
@@ -51,11 +52,12 @@ const columns: ColumnDef<VendorRegistration>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.status as
+      const status = row.original.registration_status as
         | "draft"
         | "submitted"
         | "under_review"
         | "approved"
+        | "conditional"
         | "rejected"
         | "revision_requested"
         | null

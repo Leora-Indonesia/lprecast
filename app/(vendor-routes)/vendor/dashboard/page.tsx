@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { StatusBadge } from "@/components/ui/status-badge"
 
 export const metadata = {
   title: "Dashboard Vendor | LPrecast",
@@ -33,7 +34,9 @@ export default async function VendorDashboard() {
 
   const { data: vendorProfile } = await supabase
     .from("vendor_profiles")
-    .select("status, nama_perusahaan")
+    .select(
+      "status, registration_status, nama_perusahaan, approval_tier, approval_notes, rejection_reason"
+    )
     .eq("user_id", user?.id)
     .single()
 
@@ -137,6 +140,8 @@ export default async function VendorDashboard() {
   }
 
   const _profileStatus = getStatusConfig(vendorProfile?.status ?? null)
+  const registrationStatus = vendorProfile?.registration_status ?? null
+  const accountStatus = vendorProfile?.status ?? null
 
   return (
     <div className="space-y-6">
@@ -147,11 +152,76 @@ export default async function VendorDashboard() {
             Selamat datang di portal vendor LPrecast
           </p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {registrationStatus && <StatusBadge status={registrationStatus} />}
+          <Badge
+            variant={
+              accountStatus === "blacklisted"
+                ? "destructive"
+                : accountStatus === "suspended"
+                  ? "secondary"
+                  : "outline"
+            }
+          >
+            {accountStatus === "blacklisted"
+              ? "Diblokir"
+              : accountStatus === "suspended"
+                ? "Ditangguhkan"
+                : "Akun Aktif"}
+          </Badge>
+        </div>
       </div>
 
       <Card>
         <CardContent className="pt-6">
-          {vendorProfile?.status === "under_review" && (
+          {accountStatus === "blacklisted" && (
+            <div className="flex items-center gap-4">
+              <XCircle className="h-8 w-8 text-red-500" />
+              <div>
+                <p className="font-medium">Akun diblokir</p>
+                <p className="text-sm text-muted-foreground">
+                  Vendor tidak bisa ikut tender sampai admin membuka blokir.
+                </p>
+              </div>
+            </div>
+          )}
+          {registrationStatus === "revision_requested" && (
+            <div className="flex items-center gap-4">
+              <AlertCircle className="h-8 w-8 text-amber-500" />
+              <div>
+                <p className="font-medium">Perlu revisi</p>
+                <p className="text-sm text-muted-foreground">
+                  {vendorProfile?.approval_notes ||
+                    "Silakan perbaiki data lalu submit ulang."}
+                </p>
+              </div>
+            </div>
+          )}
+          {registrationStatus === "conditional" && (
+            <div className="flex items-center gap-4">
+              <CheckCircle className="h-8 w-8 text-amber-500" />
+              <div>
+                <p className="font-medium">Disetujui bersyarat</p>
+                <p className="text-sm text-muted-foreground">
+                  {vendorProfile?.approval_notes ||
+                    "Vendor dapat ikut tender sesuai kondisi approval."}
+                </p>
+              </div>
+            </div>
+          )}
+          {registrationStatus === "submitted" && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Status Pendaftaran</span>
+                <span className="font-medium">Menunggu Review</span>
+              </div>
+              <Progress value={35} className="h-2" />
+              <p className="text-xs text-muted-foreground">
+                Data telah dikirim dan sedang menunggu verifikasi admin.
+              </p>
+            </div>
+          )}
+          {registrationStatus === "under_review" && (
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Progress Review</span>
@@ -164,7 +234,7 @@ export default async function VendorDashboard() {
               </p>
             </div>
           )}
-          {vendorProfile?.status === "active" && (
+          {registrationStatus === "approved" && (
             <div className="flex items-center gap-4">
               <CheckCircle className="h-8 w-8 text-green-500" />
               <div>
@@ -175,13 +245,14 @@ export default async function VendorDashboard() {
               </div>
             </div>
           )}
-          {vendorProfile?.status === "rejected" && (
+          {registrationStatus === "rejected" && (
             <div className="flex items-center gap-4">
               <XCircle className="h-8 w-8 text-red-500" />
               <div>
                 <p className="font-medium">Pendaftaran ditolak</p>
                 <p className="text-sm text-muted-foreground">
-                  Silakan hubungi admin untuk informasi lebih lanjut
+                  {vendorProfile?.rejection_reason ||
+                    "Silakan hubungi admin untuk informasi lebih lanjut"}
                 </p>
               </div>
             </div>

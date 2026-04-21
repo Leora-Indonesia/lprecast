@@ -12,6 +12,7 @@ import {
   CheckCircle,
   XCircle,
   Eye,
+  ClipboardList,
   MapPin,
   Truck,
   DollarSign,
@@ -23,6 +24,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { StatusBadge } from "@/components/ui/status-badge"
 import {
   Table,
   TableBody,
@@ -145,6 +147,18 @@ export default async function VendorDetailPage({
     linkedin?: string
   }
 
+  const registrationStatus = profile.registration_status ?? "draft"
+  const accountStatus = profile.status ?? "active"
+  const isPendingApproval = [
+    "submitted",
+    "under_review",
+    "revision_requested",
+  ].includes(registrationStatus)
+
+  const approvalButtonLabel = isPendingApproval
+    ? "Buka Checklist"
+    : "Review Ulang Checklist"
+
   const primaryContact = contacts.find((c) => c.is_primary) || contacts[0]
 
   const transactionStatus = await checkVendorTransactions(profile.user_id)
@@ -162,9 +176,16 @@ export default async function VendorDetailPage({
           <p className="text-muted-foreground">Detail informasi vendor</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Badge variant={statusVariants[profile.status]}>
-            {statusLabels[profile.status] || profile.status}
+          <StatusBadge status={registrationStatus} />
+          <Badge variant={statusVariants[accountStatus]}>
+            {statusLabels[accountStatus] || accountStatus}
           </Badge>
+          <Button variant={isPendingApproval ? "default" : "outline"} asChild>
+            <Link href={`/admin/vendors/${profile.user_id}/approval`}>
+              <ClipboardList className="mr-2 h-4 w-4" />
+              {approvalButtonLabel}
+            </Link>
+          </Button>
           <Button variant="destructive" asChild>
             <Link href={`/admin/vendors/${profile.user_id}/delete`}>Hapus</Link>
           </Button>
@@ -258,10 +279,15 @@ export default async function VendorDetailPage({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="text-muted-foreground">Status</div>
+                  <div className="text-muted-foreground">Status Registrasi</div>
                   <div className="font-medium">
-                    <Badge variant={statusVariants[profile.status]}>
-                      {statusLabels[profile.status]}
+                    <StatusBadge status={registrationStatus} />
+                  </div>
+
+                  <div className="text-muted-foreground">Status Akun</div>
+                  <div className="font-medium">
+                    <Badge variant={statusVariants[accountStatus]}>
+                      {statusLabels[accountStatus] || accountStatus}
                     </Badge>
                   </div>
 

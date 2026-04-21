@@ -24,6 +24,8 @@ export function canVendorJoinTender(
     under_review: "Sedang dalam proses review oleh tim LPrecast",
     revision_requested: "Silakan perbaiki data sesuai catatan reviewer",
     rejected: "Pendaftaran ditolak. Silakan hubungi tim LPrecast",
+    suspended: "Akun ditangguhkan. Hubungi tim LPrecast",
+    blacklisted: "Akun diblokir. Hubungi tim LPrecast",
   }
 
   if (!registrationStatus || !profileStatus) {
@@ -42,6 +44,15 @@ export function canVendorJoinTender(
     }
   }
 
+  if (registrationStatus === "conditional") {
+    return {
+      allowed: true,
+      canJoin: true,
+      projectLimit: "small_only",
+      reason: "Anda hanya boleh mengikuti project sesuai kondisi approval.",
+    }
+  }
+
   if (registrationStatus === "approved") {
     if (profileCompleteness != null && profileCompleteness < 80) {
       return {
@@ -54,15 +65,6 @@ export function canVendorJoinTender(
       allowed: true,
       canJoin: true,
       projectLimit: "all",
-    }
-  }
-
-  if (registrationStatus === "conditional") {
-    return {
-      allowed: true,
-      canJoin: true,
-      projectLimit: "small_only",
-      reason: "Anda hanya boleh mengikuti project kecil.",
     }
   }
 
@@ -101,7 +103,7 @@ export function getProfileStatusLabel(status: VendorProfileStatus): string {
 export function isVendorApproved(
   registrationStatus: VendorRegistrationStatus | null | undefined
 ): boolean {
-  return registrationStatus === "approved"
+  return registrationStatus === "approved" || registrationStatus === "conditional"
 }
 
 export function isVendorActive(

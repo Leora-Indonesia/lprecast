@@ -8,6 +8,10 @@
 !.yarn/releases
 !.yarn/versions
 
+
+.next
+.next-build
+.next-dev*
 # testing
 /coverage
 

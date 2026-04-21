@@ -11,7 +11,6 @@ Buat dashboard monitoring untuk overview proyek & progress (admin, SPV, vendor).
 **`/app/(admin)/admin/dashboard/page.tsx`** (update)
 
 Tambahkan section:
-
 - **Projects Overview**: Total, active, completed
 - **Pending Verifications**: Count & link
 - **Recent Progress**: Last 5 progress uploads
@@ -28,7 +27,7 @@ Stats:
 - Verified today
 - Late verifications
 
-List:
+List::
 
 - Today's progress uploads
 - Projects overview

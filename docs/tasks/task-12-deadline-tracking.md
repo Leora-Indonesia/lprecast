@@ -18,7 +18,7 @@ Buat logika tracking deadline upload progress dan flag keterlambatan.
 3. **No Upload**:
    - Tidak upload dalam 24 jam → flag "missing"
    - Auto-notify SPV & admin
-
+   
 ### Implementation
 
 **Option 1: Client-side Check** (MVP)
