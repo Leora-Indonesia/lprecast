@@ -151,3 +151,10 @@ Format code with Prettier.
 - **Command**: `prettier --write "**/*.{ts,tsx}"`
 - **Purpose**: Automatically format TypeScript and TSX files
 - **Prerequisites**: Prettier configuration
+
+Terse like caveman. Technical substance exact. Only fluff die.
+Drop: articles, filler (just/really/basically), pleasantries, hedging.
+Fragments OK. Short synonyms. Code unchanged.
+Pattern: [thing] [action] [reason]. [next step].
+ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift.
+Code/commits/PRs: normal. Off: "stop caveman" / "normal mode".

@@ -5,9 +5,12 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 import {
-  adminChecklist,
-  surveyChecklist,
-} from "@/components/admin/vendor-approval-checklist"
+  computeApprovalTier,
+  computeRecommendation,
+  computeTotalScore,
+  getChecklistMetrics,
+  hasRedFlag as computeHasRedFlag,
+} from "@/lib/vendor-approval"
 
 type VendorApprovalDraft = {
   vendor_id: string
@@ -17,6 +20,7 @@ type VendorApprovalDraft = {
   score: number | null
   tier: string | null
   updated_by: string | null
+  updated_by_name?: string | null
   updated_at: string
 }
 
@@ -32,15 +36,23 @@ type VendorApprovalReviewContextValue = {
 
   hasRedFlag: boolean
   totalScore: number
+  checklistCheckedCount: number
+  checklistTotalCount: number
+  checklistRemainingItems: number
+  checklistCompletionPct: number
   recommendation: "APPROVED" | "CONDITIONAL" | "REJECT"
   approvalTier: string
 
   isSavingDraft: boolean
   isSubmitting: boolean
   lastSavedAt: string | null
+  lastSavedBy: string | null
+  isNotesOpen: boolean
 
   saveDraft: () => Promise<void>
   submitReview: (action: ReviewAction) => Promise<void>
+  openNotes: () => void
+  closeNotes: () => void
 }
 
 const VendorApprovalReviewContext = createContext<VendorApprovalReviewContextValue | null>(
@@ -49,12 +61,10 @@ const VendorApprovalReviewContext = createContext<VendorApprovalReviewContextVal
 
 export function VendorApprovalReviewProvider({
   userId,
-  adminUserId,
   initialDraft,
   children,
 }: {
   userId: string
-  adminUserId: string
   initialDraft?: VendorApprovalDraft | null
   children: React.ReactNode
 }) {
@@ -69,106 +79,32 @@ export function VendorApprovalReviewProvider({
   const [notes, setNotes] = useState(() => initialDraft?.notes ?? "")
   const [isSavingDraft, setIsSavingDraft] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isNotesOpen, setIsNotesOpen] = useState(false)
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(
     () => initialDraft?.updated_at ?? null
   )
+  const [lastSavedBy, setLastSavedBy] = useState<string | null>(
+    () => initialDraft?.updated_by_name ?? initialDraft?.updated_by ?? null
+  )
 
   const hasRedFlag = useMemo(
-    () => Object.values(redFlagFindings).some(Boolean),
+    () => computeHasRedFlag(redFlagFindings),
     [redFlagFindings]
   )
 
-  type ScoringCategory =
-    | "legal_admin"
-    | "pengalaman"
-    | "kapasitas"
-    | "workshop_produksi"
-    | "attitude_compliance"
-
-  const scoring = useMemo(() => {
-    // Scoring mengikuti referensi: docs/modules/VENDOR APPROVAL CHECKLIST.md
-    const weights: Record<ScoringCategory, number> = {
-      legal_admin: 20,
-      pengalaman: 20,
-      kapasitas: 20,
-      workshop_produksi: 30,
-      attitude_compliance: 10,
-    }
-
-    const sectionCategoryMap: Record<string, ScoringCategory> = {
-      identitas: "legal_admin",
-      profil: "legal_admin",
-      finance: "legal_admin",
-
-      pengalaman: "pengalaman",
-      kapasitas: "kapasitas",
-
-      lokasi: "workshop_produksi",
-      fasilitas: "workshop_produksi",
-      peralatan: "workshop_produksi",
-      tk_lapangan: "workshop_produksi",
-      proses: "workshop_produksi",
-      kualitas: "workshop_produksi",
-      manajemen: "workshop_produksi",
-      safety: "workshop_produksi",
-
-      komitmen: "attitude_compliance",
-      sikap: "attitude_compliance",
-    }
-
-    const stats: Record<ScoringCategory, { total: number; checked: number }> = {
-      legal_admin: { total: 0, checked: 0 },
-      pengalaman: { total: 0, checked: 0 },
-      kapasitas: { total: 0, checked: 0 },
-      workshop_produksi: { total: 0, checked: 0 },
-      attitude_compliance: { total: 0, checked: 0 },
-    }
-
-    const allSections = [...adminChecklist, ...surveyChecklist]
-    for (const section of allSections) {
-      const category = sectionCategoryMap[section.id]
-      if (!category) continue
-
-      for (const item of section.items) {
-        stats[category].total += 1
-        if (checkedItems[item.id]) stats[category].checked += 1
-      }
-    }
-
-    const scoreByCategory = (Object.keys(stats) as ScoringCategory[]).map(
-      (category) => {
-        const total = stats[category].total
-        const checked = stats[category].checked
-        const ratio = total > 0 ? checked / total : 0
-        const weighted = ratio * weights[category]
-        return { category, total, checked, ratio, weighted }
-      }
-    )
-
-    const totalScore = Math.round(scoreByCategory.reduce((sum, c) => sum + c.weighted, 0))
-
-    return {
-      totalScore,
-    }
-  }, [checkedItems])
-
-  const totalScore = scoring.totalScore
-
-  const recommendation = hasRedFlag
-    ? "REJECT"
-    : totalScore >= 85
-      ? "APPROVED"
-      : totalScore >= 70
-        ? "CONDITIONAL"
-        : "REJECT"
-
-  const approvalTier = hasRedFlag
-    ? "Auto Reject"
-    : totalScore >= 90
-      ? "Tier A"
-      : totalScore >= 85
-        ? "Tier B"
-        : "Needs Review"
+  const totalScore = useMemo(() => computeTotalScore(checkedItems), [checkedItems])
+  const recommendation = useMemo(
+    () => computeRecommendation({ totalScore, hasRedFlag }),
+    [totalScore, hasRedFlag]
+  )
+  const approvalTier = useMemo(
+    () => computeApprovalTier({ totalScore, hasRedFlag }),
+    [totalScore, hasRedFlag]
+  )
+  const checklistMetrics = useMemo(
+    () => getChecklistMetrics(checkedItems),
+    [checkedItems]
+  )
 
   function setCheckedItem(id: string, value: boolean) {
     setCheckedItems((prev) => ({ ...prev, [id]: value }))
@@ -180,11 +116,6 @@ export function VendorApprovalReviewProvider({
 
   async function saveDraft() {
     const trimmedNotes = notes.trim()
-    if (!adminUserId) {
-      toast.error("Admin user tidak terdeteksi")
-      return
-    }
-
     setIsSavingDraft(true)
     try {
       const res = await fetch(`/admin/vendors/${userId}/actions`, {
@@ -192,22 +123,26 @@ export function VendorApprovalReviewProvider({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "save_draft",
-          adminUserId,
           draft: {
             checkedItems,
             redFlagFindings,
             notes: trimmedNotes || null,
-            score: totalScore,
-            tier: approvalTier,
           },
         }),
       })
 
-      const data = await res.json()
+      const data = await res.json().catch(() => null)
+      if (!res.ok) {
+        toast.error(data?.error || "Gagal menyimpan draft")
+        return
+      }
       if (data.success) {
         if (data.changed) toast.success("Draft tersimpan")
         else toast.message("Tidak ada perubahan draft")
         if (data.draft?.updated_at) setLastSavedAt(data.draft.updated_at)
+        if (data.draft?.updated_by_name || data.draft?.updated_by) {
+          setLastSavedBy(data.draft.updated_by_name ?? data.draft.updated_by)
+        }
         router.refresh()
       } else {
         toast.error(data.error || "Gagal menyimpan draft")
@@ -222,17 +157,13 @@ export function VendorApprovalReviewProvider({
   async function submitReview(action: ReviewAction) {
     const trimmedNotes = notes.trim()
 
-    if (!adminUserId) {
-      toast.error("Admin user tidak terdeteksi")
-      return
-    }
-
     if (hasRedFlag && action !== "reject") {
       toast.error("Ada red flag: hasil wajib REJECT")
       return
     }
 
     if ((action === "reject" || action === "revision_requested") && !trimmedNotes) {
+      setIsNotesOpen(true)
       toast.error("Catatan wajib diisi untuk revisi/penolakan")
       return
     }
@@ -244,15 +175,20 @@ export function VendorApprovalReviewProvider({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action,
-          adminUserId,
           notes: trimmedNotes || null,
           reason: trimmedNotes || null,
-          score: totalScore,
-          tier: approvalTier,
+          draft: {
+            checkedItems,
+            redFlagFindings,
+          },
         }),
       })
 
-      const data = await res.json()
+      const data = await res.json().catch(() => null)
+      if (!res.ok) {
+        toast.error(data?.error || "Gagal menyimpan review vendor")
+        return
+      }
       if (data.success) {
         toast.success("Review vendor tersimpan")
         router.refresh()
@@ -275,13 +211,21 @@ export function VendorApprovalReviewProvider({
     setCheckedItem,
     hasRedFlag,
     totalScore,
+    checklistCheckedCount: checklistMetrics.checkedItemsCount,
+    checklistTotalCount: checklistMetrics.totalItems,
+    checklistRemainingItems: checklistMetrics.remainingItems,
+    checklistCompletionPct: checklistMetrics.completionPct,
     recommendation,
     approvalTier,
     isSavingDraft,
     isSubmitting,
     lastSavedAt,
+    lastSavedBy,
+    isNotesOpen,
     saveDraft,
     submitReview,
+    openNotes: () => setIsNotesOpen(true),
+    closeNotes: () => setIsNotesOpen(false),
   }
 
   return (

@@ -6,13 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { useVendorApprovalReview } from "@/components/admin/vendor-approval-review-context"
 
-  const redFlagChecklist = [
-    { id: "no_workshop", label: "Tidak punya workshop jelas" },
-    { id: "fake_portfolio", label: "Portofolio palsu" },
-    { id: "poor_quality", label: "Kualitas produk buruk" },
-    { id: "refuse_system", label: "Tidak mau ikut sistem" },
-    { id: "bypass_client", label: "Indikasi ingin bypass client" },
-  ]
+import { redFlagChecklist } from "@/lib/vendor-approval"
 
 export function ChecklistWorkspace() {
   const {

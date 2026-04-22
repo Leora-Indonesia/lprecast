@@ -1,5 +1,4 @@
-import { createClient } from "@/lib/supabase/server"
-import { getVendorProfileByUserId } from "../../actions"
+import { getVendorApprovalWorkspaceByUserId } from "../../actions"
 import { notFound } from "next/navigation"
 import {
   Building2,
@@ -21,6 +20,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { VendorApprovalReviewProvider } from "@/components/admin/vendor-approval-review-context"
 import { VendorApprovalHeaderActions } from "@/components/admin/vendor-approval-header-actions"
 import { VendorApprovalHeaderCards } from "@/components/admin/vendor-approval-header-summary"
+import { VendorApprovalNoteCallout } from "@/components/admin/vendor-approval-note-callout"
+import { VendorApprovalNotesSheet } from "@/components/admin/vendor-approval-notes-sheet"
 import {
   Table,
   TableBody,
@@ -63,11 +64,7 @@ export default async function VendorApprovalWorkspacePage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const data = await getVendorProfileByUserId(id)
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const data = await getVendorApprovalWorkspaceByUserId(id)
 
   if (!data) {
     notFound()
@@ -118,11 +115,13 @@ export default async function VendorApprovalWorkspacePage({
   const availableDocTypes = new Set(documents.map((d) => d.document_type))
   const requiredLegalDocs = ["ktp", "npwp", "nib", "siup_sbu", "company_profile"]
   const missingLegalDocs = requiredLegalDocs.filter((t) => !availableDocTypes.has(t))
+  const reviewNote = profile.rejection_reason || profile.approval_notes || null
+  const shouldShowNoteCallout =
+    registrationStatus === "revision_requested" || registrationStatus === "rejected"
 
   return (
     <VendorApprovalReviewProvider
       userId={id}
-      adminUserId={user?.id || ""}
       initialDraft={approval_draft}
     >
       <div className="flex min-h-0 flex-col space-y-4">
@@ -146,8 +145,20 @@ export default async function VendorApprovalWorkspacePage({
           <VendorApprovalHeaderCards
             registrationStatus={registrationStatus}
             accountStatusLabel={accountStatusLabel}
+            documentCount={documents.length}
+            productCount={products.length}
+            contactCount={contacts.length}
+            bankAccountCount={bank_accounts.length}
+            missingLegalDocs={missingLegalDocs}
+            submittedAt={profile.submitted_at}
+            reviewedAt={profile.reviewed_at}
+            reviewedByName={profile.reviewed_by_name || null}
           />
         </div>
+
+        {shouldShowNoteCallout && (
+          <VendorApprovalNoteCallout note={reviewNote} />
+        )}
 
         <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 xl:grid-cols-12">
           <div className="flex h-fit flex-col rounded-lg border bg-background shadow-sm xl:col-span-6 xl:self-start">
@@ -483,6 +494,11 @@ export default async function VendorApprovalWorkspacePage({
             </ScrollArea>
           </div>
         </div>
+
+        <VendorApprovalNotesSheet
+          registrationStatus={registrationStatus}
+          existingNote={reviewNote}
+        />
       </div>
     </VendorApprovalReviewProvider>
   )

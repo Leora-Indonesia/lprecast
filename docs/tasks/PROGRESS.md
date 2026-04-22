@@ -22,7 +22,7 @@ Tracking semua tasks untuk MVP LPrecast.
 
 ---
 
-**Last updated:** April 21, 2026
+**Last updated:** April 22, 2026
 
 | #   | Task                                                                 | Status      | Due Date     | Notes |
 | --- | -------------------------------------------------------------------- | ----------- | ------------ | ----- |
@@ -41,8 +41,14 @@ Tracking semua tasks untuk MVP LPrecast.
 | 13  | SPV - Buat autentikasi & layout dashboard khusus SPV                 | Not started | Apr 21, 2026 | -     |
 | 14  | SPV - Buat fitur verifikasi progress (approve/reject + catatan)      | Not started | Apr 21, 2026 | -     |
 | 15  | Tim Dev - Lakukan testing & bug fixes end-to-end MVP                 | Done        | Apr 21, 2026 | `vendor_approval_drafts` remote schema sudah beres. Approval workspace dipolish: tombol approve jadi 1 tombol dinamis (`Approve` jika skor >= 85, `Approve (Bersyarat)` jika 70-84, disabled jika < 70), types database sudah dipull ulang, dan typecheck lulus. |
-| 16  | Tim Dev - Lakukan polish final, dokumentasi, & code cleanup          | Not started | Apr 23, 2026 | -     |
+| 16  | Tim Dev - Lakukan polish final, dokumentasi, & code cleanup          | Done        | Apr 23, 2026 | Threshold score dibuat lebih readable pada ringkasan approval |
 | 17  | Admin - Tambah tombol approval checklist di detail vendor            | Done        | Apr 21, 2026 | Button menuju `/admin/vendors/[id]/approval` untuk review ulang |
 | 18  | Admin - Samakan approval workspace + scoring checklist              | Done        | Apr 21, 2026 | Samakan layout dengan `vendors/checklist-preview` + scoring berbobot + red flag auto reject. Polish: header cards pindah ke baris bawah + mobile stack |
+| 19  | Admin - Hardening approval (server-side enforcement)               | Done        | Apr 22, 2026 | Enforce rule skor/red flag di server + jangan trust payload client (`adminUserId/score/tier`). |
+| 20  | Admin - Single source checklist + red flag                         | Done        | Apr 22, 2026 | Hapus duplikasi red flag/list checklist. Pakai satu module config + reuse di UI + scoring. |
+| 21  | Admin - Perkuat typing boundary approval draft                      | Done        | Apr 22, 2026 | Validasi payload approval pakai schema + coercion, response path lebih ketat. |
+| 22  | Admin - Optimasi data fetch approval workspace                       | Done        | Apr 22, 2026 | Page approval pakai fetch khusus workspace, tidak lagi overfetch field detail vendor. |
+| 23  | Admin - Pisah catatan review ke drawer                               | Done        | Apr 22, 2026 | Catatan dipindah ke drawer + inline callout saat revisi/ditolak, tombol action bisa buka drawer. |
+| 24  | Admin - Padatkan card Status & Skor                                  | Done        | Apr 22, 2026 | Status card isi legal minimum, snapshot, review trail, draft; Skor card isi eligibility, checklist progress, level. |
 
 (End of file - total 30 lines)

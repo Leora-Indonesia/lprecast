@@ -11,6 +11,7 @@ export function VendorApprovalHeaderActions() {
     totalScore,
     isSavingDraft,
     isSubmitting,
+    openNotes,
     saveDraft,
     submitReview,
   } = useVendorApprovalReview()
@@ -30,6 +31,10 @@ export function VendorApprovalHeaderActions() {
         disabled={isSavingDraft || isSubmitting}
       >
         Simpan Draft
+      </Button>
+
+      <Button variant="outline" onClick={openNotes} disabled={isSubmitting}>
+        Catatan
       </Button>
 
       <Separator orientation="vertical" className="hidden h-9 md:block" />

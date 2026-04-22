@@ -43,7 +43,7 @@ export default async function AdminVendorsPage() {
           <Building2 className="mx-auto h-12 w-12 text-muted-foreground" />
           <h3 className="mt-4 text-lg font-medium">Belum ada vendor</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Belum ada vendor yang mengajukan pendaftaran
+            Belum ada data vendor
           </p>
         </div>
       ) : (

@@ -1,11 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import {
-  VendorApprovalChecklistPreview,
-  adminChecklist,
-  surveyChecklist,
-} from "@/components/admin/vendor-approval-checklist"
+import { VendorApprovalChecklistPreview } from "@/components/admin/vendor-approval-checklist"
+import { computeTotalScore } from "@/lib/vendor-approval"
 import {
   Building2,
   Contact,
@@ -38,20 +35,7 @@ export default function ChecklistPreviewPage() {
     setCheckedItems((prev) => ({ ...prev, [id]: checked }))
   }
 
-  // Calculate scores
-  const allAdminItems = adminChecklist.flatMap((s) => s.items)
-  const allSurveyItems = surveyChecklist.flatMap((s) => s.items)
-
-  const adminCheckedCount = allAdminItems.filter(
-    (item) => checkedItems[item.id]
-  ).length
-  const surveyCheckedCount = allSurveyItems.filter(
-    (item) => checkedItems[item.id]
-  ).length
-
-  const adminScore = (adminCheckedCount / allAdminItems.length) * 40
-  const surveyScore = (surveyCheckedCount / allSurveyItems.length) * 60
-  const totalScore = Math.round(adminScore + surveyScore)
+  const totalScore = computeTotalScore(checkedItems)
 
   let tier = "REJECT"
   let tierColor: VariantProps<typeof Badge>["variant"] = "destructive"

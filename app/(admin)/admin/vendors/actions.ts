@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { Json } from "@/types/database.types"
+import { computeApprovalTier, computeTotalScore, hasRedFlag } from "@/lib/vendor-approval"
 
 type VendorApprovalDraftRow = {
   vendor_id: string
@@ -20,8 +21,6 @@ type VendorApprovalDraftPayload = {
   checkedItems: Record<string, boolean>
   redFlagFindings: Record<string, boolean>
   notes: string | null
-  score: number | null
-  tier: string | null
 }
 
 function stableStringify(value: unknown): string {
@@ -41,6 +40,12 @@ function isDraftChanged(
     | null,
   next: VendorApprovalDraftPayload
 ) {
+  const nextScore = computeTotalScore(next.checkedItems ?? {})
+  const nextTier = computeApprovalTier({
+    totalScore: nextScore,
+    hasRedFlag: hasRedFlag(next.redFlagFindings ?? {}),
+  })
+
   const existingNormalized = {
     checkedItems: existing?.checked_items ?? {},
     redFlagFindings: existing?.red_flags ?? {},
@@ -53,8 +58,8 @@ function isDraftChanged(
     checkedItems: next.checkedItems ?? {},
     redFlagFindings: next.redFlagFindings ?? {},
     notes: next.notes ?? null,
-    score: next.score ?? null,
-    tier: next.tier ?? null,
+    score: nextScore,
+    tier: nextTier,
   }
 
   return stableStringify(existingNormalized) !== stableStringify(nextNormalized)
@@ -84,6 +89,12 @@ export async function saveVendorApprovalDraft(
   draft: VendorApprovalDraftPayload
 ) {
   const supabase = await createAdminClient()
+
+  const totalScore = computeTotalScore(draft.checkedItems ?? {})
+  const tier = computeApprovalTier({
+    totalScore,
+    hasRedFlag: hasRedFlag(draft.redFlagFindings ?? {}),
+  })
 
   const { data: existing, error: existingError } = await supabase
     .from("vendor_approval_drafts")
@@ -123,8 +134,6 @@ export async function saveVendorApprovalDraft(
     checkedItems: draft.checkedItems ?? {},
     redFlagFindings: draft.redFlagFindings ?? {},
     notes: draft.notes ?? null,
-    score: draft.score ?? null,
-    tier: draft.tier ?? null,
   })
 
   if (!changed) {
@@ -140,8 +149,8 @@ export async function saveVendorApprovalDraft(
     checked_items: draft.checkedItems ?? {},
     red_flags: draft.redFlagFindings ?? {},
     notes: draft.notes ?? null,
-    score: draft.score ?? null,
-    tier: draft.tier ?? null,
+    score: totalScore,
+    tier,
     updated_by: adminUserId,
   }
 
@@ -407,8 +416,7 @@ export async function getPendingVendorRegistrations() {
   const { data: profiles, error } = await supabase
     .from("vendor_profiles")
     .select("*")
-    .in("registration_status", ["submitted", "under_review"])
-    .order("submitted_at", { ascending: false })
+    .order("created_at", { ascending: false })
 
   if (error) {
     console.error("Error fetching pending vendors:", error)
@@ -478,19 +486,7 @@ export async function getVendorProfileByUserId(userId: string) {
     return null
   }
 
-  const [
-    userResult,
-    drafts,
-    approvalDraft,
-    documents,
-    contacts,
-    bankAccounts,
-    factoryAddresses,
-    products,
-    deliveryAreas,
-    costInclusions,
-    additionalCosts,
-  ] = await Promise.all([
+  const [userResult, drafts, approvalDraft, documents, contacts, bankAccounts, factoryAddresses, products, deliveryAreas, costInclusions, additionalCosts] = await Promise.all([
     supabase
       .from("users")
       .select("id, email, nama, nama_perusahaan, no_hp")
@@ -703,6 +699,95 @@ export async function getVendorProfileByUserId(userId: string) {
     delivery_areas: deliveryAreasFallback,
     cost_inclusions: costInclusionsFallback,
     additional_costs: additionalCostsFallback,
+  }
+}
+
+export async function getVendorApprovalWorkspaceByUserId(userId: string) {
+  const supabase = await createAdminClient()
+
+  const { data: profile, error } = await supabase
+    .from("vendor_profiles")
+    .select("*")
+    .eq("user_id", userId)
+    .single()
+
+  if (error || !profile) {
+    console.error("Error fetching profile:", error)
+    return null
+  }
+
+  const [userResult, drafts, approvalDraft, documents, contacts, bankAccounts, factoryAddresses, products] = await Promise.all([
+    supabase
+      .from("users")
+      .select("id, email, nama, nama_perusahaan, no_hp")
+      .eq("id", userId)
+      .single(),
+    supabase
+      .from("vendor_onboarding_drafts")
+      .select("draft_data")
+      .eq("user_id", userId)
+      .single(),
+    supabase
+      .from("vendor_approval_drafts")
+      .select(
+        "vendor_id, checked_items, red_flags, notes, score, tier, updated_by, updated_at"
+      )
+      .eq("vendor_id", userId)
+      .maybeSingle(),
+    supabase.from("vendor_documents").select("*").eq("user_id", userId),
+    supabase
+      .from("vendor_contacts")
+      .select("*")
+      .eq("user_id", userId)
+      .order("sequence"),
+    supabase.from("vendor_bank_accounts").select("*").eq("user_id", userId),
+    supabase.from("vendor_factory_addresses").select("*").eq("user_id", userId),
+    supabase.from("vendor_products").select("*").eq("user_id", userId),
+  ])
+
+  const reviewerIds = [profile.reviewed_by, approvalDraft.data?.updated_by].filter(
+    (id): id is string => Boolean(id)
+  )
+  const [{ data: reviewers }, { data: draftReviewer }] = await Promise.all([
+    reviewerIds.includes(profile.reviewed_by || "")
+      ? supabase.from("users").select("id, nama").in("id", [profile.reviewed_by!])
+      : Promise.resolve({ data: [] }),
+    approvalDraft.data?.updated_by
+      ? supabase
+          .from("users")
+          .select("id, nama")
+          .in("id", [approvalDraft.data.updated_by])
+      : Promise.resolve({ data: [] }),
+  ])
+
+  const reviewerMap = new Map([...(reviewers || []), ...(draftReviewer || [])].map((u) => [u.id, u.nama]))
+
+  const approvalDraftData = approvalDraft.data
+    ? ({
+        ...((approvalDraft.data as unknown) as VendorApprovalDraftRow),
+        updated_by_name: approvalDraft.data.updated_by
+          ? reviewerMap.get(approvalDraft.data.updated_by) || null
+          : null,
+      } as VendorApprovalDraftRow & { updated_by_name: string | null })
+    : null
+
+  const draftData = drafts.data ? extractDraftData(drafts.data) : null
+
+  return {
+    profile: {
+      ...profile,
+      user_email: userResult.data?.email || null,
+      user_nama: userResult.data?.nama || null,
+      user_no_hp: userResult.data?.no_hp || null,
+      reviewed_by_name: profile.reviewed_by ? reviewerMap.get(profile.reviewed_by) || null : null,
+    },
+    draft_data: draftData,
+    approval_draft: approvalDraftData,
+    documents: documents.data || [],
+    contacts: contacts.data || [],
+    bank_accounts: bankAccounts.data || [],
+    factory_addresses: factoryAddresses.data || [],
+    products: products.data || [],
   }
 }
 
