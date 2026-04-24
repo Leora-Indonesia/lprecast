@@ -1,28 +1,24 @@
 import {
   Building2,
-  FileText,
   ClipboardList,
   Clock,
   CheckCircle,
   XCircle,
   AlertCircle,
-  TrendingUp,
-  Users,
-  Bell,
-  AlertTriangle,
   ArrowRight,
   ExternalLink,
 } from "lucide-react"
 import Link from "next/link"
 
 import { createClient } from "@/lib/supabase/server"
-import { formatDateTime } from "@/lib/datetime"
 import { StatCard } from "@/components/admin/stat-card"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { StatusBadge } from "@/components/ui/status-badge"
+import { calculateOnboardingCompleteness } from "@/app/(vendor-routes)/vendor/onboarding/completeness"
+import type { OnboardingDraftData } from "@/app/(vendor-routes)/vendor/onboarding/types"
+import { calculateVendorProfileCompleteness } from "@/lib/vendor/profile-completeness"
 
 export const metadata = {
   title: "Dashboard Vendor | LPrecast",
@@ -31,10 +27,11 @@ export const metadata = {
 
 type ActionItem = {
   id: string
-  type: "upload" | "revision" | "tender" | "notification"
+  type: "upload" | "revision" | "tender"
   title: string
   description: string
   priority: "high" | "medium" | "low"
+  href: string
 }
 
 type ProgressItem = {
@@ -47,18 +44,8 @@ type ProgressItem = {
   rejection_notes: string | null
 }
 
-type NotificationItem = {
-  id: string
-  title: string
-  message: string
-  is_read: boolean | null
-  created_at: string | null
-  category: string
-}
-
 function buildActionItems(
   progress: ProgressItem[] | null,
-  notifications: NotificationItem[] | null,
   openTenders: number
 ): ActionItem[] {
   const items: ActionItem[] = []
@@ -72,23 +59,9 @@ function buildActionItems(
           title: "Progress ditolak SPV",
           description: p.rejection_notes || "Silakan perbaiki dan upload ulang",
           priority: "high",
+          href: "/vendor/projects",
         })
       }
-    })
-  }
-
-  if (notifications) {
-    const important = notifications
-      .filter((n) => n.is_read === false && n.category === "tender")
-      .slice(0, 1)
-    important.forEach((n) => {
-      items.push({
-        id: n.id,
-        type: "tender",
-        title: n.title,
-        description: n.message,
-        priority: "medium",
-      })
     })
   }
 
@@ -99,6 +72,7 @@ function buildActionItems(
       title: `${openTenders} tender baru tersedia`,
       description: "Ada tender yang cocok dengan area Anda",
       priority: "low",
+      href: "/vendor/tenders",
     })
   }
 
@@ -127,12 +101,18 @@ export default async function VendorDashboard() {
     { count: submittedTendersCount },
     { count: wonTendersCount },
     { data: recentSubmissions },
-    { data: recentNotifications },
+    { data: onboardingDraft },
+    { data: vendorContacts },
+    { data: vendorDocuments },
+    { data: vendorFactoryAddress },
+    { data: vendorBankAccount },
+    { count: deliveryAreasCount },
+    { count: productsCount },
   ] = await Promise.all([
     supabase
       .from("vendor_profiles")
       .select(
-        "status, registration_status, nama_perusahaan, approval_tier, approval_notes, rejection_reason, profile_completeness_pct"
+        "status, registration_status, nama_perusahaan, email_perusahaan, approval_tier, approval_notes, rejection_reason, profile_completeness_pct"
       )
       .eq("user_id", user.id)
       .single(),
@@ -163,11 +143,39 @@ export default async function VendorDashboard() {
       .order("created_at", { ascending: false })
       .limit(5),
     supabase
-      .from("notifications")
-      .select("id, title, message, is_read, created_at, category")
+      .from("vendor_onboarding_drafts")
+      .select("draft_data")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(6),
+      .maybeSingle(),
+    supabase
+      .from("vendor_contacts")
+      .select("nama, no_hp, jabatan")
+      .eq("user_id", user.id)
+      .order("sequence", { ascending: true }),
+    supabase
+      .from("vendor_documents")
+      .select("document_type, document_number, file_path")
+      .eq("user_id", user.id),
+    supabase
+      .from("vendor_factory_addresses")
+      .select("address, province, kabupaten, kecamatan, postal_code")
+      .eq("user_id", user.id)
+      .eq("is_primary", true)
+      .maybeSingle(),
+    supabase
+      .from("vendor_bank_accounts")
+      .select("bank_name, account_number, account_holder_name")
+      .eq("user_id", user.id)
+      .eq("is_primary", true)
+      .maybeSingle(),
+    supabase
+      .from("vendor_delivery_areas")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+    supabase
+      .from("vendor_products")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
   ])
 
   const spkIds = activeSPKs?.map((spk) => spk.id) || []
@@ -178,86 +186,37 @@ export default async function VendorDashboard() {
     .order("tanggal", { ascending: false })
 
   const vendorProjects = activeSPKs || []
-  const notificationCount = recentNotifications?.filter((n) => !n.is_read).length || 0
 
-  const actionItems = buildActionItems(
-    latestProgress,
-    recentNotifications,
-    openTendersCount || 0
-  )
+  const actionItems = buildActionItems(latestProgress, openTendersCount || 0)
 
-  const getStatusConfig = (status: string | null) => {
-    switch (status) {
-      case "active":
-        return {
-          label: "Aktif",
-          variant: "default" as const,
-          icon: CheckCircle,
-          description: "Akun vendor Anda telah aktif",
-        }
-      case "draft":
-        return {
-          label: "Draft",
-          variant: "secondary" as const,
-          icon: Clock,
-          description: "Belum submisi",
-        }
-      case "submitted":
-        return {
-          label: "Menunggu Review",
-          variant: "secondary" as const,
-          icon: Clock,
-          description: "Data telah dikirim, menunggu review dari admin",
-        }
-      case "under_review":
-        return {
-          label: "Sedang Direview",
-          variant: "default" as const,
-          icon: Clock,
-          description: "Tim kami sedang mereview data Anda",
-        }
-      case "revision_requested":
-        return {
-          label: "Perlu Revisi",
-          variant: "secondary" as const,
-          icon: AlertCircle,
-          description: "Silakan lengkapi data yang diperlukan",
-        }
-      case "rejected":
-        return {
-          label: "Ditolak",
-          variant: "destructive" as const,
-          icon: XCircle,
-          description: "Pendaftaran ditolak",
-        }
-      case "suspended":
-        return {
-          label: "Ditangguhkan",
-          variant: "secondary" as const,
-          icon: AlertCircle,
-          description: "Akun ditangguhkan sementara",
-        }
-      case "blacklisted":
-        return {
-          label: "Diblokir",
-          variant: "destructive" as const,
-          icon: XCircle,
-          description: "Akun diblokir",
-        }
-      default:
-        return {
-          label: "Unknown",
-          variant: "secondary" as const,
-          icon: AlertCircle,
-          description: "Status tidak diketahui",
-        }
-    }
-  }
-
-  const _profileStatus = getStatusConfig(vendorProfile?.status ?? null)
   const registrationStatus = vendorProfile?.registration_status ?? null
   const accountStatus = vendorProfile?.status ?? null
   const isVendorActive = accountStatus === "active" && registrationStatus === "approved"
+
+  const completionFromVendorData = calculateVendorProfileCompleteness({
+    profile: vendorProfile
+      ? {
+          nama_perusahaan: vendorProfile.nama_perusahaan,
+          email_perusahaan: vendorProfile.email_perusahaan,
+        }
+      : null,
+    contacts: vendorContacts ?? null,
+    documents: vendorDocuments ?? null,
+    factoryAddress: vendorFactoryAddress ?? null,
+    bankAccount: vendorBankAccount ?? null,
+    deliveryAreasCount: deliveryAreasCount ?? 0,
+    productsCount: productsCount ?? 0,
+  })
+
+  const completionFromDraft = calculateOnboardingCompleteness(
+    (onboardingDraft?.draft_data as Partial<OnboardingDraftData> | null | undefined) ??
+      undefined
+  )
+  const profileCompletion = Math.max(
+    completionFromVendorData,
+    completionFromDraft,
+    vendorProfile?.profile_completeness_pct ?? 0
+  )
 
   return (
     <div className="space-y-5">
@@ -268,43 +227,33 @@ export default async function VendorDashboard() {
             Proyek & tender yang perlu perhatian Anda
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button size="sm" asChild>
-            <Link href="/vendor/projects">Upload Progress</Link>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/vendor/tenders">Lihat Tender</Link>
-          </Button>
-        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <div className="flex items-center gap-2 rounded-full bg-background border px-3 py-1.5 text-sm">
-          <span
-            className={`h-2 w-2 rounded-full ${
-              accountStatus === "active" ? "bg-green-500" : "bg-amber-500"
-            }`}
-          />
-          <span className="font-medium">
-            {accountStatus === "active" ? "Aktif" : accountStatus || "Tidak aktif"}
-          </span>
-          <span className="text-muted-foreground text-xs">
-            {vendorProfile?.approval_tier ? `• Tier ${vendorProfile.approval_tier}` : ""}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 rounded-full bg-background border px-3 py-1.5 text-sm">
-          <span className="text-muted-foreground">Proyek aktif:</span>
-          <span className="font-bold">{vendorProjects.length}</span>
-        </div>
-        <div className="flex items-center gap-2 rounded-full bg-background border px-3 py-1.5 text-sm">
-          <span className="text-muted-foreground">Tender open:</span>
-          <span className="font-bold">{openTendersCount || 0}</span>
-        </div>
-        <div className="flex items-center gap-2 rounded-full bg-background border px-3 py-1.5 text-sm">
-          <span className="text-muted-foreground">Notifikasi:</span>
-          <span className="font-bold text-green-600">{notificationCount}</span>
-          <span className="text-muted-foreground text-xs">unread</span>
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          title="Proyek aktif"
+          value={vendorProjects.length}
+          description="SPK yang sedang berjalan"
+          icon={Building2}
+        />
+        <StatCard
+          title="Tender terbuka"
+          value={openTendersCount || 0}
+          description="Yang bisa diikuti"
+          icon={ClipboardList}
+        />
+        <StatCard
+          title="Penawaran saya"
+          value={submittedTendersCount || 0}
+          description="Sudah dikirim ke sistem"
+          icon={ArrowRight}
+        />
+        <StatCard
+          title="Menang tender"
+          value={wonTendersCount || 0}
+          description="Submission berstatus menang"
+          icon={CheckCircle}
+        />
       </div>
 
       {registrationStatus !== "approved" && (
@@ -355,6 +304,22 @@ export default async function VendorDashboard() {
                 </div>
               </div>
             )}
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Kelengkapan profil</span>
+                <span>{profileCompletion}%</span>
+              </div>
+              <Progress value={profileCompletion} />
+            </div>
+
+            {(registrationStatus === "submitted" ||
+              registrationStatus === "under_review") && (
+              <div className="mt-4">
+                <Button size="sm" asChild>
+                  <Link href="/vendor/profile">Lengkapi Profil</Link>
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -376,9 +341,10 @@ export default async function VendorDashboard() {
               <CardContent className="pt-0">
                 <div className="divide-y divide-border">
                   {actionItems.map((item) => (
-                    <div
+                    <Link
                       key={item.id}
-                      className="flex items-center justify-between py-2.5"
+                      href={item.href}
+                      className="flex items-center justify-between py-2.5 transition-colors hover:bg-muted/40"
                     >
                       <div className="flex items-center gap-3">
                         <span
@@ -398,7 +364,7 @@ export default async function VendorDashboard() {
                         </div>
                       </div>
                       <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </CardContent>
@@ -443,15 +409,15 @@ export default async function VendorDashboard() {
                               <p className="text-sm font-medium">
                                 Proyek #{spk.project_id?.slice(0, 8)}
                               </p>
-                              <p className="text-xs text-muted-foreground">
-                                {spk.pekerjaan}
-                              </p>
+                            </td>
+                            <td className="py-2 pr-4">
+                              <p className="text-sm">{spk.pekerjaan}</p>
                             </td>
                             <td className="py-2 pr-4">
                               <div className="flex items-center gap-2">
-                                <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
+                                <div className="w-20 h-1.5 overflow-hidden rounded-full bg-muted">
                                   <div
-                                    className="h-full bg-green-600 rounded-full"
+                                    className="h-full rounded-full bg-green-600"
                                     style={{
                                       width: `${spkProgress?.progress_percent || 0}%`,
                                     }}
@@ -472,7 +438,13 @@ export default async function VendorDashboard() {
                                       : "secondary"
                                 }
                               >
-                                {spkProgress?.status || "submitted"}
+                                {spkProgress?.status === "approved"
+                                  ? "Disetujui"
+                                  : spkProgress?.status === "rejected"
+                                    ? "Ditolak"
+                                    : spkProgress?.status === "submitted"
+                                      ? "Menunggu Review"
+                                      : "Belum Upload"}
                               </Badge>
                             </td>
                             <td className="py-2 text-right">
@@ -549,60 +521,38 @@ export default async function VendorDashboard() {
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                Notifikasi
-                {notificationCount > 0 && (
-                  <Badge variant="default" className="bg-blue-100 text-blue-700">
-                    {notificationCount}
-                  </Badge>
-                )}
+                <ArrowRight className="h-4 w-4" />
+                Penawaran Terbaru
               </CardTitle>
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/vendor/notifications">
+                <Link href="/vendor/tenders">
                   Semua <ArrowRight className="ml-1 h-3 w-3" />
                 </Link>
               </Button>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            {recentNotifications && recentNotifications.length > 0 ? (
+            {recentSubmissions && recentSubmissions.length > 0 ? (
               <div className="divide-y">
-                {recentNotifications.slice(0, 4).map((notif) => (
-                  <div
-                    key={notif.id}
-                    className={`py-2 ${
-                      !notif.is_read ? "bg-primary/5 -mx-4 px-4" : ""
-                    }`}
-                  >
-                    <p className="text-sm font-medium">{notif.title}</p>
+                {recentSubmissions.slice(0, 4).map((submission) => (
+                  <div key={submission.id} className="py-2">
+                    <p className="text-sm font-medium">
+                      {submission.tenders?.[0]?.title || "Tender"}
+                    </p>
                     <p className="text-xs text-muted-foreground line-clamp-1">
-                      {notif.message}
+                      Status: {submission.status || "-"}
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                Tidak ada notifikasi
+                Belum ada penawaran terbaru
               </p>
             )}
           </CardContent>
         </Card>
       </div>
-
-      <Card className="border-dashed border-2 bg-muted/30">
-        <CardContent className="py-4">
-          <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="font-medium text-muted-foreground">Segera:</span>
-            <Badge variant="outline">Pembayaran & Termin</Badge>
-            <Badge variant="outline">KPI Vendor</Badge>
-            <Badge variant="outline">Dokumen</Badge>
-            <span className="text-xs text-muted-foreground ml-auto">
-              Coming soon →
-            </span>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

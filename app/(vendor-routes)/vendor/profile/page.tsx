@@ -3,11 +3,19 @@ export const metadata = {
   description: "Kelola informasi profil dan dokumen vendor",
 }
 
-export default function VendorProfile() {
+// Uses Supabase auth cookies.
+export const dynamic = "force-dynamic"
+
+import { getInitialOnboardingData } from "@/app/(vendor-routes)/vendor/onboarding/queries"
+import { VendorProfileForm } from "./profile-form"
+
+export default async function VendorProfilePage() {
+  const { userData, draft } = await getInitialOnboardingData()
+
   return (
-    <div className="p-8">
-      <h1 className="mb-4 text-2xl font-bold">Vendor Profile</h1>
-      <p>Manage your profile information.</p>
-    </div>
+    <VendorProfileForm
+      userData={userData}
+      draftData={draft.success ? (draft.data ?? null) : null}
+    />
   )
 }

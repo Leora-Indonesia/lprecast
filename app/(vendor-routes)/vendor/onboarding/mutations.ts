@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { OnboardingDraftData, SaveDraftResult } from "./types"
 import { submitPayloadSchema } from "./types"
+import { calculateOnboardingCompleteness } from "./completeness"
 
 type DraftDocumentType = "ktp" | "npwp" | "nib" | "siup_sbu" | "company_profile"
 
@@ -99,6 +100,16 @@ export async function saveDraft(
   if (error) {
     console.error("Error saving draft:", error)
     return { success: false, error: error.message }
+  }
+
+  const completion = calculateOnboardingCompleteness(updatedDraftData)
+  const { error: profileError } = await supabase
+    .from("vendor_profiles")
+    .update({ profile_completeness_pct: completion })
+    .eq("user_id", user.id)
+
+  if (profileError) {
+    console.error("Error updating profile completion:", profileError)
   }
 
   return { success: true }
@@ -237,6 +248,10 @@ export async function submitOnboarding(
     const created = { profile: false }
 
     try {
+      const completion = calculateOnboardingCompleteness(
+        payload as unknown as Partial<OnboardingDraftData>
+      )
+
       const { error: profileError } = await supabase
         .from("vendor_profiles")
         .upsert(
@@ -251,6 +266,7 @@ export async function submitOnboarding(
             registration_status: "submitted",
             status: "active",
             submitted_at: new Date().toISOString(),
+            profile_completeness_pct: completion,
           },
           { onConflict: "user_id" }
         )
@@ -462,11 +478,6 @@ export async function submitOnboarding(
         dbErr instanceof Error ? dbErr.message : "Gagal menyimpan data"
       return { success: false, error: msg }
     }
-
-    await supabase
-      .from("vendor_onboarding_drafts")
-      .delete()
-      .eq("user_id", user.id)
 
     revalidatePath("/vendor/onboarding")
     revalidatePath("/vendor/dashboard")

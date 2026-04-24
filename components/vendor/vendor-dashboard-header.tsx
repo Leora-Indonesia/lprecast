@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, LogOut, User } from "lucide-react"
+import { LogOut, User } from "lucide-react"
 import Link from "next/link"
 
 import {
@@ -14,6 +14,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { logoutAction } from "@/actions/auth"
+import { VendorNotificationBell } from "@/components/vendor/vendor-notification-bell"
 
 interface UserData {
   nama: string | null
@@ -46,11 +47,7 @@ export function VendorDashboardHeader({ user }: VendorDashboardHeaderProps) {
           </Link>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/vendor/notifications">
-              <Bell className="h-5 w-5" />
-            </Link>
-          </Button>
+          <VendorNotificationBell />
           {user?.nama ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

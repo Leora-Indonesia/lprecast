@@ -391,9 +391,11 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
   }
 
   const handleStepClick = (step: number) => {
-    if (step < currentStep) {
+    if (step === currentStep) return
+    void (async () => {
+      await persistSave()
       setCurrentStep(step)
-    }
+    })()
   }
 
   const onFormSubmit = async () => {
@@ -523,16 +525,14 @@ export function OnboardingForm({ userData, draftData }: OnboardingFormProps) {
                 return (
                   <div
                     key={index}
-                    onClick={() => isCompleted && handleStepClick(index)}
+                    onClick={() => handleStepClick(index)}
                     className={`flex cursor-pointer items-center gap-3 px-8 py-4 transition ${
                       isActive
                         ? "border-b-2 border-b-primary bg-card text-primary"
                         : isCompleted
                           ? "bg-primary text-primary-foreground"
                           : "bg-transparent text-gray-600 hover:text-gray-900"
-                    } ${index < STEPS.length - 1 ? "border-r border-border" : ""} ${
-                      isCompleted ? "cursor-pointer" : ""
-                    }`}
+                    } ${index < STEPS.length - 1 ? "border-r border-border" : ""}`}
                   >
                     <span
                       className={`flex h-6 w-6 items-center justify-center rounded-full border text-xs ${

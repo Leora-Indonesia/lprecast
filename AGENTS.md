@@ -37,14 +37,6 @@
 **Existing (shared):** users, projects, vendor_spk, vendor_progress, vendor_payment
 **New:** vendor_profiles, vendor_documents, vendor_products, tenders, tender_submissions, project_milestones, notifications, payment_requests, vendor_kpi_scores
 
-## MVP Scope (target Apr 14)
-
-Epic 1: Vendor registration & onboarding (full)
-Epic 2: Admin verification + field visit checklist (full)
-Epic 3: Admin input proyek manual — tanpa client portal
-Epic 4: Tender minimal — submit penawaran, pilih pemenang, generate SPK
-Epic 5: Monitoring harian full — upload progres, verifikasi SPV
-
 ## Progress Tracking
 
 **WAJIB** setiap kali bekerja di proyek ini:
@@ -67,12 +59,7 @@ Status values:
 
 ## On-Demand References
 
-Baca file berikut HANYA saat relevan dengan task yang sedang dikerjakan:
-
-- Task spesifik: `docs/tasks/task-XX-*.md` (e.g. `docs/tasks/task-01-vendor-actions.md`)
-- End-to-end business flow: `docs/end-to-end-plan.md`
-- Vendor module detail: `docs/modules/vendor.md`
-- MVP plan & timeline: `docs/PLAN-MVP.md`
+Baca file di /docsl saat relevan dengan task yang sedang dikerjakan:
 
 ---
 

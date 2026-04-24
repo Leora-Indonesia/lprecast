@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Lengkapi data perusahaan dan dokumen legal untuk menjadi vendor LPrecast",
 }
 
+// Uses Supabase auth cookies.
+export const dynamic = "force-dynamic"
+
 export default async function VendorOnboardingPage() {
   let status, userData, draft
 

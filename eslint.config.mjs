@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    // Legacy custom dist dir artifacts:
+    ".next-build/**",
     // Turbopack dev artifacts (can be huge, slows lint and triggers Babel deopt logs):
     ".next-dev/**",
     ".next-dev-*/**",

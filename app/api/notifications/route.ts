@@ -19,6 +19,13 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10", 10)
     const offset = parseInt(searchParams.get("offset") || "0", 10)
     const category = searchParams.get("category")
+    const unreadOnly = searchParams.get("unread") === "true"
+
+    const { count: unreadCount } = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("is_read", false)
 
     let query = supabase
       .from("notifications")
@@ -31,11 +38,16 @@ export async function GET(request: NextRequest) {
       query = query.eq("category", category)
     }
 
+    if (unreadOnly) {
+      query = query.eq("is_read", false)
+    }
+
     const { data: notifications, count } = await query
 
     return NextResponse.json({
       notifications: notifications ?? [],
       total: count ?? 0,
+      unreadCount: unreadCount ?? 0,
       offset,
       limit,
     })
