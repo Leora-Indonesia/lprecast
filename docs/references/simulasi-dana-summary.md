@@ -39,4 +39,4 @@ Dokumen simulasi aturan deposit klien dan termin pembayaran vendor berdasarkan m
 ## Recommended KB Destination
 
 - doc future `docs/modules/payment.md`
-- `docs/end-to-end-plan.md` bagian payment dan termin
+- `docs/FLOW.md` bagian payment dan termin

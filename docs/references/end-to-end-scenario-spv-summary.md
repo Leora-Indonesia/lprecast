@@ -67,6 +67,6 @@ Rule kritikal:
 
 ## Recommended KB Destination
 
-- `docs/modules/spv.md`
-- `docs/end-to-end-plan.md`
+- `docs/modules/SPV.md`
+- `docs/FLOW.md`
 - doc future untuk payment / milestones / KPI

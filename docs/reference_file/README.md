@@ -2,7 +2,7 @@
 
 Folder ini hanya menyimpan source material mentah hasil upload.
 
-Summary markdown yang sudah diolah disimpan terpisah di `docs/references/`.
+Summary markdown, checklist kerja, dan hasil analisa disimpan terpisah di `docs/references/`.
 
 ## How To Use
 
@@ -49,3 +49,4 @@ Urutan pakai:
 - file di folder ini = raw source, bukan active source of truth harian
 - quick reference ada di `docs/references/*.md`
 - active truth tetap di `CONTEXT.md`, `modules/*.md`, `tasks/PROGRESS.md`, dan code/schema repo
+- checklist atau notes kerja internal yang sudah berupa markdown jangan ditaruh di sini

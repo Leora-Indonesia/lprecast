@@ -44,5 +44,5 @@ SOP formal untuk lifecycle vendor mulai dari pendaftaran sampai pekerjaan selesa
 ## Recommended KB Destination
 
 - `docs/modules/VENDOR.md`
-- `docs/modules/VENDOR APPROVAL CHECKLIST.md`
+- `docs/references/vendor-approval-checklist.md`
 - `docs/tasks/PROGRESS.md` untuk future task yang menyentuh progress dan payment

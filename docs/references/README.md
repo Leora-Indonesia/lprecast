@@ -15,6 +15,7 @@ Folder ini berisi hasil olahan dari source material mentah yang disimpan di `doc
 
 ## Files
 
+- `vendor-approval-checklist.md` - checklist approval vendor hasil normalisasi dari source kerja internal
 - `cerita-nyata-spv-summary.md` - narrative journey SPV
 - `end-to-end-scenario-spv-summary.md` - requirement detail flow SPV
 - `simulasi-dana-summary.md` - skema deposit dan termin pembayaran

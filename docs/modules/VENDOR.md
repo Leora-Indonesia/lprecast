@@ -102,10 +102,10 @@ Module vendor saat ini memakai kombinasi tabel onboarding vendor, tender, dan pr
 ## Related Documentation
 
 - `/docs/CONTEXT.md` - Project context & business rules
+- `/docs/FLOW.md` - Source of truth flow lintas role
 - `/docs/tasks/PROGRESS.md` - Source of truth status task & timeline
-- `/docs/end-to-end-plan.md` - Full business flow
-- `/docs/FLOW-STORY.md` - Ringkasan naratif business flow
-- `/docs/modules/VENDOR APPROVAL CHECKLIST.md` - Checklist approval vendor
+- `/docs/modules/SPV.md` - Flow SPV verification dan monitoring
+- `/docs/references/vendor-approval-checklist.md` - Checklist approval vendor
 - `/docs/references/sop-vendor-summary.md` - Ringkasan SOP vendor
 - `/docs/references/simulasi-dana-summary.md` - Ringkasan skema termin pembayaran vendor
 

@@ -1,6 +1,12 @@
 "use client"
 
-import { Construction, FileText, LayoutDashboard, Users } from "lucide-react"
+import {
+  Construction,
+  FileText,
+  FolderOpen,
+  LayoutDashboard,
+  Users,
+} from "lucide-react"
 import Link from "next/link"
 
 import {
@@ -20,6 +26,7 @@ import { Badge } from "@/components/ui/badge"
 const menuItems = [
   { title: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { title: "Vendors", href: "/admin/vendors", icon: Users },
+  { title: "Projects", href: "/admin/projects", icon: FolderOpen },
   { title: "Clients", href: "/admin/clients", icon: Users, soon: true },
   { title: "Tenders", href: "/admin/tenders", icon: FileText, soon: true },
   { title: "Users", href: "/admin/users", icon: Construction, soon: true },

@@ -294,10 +294,11 @@ export type Database = {
       }
       projects: {
         Row: {
+          attachments: Json | null
           client_id: string | null
           contract_value: number
           created_at: string | null
-          customer_name: string
+          customer_name: string | null
           description: string | null
           end_date: string | null
           id: string
@@ -308,10 +309,11 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          attachments?: Json | null
           client_id?: string | null
           contract_value?: number
           created_at?: string | null
-          customer_name: string
+          customer_name?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
@@ -322,10 +324,11 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          attachments?: Json | null
           client_id?: string | null
           contract_value?: number
           created_at?: string | null
-          customer_name?: string
+          customer_name?: string | null
           description?: string | null
           end_date?: string | null
           id?: string

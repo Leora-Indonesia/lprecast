@@ -20,9 +20,23 @@ Tracking semua tasks untuk MVP LPrecast.
 4. **Saat ada isu** — update status ke `Blocked` + isi Notes sesuai format di atas
 5. **Saat sebagian selesai** — tetap `In progress` + tulis detail di Notes
 
+## Module References
+
+Untuk task yang menyentuh domain project dan tender, gunakan modul berikut sebagai acuan:
+
+- `docs/modules/PROJECT.md` - entity utama pekerjaan, lifecycle project, relasi ke tender
+- `docs/modules/TENDER.md` - flow publish project ke vendor, dynamic tender items, attachment, vendor read flow
+- `docs/modules/VENDOR.md` - akses vendor ke tender dan project
+
+Mapping cepat:
+
+- task create project, status project, milestone, execution -> baca `docs/modules/PROJECT.md`
+- task publish tender, tender item, tender listing -> baca `docs/modules/TENDER.md`
+- task vendor browse tender, detail tender, bid, notifikasi tender -> baca `docs/modules/VENDOR.md` dan `docs/modules/TENDER.md`
+
 ---
 
-**Last updated:** April 24, 2026
+**Last updated:** April 27, 2026
 Vendor - Master plan input form vendor	LPrecast	Done	April 1, 2026 → April 2, 2026
 List fitur yg sudah ada di sistem dan disesuaikan	LPrecast	Done	April 1, 2026
 Vendor - Setup project url baru	LPrecast	Done	April 4, 2026
@@ -62,7 +76,8 @@ Vendor - Perbaikan SMTP email webmail	LPrecast	Done	April 16, 2026
 Sistem - Perbaikan relasi database untuk vendor	LPrecast	Done	April 17, 2026
 Admin - Buat aksi approve / revisi / tolak vendor	LPrecast	Done	April 21, 2026 → April 22, 2026
 Vendor - Perbaikan dashboard	LPrecast	Done	April 23, 2026 → April 24, 2026
-Admin - Buat & publish project tender (input + save + status ACTIVE)	LPrecast	Not started	April 25, 2026
+Admin - Buat add project (input + save + attachment storage + status draft)	LPrecast	Done	April 25, 2026
+Admin - Buat & publish tender dari project existing	LPrecast	Not started	April 25, 2026
 Sistem - Set struktur status project & validasi transition dasar	LPrecast	Not started	April 25, 2026
 Vendor - Tampilkan daftar project tender (fetch + UI list + empty state)	LPrecast	Not started	April 27, 2026
 Sistem - Validasi & relasi bid ke project (hindari duplikasi, 1 vendor 1 bid)	LPrecast	Not started	April 27, 2026
@@ -103,3 +118,4 @@ Docs - Sinkronisasi VENDOR.md dengan kondisi repo & progress terbaru	LPrecast	Do
 Docs - Rapikan knowledge base docs scope menengah (README, reference index, PDF summaries)	LPrecast	Done	April 24, 2026
 Docs - Hapus planning artifacts dari folder docs (plans/specs)	LPrecast	Done	April 24, 2026
 Docs - Pisahkan raw upload vs summary docs (`reference_file` vs `references`)	LPrecast	Done	April 24, 2026
+Docs - Scale up docs structure untuk AI collaboration	LPrecast	Done	April 27, 2026

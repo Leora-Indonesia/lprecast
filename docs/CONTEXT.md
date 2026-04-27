@@ -8,6 +8,7 @@
 - PWA: Serwist
 - Theme source of truth: `lib/theme-config.ts`
 - DB types: `types/database.types.ts`
+- Flow source of truth: `docs/FLOW.md`
 - Current task source of truth: `docs/tasks/PROGRESS.md`
 
 ## Current Scope
@@ -23,6 +24,16 @@ Aplikasi saat ini sudah mencakup fondasi utama untuk:
 7. Tender workflow dasar di sisi route/UI admin dan vendor
 
 Implementasi lanjutan untuk bidding penuh, progress harian, KPI, payment milestone, dan flow SPV masih mengikuti urutan task di `docs/tasks/PROGRESS.md`.
+
+## Documentation Map
+
+- `docs/README.md` - entry point dan aturan pakai docs
+- `docs/FLOW.md` - flow bisnis end-to-end lintas role
+- `docs/modules/*.md` - knowledge base per domain
+- `docs/architecture/*.md` - aturan teknis dan implementation constraints
+- `docs/references/*.md` - summary, checklist, dan hasil analisa pendukung
+- `docs/reference_file/*` - raw upload source material
+- `docs/tasks/PROGRESS.md` - progress delivery global
 
 ## Roles
 
@@ -137,11 +148,13 @@ Lihat `docs/tasks/PROGRESS.md` untuk:
 
 ## On-Demand Docs
 
+- `docs/FLOW.md` - source of truth flow bisnis lintas role
 - `docs/tasks/PROGRESS.md` - source of truth status task & timeline
-- `docs/end-to-end-plan.md` - full business flow detail
-- `docs/FLOW-STORY.md` - ringkasan naratif business flow
-- `docs/modules/VENDOR.md` - vendor module detail
-- `docs/modules/VENDOR APPROVAL CHECKLIST.md` - checklist approval vendor
+- `docs/modules/PROJECT.md` - project lifecycle, status, future execution anchor
+- `docs/modules/TENDER.md` - tender publish, dynamic items, vendor read flow
+- `docs/modules/VENDOR.md` - vendor onboarding, tender access, project reporting
+- `docs/modules/SPV.md` - SPV selection, pre-con docs, verification, monitoring
+- `docs/references/vendor-approval-checklist.md` - checklist approval vendor
 - `docs/architecture/design-system.md` - UI conventions
 - `docs/architecture/pwa.md` - PWA architecture & theme rules
 - `docs/references/README.md` - index summary reference

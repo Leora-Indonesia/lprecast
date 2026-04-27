@@ -33,5 +33,5 @@ Dokumen naratif yang menggambarkan contoh konkret journey SPV dari daftar di LPr
 
 ## Recommended KB Destination
 
-- `docs/modules/spv.md` saat doc SPV dibuat
-- `docs/end-to-end-plan.md` untuk bagian pre-con, PCM, dan execution
+- `docs/modules/SPV.md`
+- `docs/FLOW.md` untuk bagian pre-con, PCM, dan execution

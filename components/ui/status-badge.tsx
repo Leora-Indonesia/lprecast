@@ -12,6 +12,28 @@ type StatusConfig = {
 
 const statusConfig: Record<string, StatusConfig> = {
   draft: { label: "Draft", variant: "secondary" },
+  open: {
+    label: "Open",
+    variant: "default",
+    className:
+      "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+  },
+  in_progress: {
+    label: "Berjalan",
+    variant: "default",
+    className:
+      "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300",
+  },
+  completed: {
+    label: "Selesai",
+    variant: "default",
+    className:
+      "bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300",
+  },
+  cancelled: {
+    label: "Dibatalkan",
+    variant: "destructive",
+  },
   submitted: { label: "Diajukan", variant: "default" },
   under_review: { label: "Ditinjau", variant: "default" },
   approved: {
