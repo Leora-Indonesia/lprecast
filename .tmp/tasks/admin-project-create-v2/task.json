@@ -1,0 +1,37 @@
+{
+  "id": "admin-project-create-v2",
+  "name": "Admin Project Create V2",
+  "status": "active",
+  "objective": "Expand admin project creation to capture fuller draft-ready data, persist create-time attachments, and align detail sections with future tabbed project views.",
+  "context_files": [
+    "/home/alv/code/lprecast/docs/modules/PROJECT.md",
+    "/home/alv/code/lprecast/docs/architecture/design-system.md",
+    "/home/alv/code/lprecast/docs/tasks/PROGRESS.md",
+    "/home/alv/code/lprecast/docs/plans/ProjectUiSprint01.md",
+    "/home/alv/code/lprecast/docs/CONTEXT.md",
+    "/home/alv/code/lprecast/docs/FLOW.md"
+  ],
+  "reference_files": [
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/new/page.tsx",
+    "/home/alv/code/lprecast/components/admin/project-form.tsx",
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/actions.ts",
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/actions/route.ts",
+    "/home/alv/code/lprecast/lib/projects/repository.ts",
+    "/home/alv/code/lprecast/lib/validations/project.ts",
+    "/home/alv/code/lprecast/lib/projects/types.ts",
+    "/home/alv/code/lprecast/components/admin/projects/project-detail.tsx",
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/[id]/edit/page.tsx",
+    "/home/alv/code/lprecast/types/database.types.ts"
+  ],
+  "exit_criteria": [
+    "Admin create form captures fuller project foundation fields required for internal-first workflow",
+    "Create-time attachments persist correctly with project creation",
+    "Repository and validation support new fields already present in database schema",
+    "Detail experience is prepared with clear section mapping for future tabs",
+    "Progress tracker reflects active work state"
+  ],
+  "subtask_count": 6,
+  "completed_count": 0,
+  "created_at": "2026-04-28T00:00:00Z",
+  "completed_at": null
+}

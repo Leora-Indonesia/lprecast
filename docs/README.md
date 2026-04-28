@@ -19,6 +19,7 @@ Urutan baca paling aman:
 
 - `architecture/` - aturan teknis dan konvensi implementasi
 - `modules/` - knowledge base domain per role/fitur
+- `presentation/` - guideline presentasi internal, structure section, asset rule, dan AI prompt contract
 - `tasks/` - tracker delivery global dan detail task
 - `references/` - hasil olahan, summary, checklist, dan analisa yang belum otomatis jadi source of truth
 - `reference_file/` - raw upload source material
@@ -47,6 +48,7 @@ Gunakan aturan sederhana ini saat ada perubahan:
 - perubahan flow lintas role -> update `docs/FLOW.md`
 - perubahan behavior atau rule domain -> update `docs/modules/*.md`
 - perubahan schema, auth/access, atau technical contract -> update `docs/architecture/*.md` atau `docs/CONTEXT.md` bila perlu
+- perubahan guideline halaman presentasi internal -> update `docs/presentation/*.md`
 - perubahan status task / prioritas -> update `docs/tasks/PROGRESS.md`
 - task kompleks atau perlu decision log -> tambah file di `docs/tasks/items/`
 - file referensi baru -> simpan raw file di `docs/reference_file/`, lalu buat summary atau analisa di `docs/references/`
@@ -70,3 +72,4 @@ Prinsip kerja:
 - `docs/references/vendor-approval-checklist.md` - checklist approval vendor
 - `docs/architecture/design-system.md` - UI conventions
 - `docs/architecture/pwa.md` - PWA architecture dan theme rules
+- `docs/presentation/README.md` - entry point docs presentasi internal

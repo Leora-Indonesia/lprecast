@@ -1,0 +1,33 @@
+{
+  "id": "admin-project-create-v2-01",
+  "seq": "01",
+  "title": "Expand project create contract and shared field types",
+  "status": "pending",
+  "depends_on": [],
+  "parallel": false,
+  "suggested_agent": "CoderAgent",
+  "context_files": [
+    "/home/alv/code/lprecast/docs/modules/PROJECT.md",
+    "/home/alv/code/lprecast/docs/plans/ProjectUiSprint01.md",
+    "/home/alv/code/lprecast/docs/CONTEXT.md",
+    "/home/alv/code/lprecast/docs/FLOW.md"
+  ],
+  "reference_files": [
+    "/home/alv/code/lprecast/lib/validations/project.ts",
+    "/home/alv/code/lprecast/lib/projects/types.ts",
+    "/home/alv/code/lprecast/types/database.types.ts"
+  ],
+  "acceptance_criteria": [
+    "Create and update schemas include the in-scope project foundation fields already present on the projects table",
+    "Shared project input and detail types expose the new field groups without adding payment or SPV execution contracts",
+    "Validation keeps customer_name required, keeps draft-friendly optional dates, and rejects end_date before start_date"
+  ],
+  "deliverables": [
+    "lib/validations/project.ts",
+    "lib/projects/types.ts"
+  ],
+  "agent_id": null,
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}

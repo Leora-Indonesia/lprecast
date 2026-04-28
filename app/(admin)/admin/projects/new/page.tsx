@@ -3,13 +3,21 @@ import { ArrowLeft } from "lucide-react"
 
 import { ProjectForm } from "@/components/admin/project-form"
 import { Button } from "@/components/ui/button"
+import { listClients } from "@/lib/client/repository"
+import { listCityOptions, listProvinceOptions } from "@/lib/projects/repository"
 
 export const metadata = {
   title: "Tambah Project | Admin LPrecast",
   description: "Buat project baru dan simpan lampiran pendukung sebelum create tender",
 }
 
-export default function AdminProjectCreatePage() {
+export default async function AdminProjectCreatePage() {
+  const [{ clients }, provinces, cities] = await Promise.all([
+    listClients({ limit: 100 }),
+    listProvinceOptions(),
+    listCityOptions(),
+  ])
+
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -28,7 +36,12 @@ export default function AdminProjectCreatePage() {
         </div>
       </div>
 
-      <ProjectForm />
+      <ProjectForm
+        mode="create"
+        clientOptions={clients}
+        provinceOptions={provinces}
+        cityOptions={cities}
+      />
     </div>
   )
 }

@@ -1,0 +1,36 @@
+{
+  "id": "admin-project-create-v2-04",
+  "seq": "04",
+  "title": "Fix create-time attachment persistence flow",
+  "status": "pending",
+  "depends_on": [
+    "02"
+  ],
+  "parallel": false,
+  "suggested_agent": "CoderAgent",
+  "context_files": [
+    "/home/alv/code/lprecast/docs/modules/PROJECT.md",
+    "/home/alv/code/lprecast/docs/plans/ProjectUiSprint01.md",
+    "/home/alv/code/lprecast/docs/CONTEXT.md"
+  ],
+  "reference_files": [
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/actions.ts",
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/actions/route.ts",
+    "/home/alv/code/lprecast/lib/projects/repository.ts",
+    "/home/alv/code/lprecast/components/admin/project-form.tsx"
+  ],
+  "acceptance_criteria": [
+    "Admin create flow uploads selected attachments after project creation and persists resulting metadata on the created project record",
+    "Attachment failure returns a clear partial-success response with projectId while preserving the already created draft project",
+    "Server action and route-level create contracts follow one attachment handling path with no duplicate inconsistent behavior"
+  ],
+  "deliverables": [
+    "app/(admin)/admin/projects/actions.ts",
+    "app/(admin)/admin/projects/actions/route.ts",
+    "lib/projects/repository.ts"
+  ],
+  "agent_id": null,
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}

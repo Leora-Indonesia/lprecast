@@ -1,0 +1,38 @@
+{
+  "id": "admin-project-create-v2-05",
+  "seq": "05",
+  "title": "Align project detail sections with future tab mapping",
+  "status": "pending",
+  "depends_on": [
+    "02",
+    "03"
+  ],
+  "parallel": true,
+  "suggested_agent": "OpenFrontendSpecialist",
+  "context_files": [
+    "/home/alv/code/lprecast/docs/architecture/design-system.md",
+    "/home/alv/code/lprecast/docs/modules/PROJECT.md",
+    "/home/alv/code/lprecast/docs/plans/ProjectUiSprint01.md",
+    "/home/alv/code/lprecast/docs/FLOW.md"
+  ],
+  "reference_files": [
+    "/home/alv/code/lprecast/components/admin/projects/project-detail.tsx",
+    "/home/alv/code/lprecast/lib/projects/types.ts",
+    "/home/alv/code/lprecast/lib/projects/repository.ts",
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/[id]/edit/page.tsx"
+  ],
+  "acceptance_criteria": [
+    "Detail page groups project data into section blocks that mirror the create form and can map 1:1 to future tabs",
+    "Detail mapping exposes current admin-owned data only and does not introduce payment widgets, client module screens, or SPV execution workflows",
+    "Any edit-page preload changes required by the new section map use the same expanded project field contract"
+  ],
+  "deliverables": [
+    "components/admin/projects/project-detail.tsx",
+    "app/(admin)/admin/projects/[id]/edit/page.tsx",
+    "lib/projects/types.ts"
+  ],
+  "agent_id": null,
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}

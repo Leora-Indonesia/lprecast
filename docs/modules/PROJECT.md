@@ -23,8 +23,8 @@ Project menyimpan konteks umum pekerjaan, seperti:
 Project dipakai terus setelah fase tender untuk tahap berikutnya:
 - assignment vendor
 - execution
-- progress tracking
-- payment
+- progress tracking via daily report
+- payment per termin
 - completion
 
 ## Lifecycle
@@ -138,15 +138,57 @@ Target MVP iterasi pertama untuk domain project:
 3. admin simpan lokasi dan periode kerja
 4. admin menyiapkan project untuk dibuka sebagai tender
 
-## Future Scope
+## Planned Scope
 
-Iterasi berikutnya untuk domain project:
-- transition status project yang lebih lengkap
-- assignment vendor pemenang ke project
-- milestone dan timeline management
-- baseline schedule / kurva S
-- progress tracking
-- payment dan closing flow
+Fitur berikut sedang dalam implementasi atau sudah jadi aturan aktif:
+
+### Kurva S Baseline
+
+Project menyimpan data baseline Kurva S yang dipakai sebagai acuan monitoring progress. Kurva S baseline terdiri dari:
+
+- **Target kumulatif per hari/minggu** (% progress terakumulasi against elapsed time)
+- **Bobot per item pekerjaan** ( agar progress per sub-item bisa dilacak terpisah)
+- **Start date & end date baseline**
+- **Revision history** (kalau baseline direvisi karena scope change)
+
+Kurva S baseline di-entry oleh SPV saat fase pre-con, lalu dipakai oleh system untuk:
+- Bandingkan progress aktual vs target harian
+- Hitung variance dan flag delay
+- Trigger warning ke SPV dan admin
+
+### Daily Report sebagai Base Data Kurva S
+
+Laporan harian vendor adalah primary data source untuk progress aktual yang di-plot ke Kurva S. Report harian minimal memuat:
+
+- Tanggal laporan
+- Deskripsi progres hari itu (item pekerjaan yang dikerjakan)
+- % progres per item (jika multi-item project)
+- Bukti visual (foto/video)
+- Catatan: kendala, cuaca, SDM
+- Status: draft / submitted
+
+Sistem menghitung **progress kumulatif** per project dengan:
+1. Ambil semua daily report yang verified (SPV approve)
+2. Agregasi % per item pekerjaan
+3. Plot ke Kurva S baseline untuk dapat variance curve
+
+### Termin Payment Contract Field
+
+Project menyimpan skema pembayaran per termin:
+
+- **Default template**: DP 35%, Termin 25% (progress 50%), Termin 25% (progress 75%), Termin 15% (progress 100%)
+- **Override per project**: project boleh punya termin custom (jumlah termin, % per termin, dan milestone trigger berbeda)
+- **Trigger milestone**: setiap termin punya kondisi release (misal: progress ≥ X% AND SPV approve AND client confirm)
+- Detail termin dikelola di `docs/modules/PAYMENT.md`
+
+### Lampiran Invoice
+
+Setiap termin pembayaran disertai lampiran bukti tagihan (invoice / billing document). Lampiran ini:
+
+- Di-upload oleh vendor saat ajukan request payment
+- Minimal: invoice number, tanggal, nominal, lampiran file (PDF/foto)
+- Disimpan di project terkait, bukan di vendor profile
+- Jadi audit trail untuk financeiro project
 
 ## Related Documentation
 
@@ -154,9 +196,16 @@ Iterasi berikutnya untuk domain project:
 - `/docs/FLOW.md`
 - `/docs/tasks/PROGRESS.md`
 - `/docs/modules/TENDER.md`
+- `/docs/modules/PAYMENT.md` - termin payment contract, invoice, approval, audit trail
+- `/docs/modules/VENDOR.md` - daily report upload oleh vendor
+- `/docs/modules/SPV.md` - Kurva S entry & progress verification
 
 ## Notes
 
 - `project` bukan sinonim dari `tender`
 - create tender selalu berangkat dari project yang sudah dibuat
 - implementasi schema dan status harus mengikuti source of truth di repo
+- Kurva S baseline bersifat wajib untuk project aktif (entry pre-con, tidak boleh missing)
+- daily report vendor = satu-satunya input progress kumulatif yang valid
+- termin payment contract ada di `docs/modules/PAYMENT.md`
+- invoice attachment per termin wajib sebagai audit trail financeiro

@@ -1,0 +1,35 @@
+{
+  "id": "admin-project-create-v2-02",
+  "seq": "02",
+  "title": "Persist fuller admin project fields in repository layer",
+  "status": "pending",
+  "depends_on": [
+    "01"
+  ],
+  "parallel": true,
+  "suggested_agent": "CoderAgent",
+  "context_files": [
+    "/home/alv/code/lprecast/docs/modules/PROJECT.md",
+    "/home/alv/code/lprecast/docs/plans/ProjectUiSprint01.md",
+    "/home/alv/code/lprecast/docs/CONTEXT.md"
+  ],
+  "reference_files": [
+    "/home/alv/code/lprecast/lib/projects/repository.ts",
+    "/home/alv/code/lprecast/lib/projects/types.ts",
+    "/home/alv/code/lprecast/types/database.types.ts",
+    "/home/alv/code/lprecast/lib/validations/project.ts"
+  ],
+  "acceptance_criteria": [
+    "createProject maps all newly validated create fields to the projects insert payload and still forces status to draft",
+    "updateProject supports patching the same in-scope field set without touching client, payment, or SPV workflow tables",
+    "getProjectDetail and related repository shaping expose the expanded data needed by future section and tab mapping"
+  ],
+  "deliverables": [
+    "lib/projects/repository.ts",
+    "lib/projects/types.ts"
+  ],
+  "agent_id": null,
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}

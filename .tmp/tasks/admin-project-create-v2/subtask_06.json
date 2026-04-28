@@ -1,0 +1,30 @@
+{
+  "id": "admin-project-create-v2-06",
+  "seq": "06",
+  "title": "Update progress tracker for active create-project scope",
+  "status": "pending",
+  "depends_on": [
+    "03",
+    "04",
+    "05"
+  ],
+  "parallel": false,
+  "suggested_agent": "CoderAgent",
+  "context_files": [
+    "/home/alv/code/lprecast/docs/tasks/PROGRESS.md",
+    "/home/alv/code/lprecast/docs/CONTEXT.md"
+  ],
+  "reference_files": [],
+  "acceptance_criteria": [
+    "docs/tasks/PROGRESS.md keeps the admin create project row in sync with current implementation state for this feature",
+    "Progress entry notes or wording reflect the fuller form, attachment fix, and detail-section mapping scope only",
+    "No unrelated tracker rows are modified"
+  ],
+  "deliverables": [
+    "docs/tasks/PROGRESS.md"
+  ],
+  "agent_id": null,
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}

@@ -52,6 +52,88 @@ export type Database = {
           },
         ]
       }
+      client_profiles: {
+        Row: {
+          city_id: string | null
+          client_name: string | null
+          client_type: string | null
+          company_name_legal: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          notes: string | null
+          office_address: string | null
+          phone: string | null
+          pic_name: string | null
+          pic_position: string | null
+          province_id: string | null
+          updated_at: string | null
+          user_id: string | null
+          verification_notes: string | null
+          verification_status: string | null
+        }
+        Insert: {
+          city_id?: string | null
+          client_name?: string | null
+          client_type?: string | null
+          company_name_legal?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          notes?: string | null
+          office_address?: string | null
+          phone?: string | null
+          pic_name?: string | null
+          pic_position?: string | null
+          province_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verification_notes?: string | null
+          verification_status?: string | null
+        }
+        Update: {
+          city_id?: string | null
+          client_name?: string | null
+          client_type?: string | null
+          company_name_legal?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          notes?: string | null
+          office_address?: string | null
+          phone?: string | null
+          pic_name?: string | null
+          pic_position?: string | null
+          province_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verification_notes?: string | null
+          verification_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_profiles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "master_cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_profiles_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "master_provinces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       master_cities: {
         Row: {
           code: string
@@ -295,55 +377,142 @@ export type Database = {
       projects: {
         Row: {
           attachments: Json | null
+          budget_max: number | null
+          budget_min: number | null
+          budget_range: string | null
+          city_id: string | null
           client_id: string | null
+          client_profile_id: string | null
           contract_value: number
           created_at: string | null
-          customer_name: string | null
+          customer_name: string
           description: string | null
           end_date: string | null
+          estimated_height: string | null
+          estimated_length_or_area: number | null
+          foundation_preference: string | null
           id: string
+          initial_description: string | null
+          internal_notes: string | null
+          job_type: string | null
           location: string | null
+          measurement_unit: string | null
           name: string
+          province_id: string | null
+          qualification_notes: string | null
+          qualification_status: string | null
+          site_address_full: string | null
+          site_condition: string | null
+          site_coordinates: string | null
+          special_requirements: string | null
           start_date: string | null
           status: Database["public"]["Enums"]["project_status"] | null
+          target_completion_date: string | null
+          target_completion_preference: string | null
           updated_at: string | null
+          vehicle_access: string | null
         }
         Insert: {
           attachments?: Json | null
+          budget_max?: number | null
+          budget_min?: number | null
+          budget_range?: string | null
+          city_id?: string | null
           client_id?: string | null
+          client_profile_id?: string | null
           contract_value?: number
           created_at?: string | null
-          customer_name?: string | null
+          customer_name: string
           description?: string | null
           end_date?: string | null
+          estimated_height?: string | null
+          estimated_length_or_area?: number | null
+          foundation_preference?: string | null
           id?: string
+          initial_description?: string | null
+          internal_notes?: string | null
+          job_type?: string | null
           location?: string | null
+          measurement_unit?: string | null
           name: string
+          province_id?: string | null
+          qualification_notes?: string | null
+          qualification_status?: string | null
+          site_address_full?: string | null
+          site_condition?: string | null
+          site_coordinates?: string | null
+          special_requirements?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
+          target_completion_date?: string | null
+          target_completion_preference?: string | null
           updated_at?: string | null
+          vehicle_access?: string | null
         }
         Update: {
           attachments?: Json | null
+          budget_max?: number | null
+          budget_min?: number | null
+          budget_range?: string | null
+          city_id?: string | null
           client_id?: string | null
+          client_profile_id?: string | null
           contract_value?: number
           created_at?: string | null
-          customer_name?: string | null
+          customer_name?: string
           description?: string | null
           end_date?: string | null
+          estimated_height?: string | null
+          estimated_length_or_area?: number | null
+          foundation_preference?: string | null
           id?: string
+          initial_description?: string | null
+          internal_notes?: string | null
+          job_type?: string | null
           location?: string | null
+          measurement_unit?: string | null
           name?: string
+          province_id?: string | null
+          qualification_notes?: string | null
+          qualification_status?: string | null
+          site_address_full?: string | null
+          site_condition?: string | null
+          site_coordinates?: string | null
+          special_requirements?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
+          target_completion_date?: string | null
+          target_completion_preference?: string | null
           updated_at?: string | null
+          vehicle_access?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "projects_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "master_cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "projects_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_client_profile_id_fkey"
+            columns: ["client_profile_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "master_provinces"
             referencedColumns: ["id"]
           },
         ]

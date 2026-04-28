@@ -1,9 +1,12 @@
 import Link from "next/link"
-import { Building2, FolderOpen, Plus } from "lucide-react"
+import { FolderOpen, Plus, Search } from "lucide-react"
 
-import { createAdminClient } from "@/lib/supabase/admin"
+import { getProjectList, getProjectSummary } from "@/lib/projects/repository"
+import type { ProjectStatus } from "@/lib/projects/types"
 import { formatDate } from "@/lib/datetime"
+import { ProjectSummaryCards } from "@/components/admin/projects/project-summary-cards"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { StatusBadge } from "@/components/ui/status-badge"
 import {
   Table,
@@ -21,6 +24,20 @@ export const metadata = {
 
 export const dynamic = "force-dynamic"
 
+type SearchParams = {
+  q?: string
+  status?: string
+}
+
+const statusOptions: Array<{ value: ProjectStatus | "all"; label: string }> = [
+  { value: "all", label: "Semua" },
+  { value: "draft", label: "Draft" },
+  { value: "open", label: "Open" },
+  { value: "in_progress", label: "Berjalan" },
+  { value: "completed", label: "Selesai" },
+  { value: "cancelled", label: "Dibatalkan" },
+]
+
 function formatProjectPeriod(startDate: string | null, endDate: string | null) {
   if (startDate && endDate) {
     return `${formatDate(startDate)} - ${formatDate(endDate)}`
@@ -31,14 +48,19 @@ function formatProjectPeriod(startDate: string | null, endDate: string | null) {
   return "-"
 }
 
-export default async function AdminProjectsPage() {
-  const supabase = createAdminClient()
-  const { data: projects } = await supabase
-    .from("projects")
-    .select("id, name, location, status, start_date, end_date, created_at")
-    .order("created_at", { ascending: false })
+export default async function AdminProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>
+}) {
+  const params = await searchParams
+  const search = params.q?.trim() ?? ""
+  const status = (params.status as ProjectStatus | "all" | undefined) ?? "all"
 
-  const rows = projects ?? []
+  const [rows, summary] = await Promise.all([
+    getProjectList({ search, status }),
+    getProjectSummary(),
+  ])
 
   return (
     <div className="space-y-6">
@@ -48,31 +70,45 @@ export default async function AdminProjectsPage() {
             <FolderOpen className="h-6 w-6 text-primary" /> Project
           </h1>
           <p className="text-muted-foreground">
-            Buat project dulu sebagai entity utama. Tender dibuat belakangan dari project yang sudah siap.
+            Kelola project internal sebelum publish tender, assignment vendor, dan execution lane.
           </p>
         </div>
 
         <Button asChild>
           <Link href="/admin/projects/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Tambah Project
+            <Plus className="mr-2 h-4 w-4" /> Tambah Project
           </Link>
         </Button>
       </div>
 
+      <ProjectSummaryCards summary={summary} />
+
+      <form className="grid gap-3 rounded-xl border p-4 md:grid-cols-[minmax(0,1fr)_220px_auto]">
+        <div className="relative">
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input name="q" defaultValue={search} placeholder="Cari nama atau lokasi project" className="pl-9" />
+        </div>
+
+        <select
+          name="status"
+          defaultValue={status}
+          className="h-9 rounded-lg border border-input bg-transparent px-3 text-sm shadow-sm"
+        >
+          {statusOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <Button type="submit" variant="outline">
+          Terapkan Filter
+        </Button>
+      </form>
+
       {rows.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center">
-          <Building2 className="mx-auto h-12 w-12 text-muted-foreground" />
-          <h2 className="mt-4 text-lg font-medium">Belum ada project</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Tambah project baru untuk menyiapkan parent entity sebelum create tender.
-          </p>
-          <Button className="mt-6" asChild>
-            <Link href="/admin/projects/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Tambah Project Pertama
-            </Link>
-          </Button>
+        <div className="rounded-lg border border-dashed p-12 text-center text-sm text-muted-foreground">
+          Tidak ada project yang cocok dengan filter saat ini.
         </div>
       ) : (
         <div className="rounded-lg border">
@@ -92,17 +128,20 @@ export default async function AdminProjectsPage() {
                 <TableRow key={project.id}>
                   <TableCell className="font-medium">{project.name}</TableCell>
                   <TableCell>{project.location || "-"}</TableCell>
+                  <TableCell>{formatProjectPeriod(project.start_date, project.end_date)}</TableCell>
                   <TableCell>
-                    {formatProjectPeriod(project.start_date, project.end_date)}
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={project.status || "draft"} />
+                    <StatusBadge status={project.status} />
                   </TableCell>
                   <TableCell>{formatDate(project.created_at)}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href="/admin/projects/new">Tambah Lagi</Link>
-                    </Button>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/projects/${project.id}`}>Lihat</Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/projects/${project.id}/edit`}>Edit</Link>
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

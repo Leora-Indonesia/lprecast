@@ -23,7 +23,12 @@ Aplikasi saat ini sudah mencakup fondasi utama untuk:
 6. Client scaffold (`dashboard`, `projects`)
 7. Tender workflow dasar di sisi route/UI admin dan vendor
 
-Implementasi lanjutan untuk bidding penuh, progress harian, KPI, payment milestone, dan flow SPV masih mengikuti urutan task di `docs/tasks/PROGRESS.md`.
+Implementasi lanjutan untuk:
+- Kurva S baseline entry (SPV pre-con)
+- Laporan harian vendor dan progress kumulatif
+- Invoice/tagihan dengan lampiran
+- Skema pembayaran per termin (hybrid: default 35/25/25/15, boleh override)
+- KPI, payment milestone, dan flow SPV masih mengikuti urutan task di `docs/tasks/PROGRESS.md`.
 
 ## Documentation Map
 
@@ -40,9 +45,10 @@ Implementasi lanjutan untuk bidding penuh, progress harian, KPI, payment milesto
 | Role   | Access                                                    |
 | ------ | --------------------------------------------------------- |
 | admin  | Full access - vendor management, tender, dashboard, users |
-| spv    | Verify progress, monitoring (planned / not fully active)  |
+| spv    | Verify progress, monitoring (operasional only, NO payment) |
 | vendor | Register, onboarding, lihat tender, lihat project         |
-| client | View project & dashboard scaffold                         |
+| client | View progress, approve milestone, setor dana termin |
+| finance ops | Pegang invoice vendor, payment execution, client billing |
 
 ## Business Rules
 
@@ -51,7 +57,21 @@ Implementasi lanjutan untuk bidding penuh, progress harian, KPI, payment milesto
 - Nilai SPK = Tender Price x Quantity
 - Upload progress deadline: 09.00 WIB hari berikutnya
 - Keterlambatan upload -> KPI negatif + flag sistem
-- Payment 2-level approval: Finance Leora -> Client -> Paid
+- **Lane separation (penting):**
+  - **Daily report**: Vendor → SPV → System (SPV verifikasi progres, TIDAK payment)
+  - **Milestone approval**: SPV verified → Client approve milestone
+  - **Vendor payment**: Vendor → Finance/Internal → Paid (dari internal fund)
+  - **Client funding**: System → Client → Internal/Escrow (refill termin berikutnya)
+- SPV TIDAK masuk payment lane
+- SPV TIDAK boleh akses invoice vendor detail finansial
+- SPV TIDAK boleh akses billing client, margin, atau cash position
+- Client wajib approve milestone progress SEBELUM vendor bisa invoice
+- Client wajib setor termin berikutnya SEBELUM progress sentuh milestone (45-49% warning)
+- Payment 2-level approval: Finance Internal -> Client -> Paid
+- Kurva S baseline wajib di-entry saat pre-con (tidak boleh missing)
+- Daily report vendor = satu-satunya input progress kumulatif yang valid
+- Invoice attachment mandatory sebelum masuk payment approval chain
+- Termin hybrid: default 35/25/25/15, boleh override per project
 - Semua akses protected wajib cek `stakeholder_type` via `proxy.ts`
 
 ## Current Routes Snapshot
@@ -133,6 +153,8 @@ Planned / referenced in business flow:
 
 - `project_milestones`
 - `payment_requests`
+- `payment_contracts`
+- `payment_approvals`
 - `vendor_kpi_scores`
 
 Gunakan `types/database.types.ts` sebagai referensi schema teknis terbaru.
@@ -154,6 +176,7 @@ Lihat `docs/tasks/PROGRESS.md` untuk:
 - `docs/modules/TENDER.md` - tender publish, dynamic items, vendor read flow
 - `docs/modules/VENDOR.md` - vendor onboarding, tender access, project reporting
 - `docs/modules/SPV.md` - SPV selection, pre-con docs, verification, monitoring
+- `docs/modules/PAYMENT.md` - termin payment, invoice, approval, audit trail
 - `docs/references/vendor-approval-checklist.md` - checklist approval vendor
 - `docs/architecture/design-system.md` - UI conventions
 - `docs/architecture/pwa.md` - PWA architecture & theme rules

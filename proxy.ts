@@ -15,6 +15,7 @@ const publicRoutes = [
   "/terms/client",
   "/privacy",
   "/progress",
+  "/presentasi",
   "/auth/callback",
 ]
 

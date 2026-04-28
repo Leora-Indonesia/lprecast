@@ -1,0 +1,37 @@
+{
+  "id": "admin-project-create-v2-03",
+  "seq": "03",
+  "title": "Refactor admin project form into future-tab sections",
+  "status": "pending",
+  "depends_on": [
+    "01"
+  ],
+  "parallel": true,
+  "suggested_agent": "OpenFrontendSpecialist",
+  "context_files": [
+    "/home/alv/code/lprecast/docs/architecture/design-system.md",
+    "/home/alv/code/lprecast/docs/modules/PROJECT.md",
+    "/home/alv/code/lprecast/docs/plans/ProjectUiSprint01.md",
+    "/home/alv/code/lprecast/docs/CONTEXT.md"
+  ],
+  "reference_files": [
+    "/home/alv/code/lprecast/components/admin/project-form.tsx",
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/new/page.tsx",
+    "/home/alv/code/lprecast/app/(admin)/admin/projects/[id]/edit/page.tsx",
+    "/home/alv/code/lprecast/lib/validations/project.ts"
+  ],
+  "acceptance_criteria": [
+    "Create and edit form UI is split into clear sections that can map later to client intake, admin review, and SPV planning tabs",
+    "Expanded fields bind to the updated schema in both create and edit modes without adding client, payment, or SPV module actions",
+    "Form layout remains responsive across current breakpoints and uses existing shadcn/ui composition patterns"
+  ],
+  "deliverables": [
+    "components/admin/project-form.tsx",
+    "app/(admin)/admin/projects/new/page.tsx",
+    "app/(admin)/admin/projects/[id]/edit/page.tsx"
+  ],
+  "agent_id": null,
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}

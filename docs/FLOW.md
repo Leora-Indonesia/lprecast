@@ -4,11 +4,12 @@
 
 ## Actors
 
-- `client` - meminta proyek, approve milestone tertentu, melihat progres
-- `admin` - menyiapkan project, publish tender, memilih vendor, mengelola operasional internal
-- `vendor` - ikut tender, menjalankan pekerjaan, upload laporan lapangan
-- `spv` - control layer, pre-con owner, monitoring, verifikasi progres
-- `system` - menjalankan validasi, scoring, notification, dan trigger status/payment
+- `client` - memesan proyek, menyetor dana termin, lihat progres, approve milestone progress
+- `admin` - menyiapkan project, publish tender, mengelola operasional internal
+- `vendor` - ikut tender, mengerjakan, upload laporan harian, submit invoice
+- `spv` - verifikator operasional lapangan, pre-con owner, monitoring progres harian
+- `finance ops` - pegang finance internal, validasi invoice vendor, eksekusi payment ke vendor
+- `system` - validasi, scoring, notification, trigger status, milestone tracking, funding reminder
 
 ## Phase 1. Client Intake and Qualification
 
@@ -81,47 +82,96 @@ Output utama:
 - project readiness confirmed
 - execution baseline siap dipakai monitoring
 
-## Phase 5. Project Execution and Daily Reporting
+## Phase 5. Project Execution and Daily Reporting (Lane 1 - Operasional)
 
-1. Vendor mulai pekerjaan lapangan.
-2. Vendor atau lapisan operasional lapangan mengirim laporan harian dan bukti progres.
-3. Laporan harian minimal memuat tanggal, progres, kendala, cuaca, tenaga kerja, dan foto/video.
-4. SPV memonitor progres aktual terhadap target dan baseline schedule.
-5. System menghitung progres kumulatif, warning keterlambatan, dan KPI terkait bila rule sudah aktif.
+**Lane 1: Daily Reporting**
 
-Rules penting:
+1. Vendor submit laporan harian via sistem.
+2. Laporan harian memuat: tanggal, progres (% per item), deskripsi, kendala, cuaca, tenaga kerja, foto/video.
+3. SPV verify laporan vendor (approve/reject dengan catatan).
+4. System hitung progres kumulatif dari daily report yang verified SPV.
+5. System plot ke Kurva S baseline → variance / delay signal.
+6. Client lihat progres via dashboard (VIEW ONLY, tidak perlu approve harian).
 
-- upload progres harian maksimal jam 09.00 WIB hari berikutnya
-- keterlambatan upload memberi flag sistem dan KPI negatif
-- progres harus terdokumentasi dengan bukti visual dan catatan lapangan
+Rules:
 
-Output utama:
+- Upload deadline: 09.00 WIB hari berikutnya
+- Keterlambatan → flag sistem + KPI negatif
+- SPV wajib verify sebelum masuk kalkulasi kumulatif
+- Vendor tidak bypass ke client, harus lewat SPV
 
-- daily report trail
-- progress vs target dashboard
-- delay / issue signals
+Output:
 
-## Phase 6. Validation, Payment, and Completion
+- daily report trail terverifikasi SPV
+- progress kumulatif vs Kurva S baseline
+- variance / delay signals
+- milestone trigger untuk Lane 2
 
-1. SPV memverifikasi progres vendor.
-2. System mengecek approval layer dan trigger milestone atau termin pembayaran.
-3. Payment berjalan sesuai skema approval internal dan client.
-4. Final QC dilakukan saat pekerjaan selesai.
-5. BAST dan final approval menutup proyek.
-6. System update status `completed`, histori performa vendor/SPV, dan data closing lain.
+## Phase 6. Validation, Payment, and Completion (Lane 2 & 3)
 
-Rules penting:
+**Lane 2: Milestone Progress Approval**
 
-- nilai SPK = tender price x quantity
-- payment approval berjalan bertahap, tidak langsung auto-paid tanpa approval layer yang relevan
-- histori progres, pembayaran, dan performa harus bisa diaudit
+1. System deteksi progress kumulatif sudah mendekat milestone threshold (misal 45%).
+2. Client approve milestone progress (misal: "ya, progress 50% tercapai dan disetujui").
+3. Approval milestone ini jadi trigger untuk:
+   - B (vendor payment eligible) 
+   - C (client funding reminder)
+4. Sistem catat approval milestone dengan timestamp.
+
+Rules:
+
+- Client wajib approve milestone progress SEBELUM vendor bisa invoice
+- SPV tidak masuk lane payment, cuma hasilkan verified progress
+- Client tidak perlu approve setiap daily report, cukup milestone besar
+
+---
+
+**Lane 3: Payment dan Funding**
+
+**3A. Vendor Payment (dari internal fund)**
+
+1. Vendor submit invoice dengan lampiran bukti progress.
+2. Finance Ops/Internal validasi:
+   - Invoice detail vs progress milestone approved
+   - Lampiran lengkap
+   - Nominal sesuai termin contract
+3. Finance Ops approve → system mark "ready to pay".
+4. Payment executed dari internal fund ke vendor.
+
+**3B. Client Funding (refill untuk termin berikutnya)**
+
+1. System deteksi progress sudah 45-49% (threshold configurable).
+2. System trigger reminder ke client: "silakan_setor termin berikutnya".
+3. Client setor dana termin berikutnya ke internal/escrow.
+4. System confirm dana masuk → status "funds ready".
+5. Baru vendor eligible untuk invoice termin berikutnya.
+
+Rules:
+
+- Invoice wajib punya lampiran sebelum approval
+- Vendor payment hanya jalan kalau:
+  - milestone approved client
+  - funds tersedia di internal/escrow
+- SPV TIDAK boleh lihat invoice vendor detail finansial
+- SPV TIDAK boleh lihat billing client, margin, atau cash position
+- Client wajib setor termin berikutnya SEBELUM progress sentuh milestone
+
+Output:
+
+- Client milestone approval logged
+- Vendor payment executed (dari internal fund)
+- Client funding confirmed ke escrow
+- Audit trail per payment event
 
 ## Control Layers
 
-- Approval layer: admin/internal, SPV, client, dan system sesuai tahap
-- Transparency layer: client bisa lihat progres, vendor tidak bisa lihat data client sensitif
-- Control layer: semua aksi penting harus lewat sistem, bukan bypass manual
-- Event-based workflow: tiap status atau approval penting harus bisa memicu step berikutnya
+- **Operasional lane**: Vendor → SPV → System (daily report, progress verification)
+- **Milestone approval lane**: SPV verified → Client approve milestone
+- **Payment lane**: Vendor → Finance Ops → Paid (dari internal fund)
+- **Funding lane**: System → Client reminder → Client setor → Internal/Escrow
+- Client wajib approve milestone sebelum vendor invoice
+- SPV TIDAK boleh akses invoice vendor detail finansial
+- SPV TIDAK boleh akses billing client, margin, atau cash position
 
 ## Documentation Ownership
 
@@ -130,4 +180,5 @@ Rules penting:
 - perubahan detail tender/bid -> update `docs/modules/TENDER.md`
 - perubahan vendor reporting atau onboarding -> update `docs/modules/VENDOR.md`
 - perubahan SPV selection, pre-con, verification -> update `docs/modules/SPV.md`
+- perubahan termin payment, invoice, approval chain -> update `docs/modules/PAYMENT.md`
 - perubahan status task delivery -> update `docs/tasks/PROGRESS.md`
