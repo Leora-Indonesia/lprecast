@@ -36,10 +36,12 @@ import {
 import {
   getVendorProfileByUserId,
   checkVendorTransactions,
+  deleteVendor,
   type VendorProductDetail,
 } from "../actions"
 import { DocumentViewerDialog } from "@/components/vendor/DocumentViewerDialog"
 import { ProductDetailDialog } from "@/components/admin/product-detail-dialog"
+import { DeleteVendorButton } from "@/components/admin/delete-vendor-button"
 
 export const metadata = {
   title: "Detail Vendor | LPrecast",
@@ -186,9 +188,16 @@ export default async function VendorDetailPage({
               {approvalButtonLabel}
             </Link>
           </Button>
-          <Button variant="destructive" asChild>
-            <Link href={`/admin/vendors/${profile.user_id}/delete`}>Hapus</Link>
-          </Button>
+          <DeleteVendorButton
+            userId={profile.user_id}
+            companyName={
+              companyInfo?.nama_perusahaan ||
+              profile.nama_perusahaan ||
+              profile.user_nama ||
+              "Vendor"
+            }
+            deleteAction={deleteVendor}
+          />
         </div>
       </div>
 

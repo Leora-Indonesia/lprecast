@@ -65,6 +65,23 @@ function isDraftChanged(
   return stableStringify(existingNormalized) !== stableStringify(nextNormalized)
 }
 
+function isAbsoluteUrl(value: string) {
+  return value.startsWith("http://") || value.startsWith("https://")
+}
+
+function getVendorDocumentPublicUrl(filePath: string) {
+  if (isAbsoluteUrl(filePath)) {
+    return filePath
+  }
+
+  const supabase = createAdminClient()
+  const { data } = supabase.storage
+    .from("vendor-documents")
+    .getPublicUrl(filePath)
+
+  return data.publicUrl
+}
+
 export async function getVendorApprovalDraft(vendorId: string) {
   const supabase = await createAdminClient()
   const { data, error } = await supabase
@@ -691,7 +708,10 @@ export async function getVendorProfileByUserId(userId: string) {
     },
     draft_data: draftData,
     approval_draft: approvalDraftData,
-    documents: documents.data || [],
+    documents: (documents.data || []).map((document) => ({
+      ...document,
+      file_path: getVendorDocumentPublicUrl(document.file_path),
+    })),
     contacts: contactsFallback,
     bank_accounts: bankAccountsFallback,
     factory_addresses: factoryAddressesFallback,
@@ -783,7 +803,10 @@ export async function getVendorApprovalWorkspaceByUserId(userId: string) {
     },
     draft_data: draftData,
     approval_draft: approvalDraftData,
-    documents: documents.data || [],
+    documents: (documents.data || []).map((document) => ({
+      ...document,
+      file_path: getVendorDocumentPublicUrl(document.file_path),
+    })),
     contacts: contacts.data || [],
     bank_accounts: bankAccounts.data || [],
     factory_addresses: factoryAddresses.data || [],
@@ -986,6 +1009,9 @@ export async function deleteVendor(userId: string) {
     "vendor_cost_inclusions",
     "vendor_additional_costs",
     "vendor_profiles",
+    "vendor_approval_drafts",
+    "vendor_registrations",
+    "notifications",
   ]
 
   for (const table of tablesToDelete) {

@@ -89,6 +89,9 @@ export async function deleteVendor(userId: string) {
     "vendor_cost_inclusions",
     "vendor_additional_costs",
     "vendor_profiles",
+    "vendor_approval_drafts",
+    "vendor_registrations",
+    "notifications",
   ]
 
   for (const table of tablesToDelete) {

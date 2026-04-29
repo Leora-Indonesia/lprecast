@@ -259,7 +259,7 @@ async function buildDraftFromVendorData(
   })
 
   return {
-    currentStep: 3,
+    currentStep: 1,
     company_info: companyInfo,
     documents: {
       ktp_path: docByType.get("ktp")?.file_path ?? null,

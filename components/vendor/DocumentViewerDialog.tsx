@@ -1,6 +1,6 @@
 "use client"
 
-import { Eye } from "lucide-react"
+import { ExternalLink, Eye } from "lucide-react"
 import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ import {
 interface VendorLegalDocument {
   id: string
   document_type: string
-  file_name: string
+  file_name: string | null
   file_path: string
   document_number: string | null
   verification_status: string | null
@@ -34,7 +34,13 @@ export function DocumentViewerDialog({
   document,
   trigger,
 }: DocumentViewerDialogProps) {
-  const isPdf = document.file_path.toLowerCase().endsWith(".pdf")
+  const fileName = document.file_name || document.document_type
+  const fileUrl = document.file_path
+  const fileType = document.mime_type?.toLowerCase() || ""
+  const lowerFileUrl = fileUrl.toLowerCase()
+  const lowerFileName = fileName.toLowerCase()
+  const isPdf = fileType.includes("pdf") || lowerFileUrl.endsWith(".pdf") || lowerFileName.endsWith(".pdf")
+  const isImage = fileType.startsWith("image/") || /\.(png|jpe?g|webp|gif|svg)$/i.test(lowerFileUrl) || /\.(png|jpe?g|webp|gif|svg)$/i.test(lowerFileName)
 
   return (
     <Dialog>
@@ -49,26 +55,36 @@ export function DocumentViewerDialog({
       <DialogContent className="max-h-[90vh] max-w-4xl">
         <DialogHeader>
           <DialogTitle className="truncate pr-8">
-            {document.file_name}
+            {fileName}
           </DialogTitle>
         </DialogHeader>
         <div className="flex-1 overflow-hidden rounded-md border bg-muted">
           {isPdf ? (
             <iframe
-              src={`https://docs.google.com/gview?url=${encodeURIComponent(
-                document.file_path
-              )}&embedded=true`}
+              src={fileUrl}
               className="h-[70vh] w-full"
-              title={document.file_name}
+              title={fileName}
             />
-          ) : (
+          ) : isImage ? (
             <div className="relative h-[70vh] w-full">
               <Image
-                src={document.file_path}
-                alt={document.file_name}
+                src={fileUrl}
+                alt={fileName}
                 fill
                 className="object-contain"
               />
+            </div>
+          ) : (
+            <div className="flex h-[70vh] flex-col items-center justify-center gap-3 p-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                Format dokumen tidak bisa dipreview langsung.
+              </p>
+              <Button asChild>
+                <a href={fileUrl} target="_blank" rel="noreferrer">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Buka dokumen
+                </a>
+              </Button>
             </div>
           )}
         </div>
