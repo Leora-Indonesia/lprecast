@@ -32,11 +32,6 @@ export function NotificationBell({
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount)
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [mounted] = useState(() => {
-    if (typeof window === "undefined") return false
-    return true
-  })
-
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -118,14 +113,6 @@ export function NotificationBell({
       default:
         return "bg-gray-100 text-gray-800"
     }
-  }
-
-  if (!mounted) {
-    return (
-      <Button variant="ghost" size="icon" className="relative">
-        <Bell className="h-5 w-5" />
-      </Button>
-    )
   }
 
   return (

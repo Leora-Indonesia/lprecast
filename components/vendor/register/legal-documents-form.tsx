@@ -144,9 +144,7 @@ export function LegalDocumentsForm({
         </div>
 
         <div className="rounded-lg border border-gray-100 bg-gray-50/50 p-5">
-          <Label className="form-label text-base">
-            2. NPWP Perusahaan<span className="required-star">*</span>
-          </Label>
+          <Label className="form-label text-base">2. NPWP Perusahaan</Label>
           <Input
             id="npwp_nomor"
             placeholder="16 digit angka (contoh: 1234567890123456)"
@@ -176,7 +174,6 @@ export function LegalDocumentsForm({
         <div className="rounded-lg border border-gray-100 bg-gray-50/50 p-5">
           <Label className="form-label text-base">
             3. NIB (Nomor Induk Berusaha)
-            <span className="required-star">*</span>
           </Label>
           <Input
             id="nib_nomor"
@@ -200,7 +197,6 @@ export function LegalDocumentsForm({
             name="legal_documents.nib_file"
             control={control}
             errors={errors}
-            required
             uploadedPath={uploadedFiles?.nib_path}
           />
         </div>

@@ -41,11 +41,13 @@ Mapping cepat:
 
 ---
 
-**Last updated:** April 29, 2026 | Vendor - Fix register redirect onboarding step awal
+**Last updated:** April 29, 2026 | Admin - Fix notification bell hydration
 ---
 
 Task | Project | Status | Last updated | Notes
 --- | --- | --- | --- | ---
+Admin - Fix notification bell hydration | LPrecast | Done | April 29, 2026 | Hapus server/client render branch di notification bell agar atribut Radix Popover konsisten saat hydration. Validasi: pnpm typecheck
+Vendor - Rapikan indikator wajib dokumen legal | LPrecast | Done | April 29, 2026 | Tab 2 onboarding hanya KTP yang menampilkan tanda wajib; NPWP/NIB mengikuti validasi optional format-only. Validasi: pnpm typecheck
 Admin - Fix preview dokumen vendor | LPrecast | Done | April 29, 2026 | Normalisasi storage path vendor_documents agar preview KTP/NPWP/NIB/SIUP/Company Profile bisa dibuka dari admin detail dan approval. Validasi: pnpm typecheck, pnpm build
 Vendor - Fix register redirect onboarding step awal | LPrecast | Done | April 29, 2026 | Setelah register auto-login, onboarding draft fallback sekarang mulai dari step 1 bukan langsung tab 3. Validasi: pnpm typecheck, pnpm build
 Docs - Expand project docs scope (Kurva S, daily report, invoice, termin payment) | LPrecast | Done | April 27, 2026 |
