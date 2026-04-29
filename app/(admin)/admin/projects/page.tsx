@@ -32,7 +32,7 @@ type SearchParams = {
 const statusOptions: Array<{ value: ProjectStatus | "all"; label: string }> = [
   { value: "all", label: "Semua" },
   { value: "draft", label: "Draft" },
-  { value: "open", label: "Open" },
+  { value: "open", label: "Tendering" },
   { value: "in_progress", label: "Berjalan" },
   { value: "completed", label: "Selesai" },
   { value: "cancelled", label: "Dibatalkan" },

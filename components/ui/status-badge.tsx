@@ -13,7 +13,7 @@ type StatusConfig = {
 const statusConfig: Record<string, StatusConfig> = {
   draft: { label: "Draft", variant: "secondary" },
   open: {
-    label: "Open",
+    label: "Tendering",
     variant: "default",
     className:
       "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",

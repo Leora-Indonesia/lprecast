@@ -27,7 +27,7 @@ import { Badge } from "@/components/ui/badge"
 const menuItems = [
   { title: "Dashboard", href: "/vendor/dashboard", icon: LayoutDashboard },
   { title: "Profil", href: "/vendor/profile", icon: Building2, soon: true },
-  { title: "Tender", href: "/vendor/tenders", icon: FileText, soon: true },
+  { title: "Tender", href: "/vendor/tenders", icon: FileText },
   {
     title: "Penawaran",
     href: "/vendor/submissions",

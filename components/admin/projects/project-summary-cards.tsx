@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 const items = [
   { key: "total", label: "Total Project", icon: FolderOpen },
   { key: "draft", label: "Draft", icon: FolderClock },
-  { key: "open", label: "Open", icon: FolderKanban },
+  { key: "open", label: "Tendering", icon: FolderKanban },
   { key: "in_progress", label: "Berjalan", icon: FolderOpen },
   { key: "completed", label: "Selesai", icon: FolderCheck },
   { key: "cancelled", label: "Dibatalkan", icon: FolderX },

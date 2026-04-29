@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { ArrowLeft, CalendarRange, MapPin, PencilLine, UserRound } from "lucide-react"
+import { ArrowLeft, CalendarRange, MapPin, PencilLine, Send, UserRound } from "lucide-react"
 
 import type { ProjectDetail as ProjectDetailType } from "@/lib/projects/types"
 import { formatDate, formatDateTime } from "@/lib/datetime"
@@ -52,11 +52,20 @@ export function ProjectDetail({ project }: { project: ProjectDetailType }) {
             </div>
           </div>
 
-          <Button asChild>
-            <Link href={`/admin/projects/${project.id}/edit`}>
-              <PencilLine /> Edit Project
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {project.status === "draft" ? (
+              <Button asChild>
+                <Link href={`/admin/projects/${project.id}/tender/new`}>
+                  <Send /> Ajukan ke Tender
+                </Link>
+              </Button>
+            ) : null}
+            <Button variant={project.status === "draft" ? "outline" : "default"} asChild>
+              <Link href={`/admin/projects/${project.id}/edit`}>
+                <PencilLine /> Edit Project
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -73,7 +82,7 @@ export function ProjectDetail({ project }: { project: ProjectDetailType }) {
         <CardContent className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <span>Status saat ini</span>
           <StatusBadge status={project.status} />
-          <span>Ubah data hanya lewat tombol Edit Project.</span>
+          <span>{project.status === "open" ? "UI label: Tendering." : "Ubah data hanya lewat tombol Edit Project."}</span>
         </CardContent>
       </Card>
 

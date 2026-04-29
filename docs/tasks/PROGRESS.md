@@ -41,7 +41,7 @@ Mapping cepat:
 
 ---
 
-**Last updated:** April 29, 2026 | Admin - Fix notification bell hydration
+**Last updated:** April 29, 2026 | Vendor - Tampilkan daftar/detail project tender
 ---
 
 Task | Project | Status | Last updated | Notes
@@ -94,10 +94,10 @@ Vendor - Perbaikan dashboard | LPrecast | Done | April 23, 2026 → April 24, 20
 Admin - Buat add project (input + save + attachment storage + status draft) | LPrecast | Done | April 25, 2026 → April 28, 2026 |
 Admin - Buat & publish tender dari project existing | LPrecast | Not started | April 25, 2026 |
 Sistem - Set struktur status project & validasi transition dasar | LPrecast | Done | April 25, 2026 → April 27, 2026 |
-Vendor - Tampilkan daftar project tender (fetch + UI list + empty state) | LPrecast | Not started | April 27, 2026 |
+Vendor - Tampilkan daftar project tender (fetch + UI list + empty state) | LPrecast | Done | April 29, 2026 | Tambah view vendor_open_tenders, list tender open vendor-safe, badge sudah ajukan, empty state. Validasi: pnpm typecheck
 Sistem - Validasi & relasi bid ke project (hindari duplikasi, 1 vendor 1 bid) | LPrecast | Not started | April 27, 2026 |
 Sistem - Setup target timeline & milestone project | LPrecast | Done | April 27, 2026 |
-Vendor - Tampilkan detail project tender (spesifikasi, lokasi, scope) | LPrecast | Not started | April 28, 2026 |
+Vendor - Tampilkan detail project tender (spesifikasi, lokasi, scope) | LPrecast | Done | April 29, 2026 | Detail tender vendor-safe menampilkan ringkasan, lokasi publik, periode, item pekerjaan, dan CTA submit disabled. Validasi: pnpm typecheck
 Admin - Pilih pemenang tender & assign vendor ke project | LPrecast | Not started | April 29, 2026 |
 Admin - Lihat & bandingkan semua penawaran vendor (table comparison) | LPrecast | Not started | April 29, 2026 |
 Vendor - Submit penawaran ke project (form + save bid ke database) | LPrecast | Not started | April 30, 2026 |

@@ -19,7 +19,7 @@ const transitions: Record<ProjectStatus, ProjectStatus[]> = {
 
 const labels: Record<ProjectStatus, string> = {
   draft: "Draft",
-  open: "Open",
+  open: "Tendering",
   in_progress: "Berjalan",
   completed: "Selesai",
   cancelled: "Dibatalkan",

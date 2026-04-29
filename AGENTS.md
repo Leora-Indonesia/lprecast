@@ -37,20 +37,47 @@
 **Existing (shared):** users, projects, vendor_spk, vendor_progress, vendor_payment
 **New:** vendor_profiles, vendor_documents, vendor_products, tenders, tender_submissions, project_milestones, notifications, payment_requests, vendor_kpi_scores
 
-## Progress Tracking
+## Progress Tracking - Local vs Notion
 
-**WAJIB** setiap kali bekerja di proyek ini:
+### Guideline untuk AI Agent
 
-1. **Sebelum mulai task** — cek `docs/tasks/PROGRESS.md` untuk melihat status terkini
-2. **Saat mulai task** — update status dari `Not started` ke `In progress`
-3. **Setelah selesai task** — update status ke `Done` + update `Last updated`
-4. **Jika task mengalami isu/blocker** — update status ke `Blocked` + tulis di Notes:
-   - Deskripsi isu
-   - Sejak kapan
-   - Apa yang dibutuhkan untuk lanjut
-5. **Jika sebagian selesai** — tetap `In progress` + tulis detail di Notes (apa yang sudah done, apa yang belum)
+**Source of Truth:**
 
-Status values:
+- `docs/tasks/PROGRESS.md` adalah **satu-satunya** source of truth untuk progress tracking
+- Semua update task WAJIB tulis di `PROGRESS.md`
+- Include notes: validasi yang sudah/run, blocker, detail implementasi
+
+**Notion Sebagai Display Only:**
+
+- Notion `Leora To Do` adalah **dashboard display** — BUKAN source of truth
+- Tidak wajib update Notion manual setiap hari
+- Display untuk: team meeting, report ke stakeholder non-dev
+- Sync manual saat ada waktu / sprint review — tidak realtime
+
+**Workflow untuk AI Agent:**
+
+```
+1. Before task → cek PROGRESS.md (status terkini)
+2. Saat coding → update PROGRESS.md (In progress, notes)
+3. Setelah selesai → update status ke Done + Last updated + validasi notes
+4. Blocker → update status ke Blocked + deskripsi + since when + needed
+5. Done coding → commit termasuk PROGRESS.md update
+6. Notion → optional update manual (bukan wajib)
+```
+
+**Kenapa local dulu:**
+
+- Ikut repo + commit = audit trail teknis
+- Detail validasi: `pnpm typecheck`, `pnpm build` — penting untuk dev
+- AI agent wajib cek sebelum mulai task
+
+**Kapan sync Notion:**
+
+- Mau report ke tim → cek Notion
+- Bedanya >5 task → sync manual saat sprint review
+- Tidak perlu realtime — Notion hanya display
+
+### Status Values
 
 - `Not started` — belum dikerjakan
 - `In progress` — sedang dikerjakan (termasuk sebagian selesai, detail di Notes)
@@ -59,7 +86,7 @@ Status values:
 
 ## On-Demand References
 
-Baca file di /docsl saat relevan dengan task yang sedang dikerjakan:
+Baca file di /docs saat relevan dengan task yang sedang dikerjakan:
 
 ---
 
