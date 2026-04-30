@@ -29,6 +29,7 @@ export type TenderDetail = {
   project_id: string
   status: TenderStatus
   min_vendors: number | null
+  submission_deadline_at: string | null
   revision_deadline_hours: number | null
   created_by: string
   created_at: string | null
@@ -43,6 +44,7 @@ export type VendorOpenTender = {
   tender_description: string | null
   tender_status: TenderStatus | null
   min_vendors: number | null
+  submission_deadline_at?: string | null
   revision_deadline_hours: number | null
   tender_created_at: string | null
   tender_updated_at: string | null

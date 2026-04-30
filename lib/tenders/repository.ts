@@ -27,14 +27,102 @@ async function getCurrentInternalAdminUserId() {
   return user.id
 }
 
+async function getCurrentVendorUserId() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  if (error || !user) return null
+
+  const adminClient = createAdminClient()
+  const { data: profile } = await adminClient
+    .from("users")
+    .select("stakeholder_type")
+    .eq("id", user.id)
+    .maybeSingle()
+
+  if (profile?.stakeholder_type !== "vendor") return null
+  return user.id
+}
+
 function parseOptionalNumber(value: string | null | undefined, fallback: number | null = null) {
   if (!value) return fallback
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
+function parseOptionalDateTime(value: string | null | undefined) {
+  if (!value) return null
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString()
+}
+
 function normalizeTenderStatus(status: Database["public"]["Enums"]["tender_status"] | null) {
   return status ?? "open"
+}
+
+function isSubmissionDeadlinePassed(submissionDeadlineAt: string | null | undefined) {
+  if (!submissionDeadlineAt) return false
+  const deadline = new Date(submissionDeadlineAt)
+  if (Number.isNaN(deadline.getTime())) return false
+  return Date.now() > deadline.getTime()
+}
+
+export async function validateVendorTenderSubmission(tenderId: string) {
+  const vendorUserId = await getCurrentVendorUserId()
+
+  if (!vendorUserId) {
+    return { success: false as const, error: "Unauthorized" }
+  }
+
+  const adminClient = createAdminClient()
+  const [{ data: tender, error: tenderError }, { data: existingSubmission, error: submissionError }] =
+    await Promise.all([
+      adminClient
+        .from("tenders")
+        .select("id, project_id, status, submission_deadline_at")
+        .eq("id", tenderId)
+        .maybeSingle(),
+      adminClient
+        .from("tender_submissions")
+        .select("id")
+        .eq("tender_id", tenderId)
+        .eq("vendor_id", vendorUserId)
+        .maybeSingle(),
+    ])
+
+  if (tenderError) {
+    return { success: false as const, error: "Gagal membaca tender" }
+  }
+
+  if (submissionError) {
+    return { success: false as const, error: "Gagal membaca status penawaran vendor" }
+  }
+
+  if (!tender) {
+    return { success: false as const, error: "Tender tidak ditemukan" }
+  }
+
+  if (normalizeTenderStatus(tender.status) !== "open") {
+    return { success: false as const, error: "Tender tidak tersedia untuk pengajuan penawaran" }
+  }
+
+  if (isSubmissionDeadlinePassed(tender.submission_deadline_at)) {
+    return { success: false as const, error: "Batas waktu submit tender sudah lewat" }
+  }
+
+  if (existingSubmission) {
+    return { success: false as const, error: "Vendor sudah pernah mengajukan penawaran untuk tender ini" }
+  }
+
+  return {
+    success: true as const,
+    tenderId: tender.id,
+    projectId: tender.project_id,
+    vendorUserId,
+  }
 }
 
 export async function getActiveTenderForProject(projectId: string) {
@@ -89,6 +177,7 @@ export async function publishTenderFromProject(projectId: string, input: TenderP
     project_id: projectId,
     status: "open",
     min_vendors: parseOptionalNumber(input.min_vendors, 2),
+    submission_deadline_at: parseOptionalDateTime(input.submission_deadline_at),
     revision_deadline_hours: parseOptionalNumber(input.revision_deadline_hours),
     created_by: adminUserId,
   }
@@ -218,7 +307,7 @@ export async function getVendorOpenTenderDetail(id: string): Promise<VendorTende
 
   if (!user) return null
 
-  const [tenderResult, itemsResult, submissionResult] = await Promise.all([
+  const [tenderResult, itemsResult, submissionResult, tenderMetaResult] = await Promise.all([
     supabase.from("vendor_open_tenders").select("*").eq("tender_id", id).maybeSingle(),
     supabase
       .from("tender_items")
@@ -230,6 +319,11 @@ export async function getVendorOpenTenderDetail(id: string): Promise<VendorTende
       .select("status")
       .eq("tender_id", id)
       .eq("vendor_id", user.id)
+      .maybeSingle(),
+    supabase
+      .from("tenders")
+      .select("status, submission_deadline_at")
+      .eq("id", id)
       .maybeSingle(),
   ])
 
@@ -245,10 +339,16 @@ export async function getVendorOpenTenderDetail(id: string): Promise<VendorTende
     throw new Error("Gagal memuat status penawaran")
   }
 
+  if (tenderMetaResult.error) {
+    throw new Error("Gagal memuat deadline tender")
+  }
+
   if (!tenderResult.data) return null
 
   return {
     ...(tenderResult.data as VendorOpenTender),
+    tender_status: tenderMetaResult.data?.status ?? tenderResult.data.tender_status,
+    submission_deadline_at: tenderMetaResult.data?.submission_deadline_at ?? null,
     has_submitted: Boolean(submissionResult.data),
     submission_status: submissionResult.data?.status ?? null,
     items: (itemsResult.data ?? []) as TenderItem[],

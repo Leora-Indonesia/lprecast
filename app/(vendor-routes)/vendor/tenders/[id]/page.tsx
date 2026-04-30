@@ -22,6 +22,11 @@ function formatPeriod(startDate: string | null, endDate: string | null) {
   return "Periode belum ditentukan"
 }
 
+function formatSubmissionDeadline(value: string | null | undefined) {
+  if (!value) return "-"
+  return formatDate(value)
+}
+
 export default async function TenderDetail({
   params,
 }: {
@@ -47,7 +52,7 @@ export default async function TenderDetail({
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl font-bold">{tender.tender_title}</h1>
-              <Badge>Open</Badge>
+              <Badge>{tender.tender_status ?? "open"}</Badge>
               {tender.has_submitted ? <Badge variant="secondary">Sudah ajukan</Badge> : null}
             </div>
             <p className="text-muted-foreground">{tender.project_name}</p>
@@ -100,8 +105,9 @@ export default async function TenderDetail({
           <Card>
             <CardHeader><CardTitle>Aturan Tender</CardTitle></CardHeader>
             <CardContent className="space-y-4 text-sm">
-              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Status</span><Badge>Open</Badge></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Status</span><Badge>{tender.tender_status ?? "open"}</Badge></div>
               <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Minimal vendor</span><span>{tender.min_vendors ?? 2}</span></div>
+              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Batas submit</span><span>{formatSubmissionDeadline(tender.submission_deadline_at)}</span></div>
               <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Deadline revisi</span><span>{tender.revision_deadline_hours ? `${tender.revision_deadline_hours} jam` : "-"}</span></div>
               <div className="rounded-lg border bg-muted/20 p-3 text-muted-foreground">
                 Penawaran vendor akan memakai item tender ini. Nilai SPK mengikuti harga tender x quantity setelah vendor dipilih.

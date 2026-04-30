@@ -20,6 +20,11 @@ function formatPeriod(startDate: string | null | undefined, endDate: string | nu
   return "-"
 }
 
+function formatSubmissionDeadline(value: string | null | undefined) {
+  if (!value) return "-"
+  return formatDate(value)
+}
+
 export default async function TenderDetail({
   params,
 }: {
@@ -77,6 +82,10 @@ export default async function TenderDetail({
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Deadline revisi</p>
                 <p className="font-medium">{tender.revision_deadline_hours ? `${tender.revision_deadline_hours} jam` : "-"}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Batas submit tender</p>
+                <p className="font-medium">{formatSubmissionDeadline(tender.submission_deadline_at)}</p>
               </div>
               <div className="space-y-1 md:col-span-2">
                 <p className="text-sm text-muted-foreground">Deskripsi tender</p>

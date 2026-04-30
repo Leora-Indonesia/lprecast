@@ -15,6 +15,7 @@ function readTenderFormData(formData: FormData) {
     title: formData.get("title") as string,
     description: formData.get("description") as string,
     min_vendors: formData.get("min_vendors") as string,
+    submission_deadline_at: formData.get("submission_deadline_at") as string,
     revision_deadline_hours: formData.get("revision_deadline_hours") as string,
     items: names.map((name, index) => ({
       name: String(name),

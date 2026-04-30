@@ -44,6 +44,21 @@ function formatPeriod(project: ProjectDetail) {
   return "Belum ditentukan"
 }
 
+function formatDateTimeLocal(value: string | null | undefined) {
+  if (!value) return ""
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ""
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  const hours = String(date.getHours()).padStart(2, "0")
+  const minutes = String(date.getMinutes()).padStart(2, "0")
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
 export function TenderPublishForm({ project }: { project: ProjectDetail }) {
   const router = useRouter()
   const [items, setItems] = useState<TenderItemDraft[]>(() => [createItemDraft(project)])
@@ -160,16 +175,21 @@ export function TenderPublishForm({ project }: { project: ProjectDetail }) {
                 <p className="text-xs text-muted-foreground">Tulis versi aman untuk vendor. Jangan masukkan data client sensitif.</p>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label htmlFor="min_vendors" className="text-sm font-medium">Minimal Vendor Submit</label>
-                  <Input id="min_vendors" name="min_vendors" inputMode="numeric" defaultValue="2" />
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label htmlFor="min_vendors" className="text-sm font-medium">Minimal Vendor Submit</label>
+                    <Input id="min_vendors" name="min_vendors" inputMode="numeric" defaultValue="2" />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="submission_deadline_at" className="text-sm font-medium">Batas Submit Tender</label>
+                    <Input id="submission_deadline_at" name="submission_deadline_at" type="datetime-local" defaultValue={formatDateTimeLocal(project.start_date)} />
+                    <p className="text-xs text-muted-foreground">Opsional. Jika diisi, vendor tidak bisa submit setelah waktu ini.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="revision_deadline_hours" className="text-sm font-medium">Deadline Revisi (jam)</label>
+                    <Input id="revision_deadline_hours" name="revision_deadline_hours" inputMode="numeric" placeholder="Opsional" />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="revision_deadline_hours" className="text-sm font-medium">Deadline Revisi (jam)</label>
-                  <Input id="revision_deadline_hours" name="revision_deadline_hours" inputMode="numeric" placeholder="Opsional" />
-                </div>
-              </div>
             </CardContent>
           </Card>
 

@@ -714,6 +714,7 @@ export type Database = {
           id: string
           min_vendors: number | null
           project_id: string
+          submission_deadline_at: string | null
           revision_deadline_hours: number | null
           status: Database["public"]["Enums"]["tender_status"] | null
           title: string
@@ -726,6 +727,7 @@ export type Database = {
           id?: string
           min_vendors?: number | null
           project_id: string
+          submission_deadline_at?: string | null
           revision_deadline_hours?: number | null
           status?: Database["public"]["Enums"]["tender_status"] | null
           title: string
@@ -738,6 +740,7 @@ export type Database = {
           id?: string
           min_vendors?: number | null
           project_id?: string
+          submission_deadline_at?: string | null
           revision_deadline_hours?: number | null
           status?: Database["public"]["Enums"]["tender_status"] | null
           title?: string

@@ -13,6 +13,18 @@ const optionalNumberStringSchema = z
   .regex(/^\d*$/, "Nilai hanya boleh angka")
   .or(z.literal(""))
 
+const optionalDateTimeStringSchema = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value === "" || !Number.isNaN(new Date(value).getTime()),
+    "Format deadline submit tidak valid"
+  )
+  .refine(
+    (value) => value === "" || new Date(value).getTime() > Date.now(),
+    "Deadline submit harus di masa depan"
+  )
+
 export const tenderItemInputSchema = z.object({
   name: z.string().trim().min(1, "Nama item wajib diisi"),
   quantity: positiveNumberStringSchema,
@@ -27,6 +39,7 @@ export const tenderPublishSchema = z.object({
     (value) => value === "" || Number(value) >= 2,
     "Minimal vendor submit adalah 2"
   ),
+  submission_deadline_at: optionalDateTimeStringSchema,
   revision_deadline_hours: optionalNumberStringSchema,
   items: z.array(tenderItemInputSchema).min(1, "Minimal satu item pekerjaan wajib ada"),
 })
