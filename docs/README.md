@@ -6,6 +6,7 @@ Dokumentasi `docs/` dipisah per lapis supaya AI agent dan manusia cepat tahu fil
 
 Urutan baca paling aman:
 
+0. `AGENTS.md` - agent operating rules, recommended macro skill stack, progress workflow, command references
 1. `docs/CONTEXT.md` - snapshot proyek, scope aktif, role, business rules inti
 2. `docs/FLOW.md` - source of truth flow bisnis end-to-end
 3. `docs/tasks/PROGRESS.md` - status task, prioritas, timeline delivery
@@ -36,6 +37,7 @@ Urutan baca paling aman:
 
 ## AI Collaboration Rules
 
+- untuk task level makro, baca `AGENTS.md` dulu agar agent load skill stack yang tepat: `improve-codebase-architecture`, `supabase`, `next-best-practices`, `architecture-blueprint-generator`
 - ide fitur baru atau hasil brainstorm agent -> simpan dulu di `docs/references/`
 - keputusan final yang sudah disetujui -> promote ke `CONTEXT.md`, `FLOW.md`, `modules/*.md`, atau `tasks/*.md`
 - raw upload seperti PDF, deck, atau dokumen eksternal -> simpan di `docs/reference_file/`
@@ -63,6 +65,7 @@ Prinsip kerja:
 
 ## Key References
 
+- `AGENTS.md` - agent rules, macro skill stack, progress workflow, command references
 - `docs/references/README.md` - indeks summary reference dan hasil analisa
 - `docs/reference_file/README.md` - indeks raw upload reference
 - `docs/modules/PROJECT.md` - lifecycle project dan execution container

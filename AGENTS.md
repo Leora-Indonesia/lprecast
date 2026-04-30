@@ -6,6 +6,30 @@
 **URL:** precast.leora.co.id
 **Stack:** Next.js 16 App Router + React 19 + TypeScript + Turbopack, Supabase, Tailwind CSS + shadcn/ui + Radix UI, PWA via Serwist
 
+## Recommended Agent Skill Stack
+
+Install dan gunakan combo skill ini agar AI agent paham project secara makro, bukan hanya level implementasi file-per-file.
+
+### Core Macro Stack
+
+- `improve-codebase-architecture` — untuk analisa struktur repo, domain boundary, coupling, refactor direction, dan keputusan arsitektur level makro
+- `supabase` — untuk semua task Supabase: auth, SSR integration, RLS, schema, migration, storage, dan security boundary
+- `next-best-practices` — untuk semua task Next.js App Router: server/client boundary, routing, data fetching, cache, middleware/proxy, dan pattern framework modern
+- `architecture-blueprint-generator` — untuk membuat blueprint sistem, map komponen, high-level flow, dan dokumentasi arsitektur
+
+### How AI Agent Should Use This Stack
+
+- Saat merancang fitur besar / domain baru -> load `improve-codebase-architecture` dulu
+- Saat task menyentuh auth, database, RLS, storage, migration, Edge Function -> load `supabase`
+- Saat task menyentuh App Router, middleware/proxy, server action, data fetching, caching, route handler -> load `next-best-practices`
+- Saat perlu melihat big picture, membuat blueprint, atau merapikan arsitektur lintas module -> load `architecture-blueprint-generator`
+
+### Macro Rule
+
+- Untuk task level makro (arsitektur, domain modeling, workflow end-to-end, refactor besar), gunakan combo `improve-codebase-architecture` + `supabase` + `next-best-practices`
+- Untuk task level makro yang perlu output blueprint/dokumentasi, tambahkan `architecture-blueprint-generator`
+- Jangan kerjakan perubahan arsitektur besar hanya dari 1 layer. Selalu cek 4 layer: business flow, app/router, data/auth/RLS, dan role/access boundary
+
 ## Key Conventions
 - proxy.ts as middleware
 - Server components by default, use `"use client"` only when interactivity is needed
