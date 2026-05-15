@@ -7,6 +7,8 @@ import {
 } from "@/lib/notifications"
 import type { Notification } from "@/lib/types/vendor"
 
+export const dynamic = "force-dynamic"
+
 export default async function AdminRootLayout({
   children,
 }: {
