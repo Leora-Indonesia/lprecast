@@ -11,7 +11,12 @@ import {
   type ProjectStatusInput,
   type ProjectUpdateInput,
 } from "@/lib/validations/project"
-import type { Database, Json, TablesInsert, TablesUpdate } from "@/types/database.types"
+import type {
+  Database,
+  Json,
+  TablesInsert,
+  TablesUpdate,
+} from "@/types/database.types"
 
 import type {
   ProjectAttachment,
@@ -80,7 +85,9 @@ function sanitizeSegment(value: string) {
     .slice(0, 80)
 }
 
-function normalizeProjectStatus(status: Database["public"]["Enums"]["project_status"] | null) {
+function normalizeProjectStatus(
+  status: Database["public"]["Enums"]["project_status"] | null
+) {
   return status ?? "draft"
 }
 
@@ -119,7 +126,9 @@ function parseAttachments(value: Json | null) {
   })
 }
 
-function isMissingAttachmentsColumn(error: PostgrestLikeError | null | undefined) {
+function isMissingAttachmentsColumn(
+  error: PostgrestLikeError | null | undefined
+) {
   return (
     error?.code === "PGRST204" &&
     error.message?.includes("'attachments'") &&
@@ -127,8 +136,15 @@ function isMissingAttachmentsColumn(error: PostgrestLikeError | null | undefined
   )
 }
 
-async function getProjectDetailBaseRow(adminClient: ReturnType<typeof createAdminClient>, id: string) {
-  const result = await adminClient.from("projects").select("*").eq("id", id).maybeSingle()
+async function getProjectDetailBaseRow(
+  adminClient: ReturnType<typeof createAdminClient>,
+  id: string
+) {
+  const result = await adminClient
+    .from("projects")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle()
 
   if (result.error) {
     return { data: null, error: result.error }
@@ -155,13 +171,17 @@ async function getProjectDetailBaseRow(adminClient: ReturnType<typeof createAdmi
         typeof row.customer_name === "string" ? row.customer_name : null,
       client_id: typeof row.client_id === "string" ? row.client_id : null,
       client_profile_id:
-        typeof row.client_profile_id === "string" ? row.client_profile_id : null,
+        typeof row.client_profile_id === "string"
+          ? row.client_profile_id
+          : null,
       contract_value:
         typeof row.contract_value === "number"
           ? row.contract_value
           : Number(row.contract_value ?? 0),
       site_address_full:
-        typeof row.site_address_full === "string" ? row.site_address_full : null,
+        typeof row.site_address_full === "string"
+          ? row.site_address_full
+          : null,
       province_id: typeof row.province_id === "string" ? row.province_id : null,
       city_id: typeof row.city_id === "string" ? row.city_id : null,
       site_coordinates:
@@ -176,7 +196,9 @@ async function getProjectDetailBaseRow(adminClient: ReturnType<typeof createAdmi
       measurement_unit:
         typeof row.measurement_unit === "string" ? row.measurement_unit : null,
       target_completion_date:
-        typeof row.target_completion_date === "string" ? row.target_completion_date : null,
+        typeof row.target_completion_date === "string"
+          ? row.target_completion_date
+          : null,
       budget_min:
         typeof row.budget_min === "number"
           ? row.budget_min
@@ -190,13 +212,17 @@ async function getProjectDetailBaseRow(adminClient: ReturnType<typeof createAdmi
             ? Number(row.budget_max)
             : null,
       initial_description:
-        typeof row.initial_description === "string" ? row.initial_description : null,
+        typeof row.initial_description === "string"
+          ? row.initial_description
+          : null,
       site_condition:
         typeof row.site_condition === "string" ? row.site_condition : null,
       vehicle_access:
         typeof row.vehicle_access === "string" ? row.vehicle_access : null,
       special_requirements:
-        typeof row.special_requirements === "string" ? row.special_requirements : null,
+        typeof row.special_requirements === "string"
+          ? row.special_requirements
+          : null,
       estimated_height:
         typeof row.estimated_height === "string" ? row.estimated_height : null,
       foundation_preference:
@@ -321,7 +347,9 @@ export async function getProjectList(filters: ProjectListFilters = {}) {
   const adminClient = createAdminClient()
   let query = adminClient
     .from("projects")
-    .select("id, name, location, status, start_date, end_date, created_at, updated_at")
+    .select(
+      "id, name, location, status, start_date, end_date, created_at, updated_at"
+    )
     .order("created_at", { ascending: false })
 
   const search = filters.search?.trim()
@@ -372,18 +400,21 @@ export async function getProjectSummary() {
   )
 }
 
-export async function getProjectDetail(id: string): Promise<ProjectDetail | null> {
+export async function getProjectDetail(
+  id: string
+): Promise<ProjectDetail | null> {
   const adminClient = createAdminClient()
-  const [projectResult, { data: milestones, error: milestoneError }] = await Promise.all([
-    getProjectDetailBaseRow(adminClient, id),
-    adminClient
-      .from("project_milestones")
-      .select(
-        "id, project_id, title, description, due_date, status, created_at, updated_at, completed_at"
-      )
-      .eq("project_id", id)
-      .order("due_date", { ascending: true }),
-  ])
+  const [projectResult, { data: milestones, error: milestoneError }] =
+    await Promise.all([
+      getProjectDetailBaseRow(adminClient, id),
+      adminClient
+        .from("project_milestones")
+        .select(
+          "id, project_id, title, description, due_date, status, created_at, updated_at, completed_at"
+        )
+        .eq("project_id", id)
+        .order("due_date", { ascending: true }),
+    ])
 
   if (milestoneError) {
     throw new Error("Gagal memuat milestone project")
@@ -433,7 +464,9 @@ export async function createProject(input: ProjectCreateInput) {
     city_id: input.city_id || null,
     site_coordinates: input.site_coordinates || null,
     job_type: input.job_type || null,
-    estimated_length_or_area: parseOptionalNumber(input.estimated_length_or_area),
+    estimated_length_or_area: parseOptionalNumber(
+      input.estimated_length_or_area
+    ),
     measurement_unit: input.measurement_unit || null,
     estimated_height: input.estimated_height || null,
     target_completion_date: input.target_completion_date || null,
@@ -459,7 +492,10 @@ export async function createProject(input: ProjectCreateInput) {
 
   if (error) {
     console.error("Project insert failed:", error)
-    return { success: false as const, error: "Gagal menyimpan project ke database" }
+    return {
+      success: false as const,
+      error: "Gagal menyimpan project ke database",
+    }
   }
 
   return { success: true as const, projectId: project.id, adminUserId }
@@ -475,9 +511,12 @@ export async function updateProject(id: string, input: ProjectUpdateInput) {
 
   if (typeof input.name === "string") payload.name = input.name
   if (typeof input.location === "string") payload.location = input.location
-  if (typeof input.start_date === "string") payload.start_date = input.start_date || null
-  if (typeof input.end_date === "string") payload.end_date = input.end_date || null
-  if (typeof input.description === "string") payload.description = input.description || null
+  if (typeof input.start_date === "string")
+    payload.start_date = input.start_date || null
+  if (typeof input.end_date === "string")
+    payload.end_date = input.end_date || null
+  if (typeof input.description === "string")
+    payload.description = input.description || null
   if (typeof input.customer_name === "string") {
     payload.customer_name = input.customer_name
   }
@@ -490,14 +529,18 @@ export async function updateProject(id: string, input: ProjectUpdateInput) {
   if (typeof input.site_address_full === "string") {
     payload.site_address_full = input.site_address_full || null
   }
-  if (typeof input.province_id === "string") payload.province_id = input.province_id || null
+  if (typeof input.province_id === "string")
+    payload.province_id = input.province_id || null
   if (typeof input.city_id === "string") payload.city_id = input.city_id || null
   if (typeof input.site_coordinates === "string") {
     payload.site_coordinates = input.site_coordinates || null
   }
-  if (typeof input.job_type === "string") payload.job_type = input.job_type || null
+  if (typeof input.job_type === "string")
+    payload.job_type = input.job_type || null
   if (typeof input.estimated_length_or_area === "string") {
-    payload.estimated_length_or_area = parseOptionalNumber(input.estimated_length_or_area)
+    payload.estimated_length_or_area = parseOptionalNumber(
+      input.estimated_length_or_area
+    )
   }
   if (typeof input.measurement_unit === "string") {
     payload.measurement_unit = input.measurement_unit || null
@@ -517,8 +560,10 @@ export async function updateProject(id: string, input: ProjectUpdateInput) {
   if (typeof input.initial_description === "string") {
     payload.initial_description = input.initial_description || null
   }
-  if (typeof input.site_condition === "string") payload.site_condition = input.site_condition || null
-  if (typeof input.vehicle_access === "string") payload.vehicle_access = input.vehicle_access || null
+  if (typeof input.site_condition === "string")
+    payload.site_condition = input.site_condition || null
+  if (typeof input.vehicle_access === "string")
+    payload.vehicle_access = input.vehicle_access || null
   if (typeof input.foundation_preference === "string") {
     payload.foundation_preference = input.foundation_preference || null
   }
@@ -536,7 +581,10 @@ export async function updateProject(id: string, input: ProjectUpdateInput) {
   }
 
   const adminClient = createAdminClient()
-  const { error } = await adminClient.from("projects").update(payload).eq("id", id)
+  const { error } = await adminClient
+    .from("projects")
+    .update(payload)
+    .eq("id", id)
 
   if (error) {
     console.error("Project update failed:", error)
@@ -546,7 +594,10 @@ export async function updateProject(id: string, input: ProjectUpdateInput) {
   return { success: true as const }
 }
 
-export async function updateProjectStatus(id: string, newStatus: ProjectStatusInput) {
+export async function updateProjectStatus(
+  id: string,
+  newStatus: ProjectStatusInput
+) {
   const adminUserId = await getCurrentInternalAdminUserId()
   if (!adminUserId) {
     return { success: false as const, error: "Unauthorized" }
@@ -573,7 +624,10 @@ export async function updateProjectStatus(id: string, newStatus: ProjectStatusIn
 
   if (error) {
     console.error("Project status update failed:", error)
-    return { success: false as const, error: "Gagal memperbarui status project" }
+    return {
+      success: false as const,
+      error: "Gagal memperbarui status project",
+    }
   }
 
   return { success: true as const }
@@ -611,7 +665,10 @@ export async function addProjectAttachments(projectId: string, files: File[]) {
     if (error) {
       console.error("Project attachment upload failed:", error)
       await cleanupUploadedFiles(uploadedPaths)
-      return { success: false as const, error: `Gagal upload file ${file.name}` }
+      return {
+        success: false as const,
+        error: `Gagal upload file ${file.name}`,
+      }
     }
 
     uploadedPaths.push(filePath)
@@ -642,7 +699,10 @@ export async function addProjectAttachments(projectId: string, files: File[]) {
   if (error) {
     console.error("Project attachment metadata update failed:", error)
     await cleanupUploadedFiles(uploadedPaths)
-    return { success: false as const, error: "Gagal menyimpan metadata lampiran" }
+    return {
+      success: false as const,
+      error: "Gagal menyimpan metadata lampiran",
+    }
   }
 
   return {
@@ -651,7 +711,10 @@ export async function addProjectAttachments(projectId: string, files: File[]) {
   }
 }
 
-export async function deleteProjectAttachment(projectId: string, attachmentPath: string) {
+export async function deleteProjectAttachment(
+  projectId: string,
+  attachmentPath: string
+) {
   const adminUserId = await getCurrentInternalAdminUserId()
   if (!adminUserId) {
     return { success: false as const, error: "Unauthorized" }
@@ -659,7 +722,9 @@ export async function deleteProjectAttachment(projectId: string, attachmentPath:
 
   const adminClient = createAdminClient()
   const currentAttachments = await getProjectAttachments(projectId)
-  const target = currentAttachments.find((attachment) => attachment.path === attachmentPath)
+  const target = currentAttachments.find(
+    (attachment) => attachment.path === attachmentPath
+  )
 
   if (!target) {
     return { success: false as const, error: "Lampiran tidak ditemukan" }
@@ -681,7 +746,9 @@ export async function deleteProjectAttachment(projectId: string, attachmentPath:
     .from("projects")
     .update({
       attachments:
-        nextAttachments.length > 0 ? (nextAttachments as unknown as Json) : null,
+        nextAttachments.length > 0
+          ? (nextAttachments as unknown as Json)
+          : null,
     })
     .eq("id", projectId)
 
@@ -694,7 +761,10 @@ export async function deleteProjectAttachment(projectId: string, attachmentPath:
 
   if (error) {
     console.error("Project attachment metadata delete failed:", error)
-    return { success: false as const, error: "Gagal memperbarui metadata lampiran" }
+    return {
+      success: false as const,
+      error: "Gagal memperbarui metadata lampiran",
+    }
   }
 
   return {
@@ -703,7 +773,10 @@ export async function deleteProjectAttachment(projectId: string, attachmentPath:
   }
 }
 
-export async function createProjectMilestone(projectId: string, input: ProjectMilestoneInput) {
+export async function createProjectMilestone(
+  projectId: string,
+  input: ProjectMilestoneInput
+) {
   const adminUserId = await getCurrentInternalAdminUserId()
   if (!adminUserId) {
     return { success: false as const, error: "Unauthorized" }
@@ -721,7 +794,8 @@ export async function createProjectMilestone(projectId: string, input: ProjectMi
     due_date: input.due_date,
     status: input.status,
     created_by: adminUserId,
-    completed_at: input.status === "completed" ? new Date().toISOString() : null,
+    completed_at:
+      input.status === "completed" ? new Date().toISOString() : null,
   }
 
   const adminClient = createAdminClient()
@@ -759,11 +833,13 @@ export async function updateProjectMilestone(
   const payload: TablesUpdate<"project_milestones"> = {}
 
   if (typeof input.title === "string") payload.title = input.title
-  if (typeof input.description === "string") payload.description = input.description || null
+  if (typeof input.description === "string")
+    payload.description = input.description || null
   if (typeof input.due_date === "string") payload.due_date = input.due_date
   if (typeof input.status === "string") {
     payload.status = input.status
-    payload.completed_at = input.status === "completed" ? new Date().toISOString() : null
+    payload.completed_at =
+      input.status === "completed" ? new Date().toISOString() : null
   }
 
   const adminClient = createAdminClient()
@@ -797,7 +873,10 @@ export async function deleteProjectMilestone(milestoneId: string) {
   }
 
   const adminClient = createAdminClient()
-  const { error } = await adminClient.from("project_milestones").delete().eq("id", milestoneId)
+  const { error } = await adminClient
+    .from("project_milestones")
+    .delete()
+    .eq("id", milestoneId)
 
   if (error) {
     console.error("Project milestone delete failed:", error)

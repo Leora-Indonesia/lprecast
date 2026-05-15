@@ -8,7 +8,8 @@ import { listCityOptions, listProvinceOptions } from "@/lib/projects/repository"
 
 export const metadata = {
   title: "Tambah Project | Admin LPrecast",
-  description: "Buat project baru dan simpan lampiran pendukung sebelum create tender",
+  description:
+    "Buat project baru dan simpan lampiran pendukung sebelum create tender",
 }
 
 export default async function AdminProjectCreatePage() {
@@ -31,7 +32,8 @@ export default async function AdminProjectCreatePage() {
         <div>
           <h1 className="text-2xl font-bold">Tambah Project</h1>
           <p className="text-muted-foreground">
-            Simpan data project utama lebih dulu. Tender akan dibuat dari project ini saat siap dipublish ke vendor.
+            Simpan data project utama lebih dulu. Tender akan dibuat dari
+            project ini saat siap dipublish ke vendor.
           </p>
         </div>
       </div>

@@ -92,8 +92,12 @@ export async function POST(
   const { action } = parsed
 
   const draftPayload = draftSchema.safeParse(parsed.draft)
-  const checkedItems = draftPayload.success ? draftPayload.data.checkedItems : {}
-  const redFlagFindings = draftPayload.success ? draftPayload.data.redFlagFindings : {}
+  const checkedItems = draftPayload.success
+    ? draftPayload.data.checkedItems
+    : {}
+  const redFlagFindings = draftPayload.success
+    ? draftPayload.data.redFlagFindings
+    : {}
   const totalScore = computeTotalScore(checkedItems)
   const hasAnyRedFlag = hasRedFlag(redFlagFindings)
   const tier = computeApprovalTier({ totalScore, hasRedFlag: hasAnyRedFlag })
@@ -132,7 +136,13 @@ export async function POST(
     }
 
     const notes = typeof parsed.notes === "string" ? parsed.notes : undefined
-    const result = await approveConditionalVendor(id, adminUserId, notes, totalScore, tier)
+    const result = await approveConditionalVendor(
+      id,
+      adminUserId,
+      notes,
+      totalScore,
+      tier
+    )
     return NextResponse.json(result)
   }
 
@@ -152,7 +162,13 @@ export async function POST(
       notes: null,
     })
 
-    const result = await requestVendorRevision(id, adminUserId, reason, totalScore, tier)
+    const result = await requestVendorRevision(
+      id,
+      adminUserId,
+      reason,
+      totalScore,
+      tier
+    )
     return NextResponse.json(result)
   }
 
@@ -178,10 +194,13 @@ export async function POST(
   if (action === "save_draft") {
     const draft = draftSchema.safeParse(parsed.draft)
     if (!draft.success) {
-      return NextResponse.json({
-        success: false,
-        error: "Invalid draft",
-      }, { status: 400 })
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid draft",
+        },
+        { status: 400 }
+      )
     }
 
     const result = await saveVendorApprovalDraft(id, adminUserId, {
@@ -192,5 +211,8 @@ export async function POST(
     return NextResponse.json(result)
   }
 
-  return NextResponse.json({ success: false, error: "Invalid action" }, { status: 400 })
+  return NextResponse.json(
+    { success: false, error: "Invalid action" },
+    { status: 400 }
+  )
 }

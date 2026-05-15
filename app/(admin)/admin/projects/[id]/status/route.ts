@@ -8,7 +8,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const body = (await request.json().catch(() => null)) as { status?: string } | null
+  const body = (await request.json().catch(() => null)) as {
+    status?: string
+  } | null
   const parsed = projectStatusSchema.safeParse(body?.status ?? "")
 
   if (!parsed.success) {

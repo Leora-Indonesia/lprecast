@@ -70,7 +70,8 @@ export default async function AdminProjectsPage({
             <FolderOpen className="h-6 w-6 text-primary" /> Project
           </h1>
           <p className="text-muted-foreground">
-            Kelola project internal sebelum publish tender, assignment vendor, dan execution lane.
+            Kelola project internal sebelum publish tender, assignment vendor,
+            dan execution lane.
           </p>
         </div>
 
@@ -86,7 +87,12 @@ export default async function AdminProjectsPage({
       <form className="grid gap-3 rounded-xl border p-4 md:grid-cols-[minmax(0,1fr)_220px_auto]">
         <div className="relative">
           <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input name="q" defaultValue={search} placeholder="Cari nama atau lokasi project" className="pl-9" />
+          <Input
+            name="q"
+            defaultValue={search}
+            placeholder="Cari nama atau lokasi project"
+            className="pl-9"
+          />
         </div>
 
         <select
@@ -128,7 +134,9 @@ export default async function AdminProjectsPage({
                 <TableRow key={project.id}>
                   <TableCell className="font-medium">{project.name}</TableCell>
                   <TableCell>{project.location || "-"}</TableCell>
-                  <TableCell>{formatProjectPeriod(project.start_date, project.end_date)}</TableCell>
+                  <TableCell>
+                    {formatProjectPeriod(project.start_date, project.end_date)}
+                  </TableCell>
                   <TableCell>
                     <StatusBadge status={project.status} />
                   </TableCell>
@@ -136,10 +144,14 @@ export default async function AdminProjectsPage({
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/admin/projects/${project.id}`}>Lihat</Link>
+                        <Link href={`/admin/projects/${project.id}`}>
+                          Lihat
+                        </Link>
                       </Button>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/admin/projects/${project.id}/edit`}>Edit</Link>
+                        <Link href={`/admin/projects/${project.id}/edit`}>
+                          Edit
+                        </Link>
                       </Button>
                     </div>
                   </TableCell>

@@ -7,13 +7,18 @@ export const metadata = {
 }
 
 export default async function NewClientPage() {
-  const [provinces, cities] = await Promise.all([listProvinceOptions(), listCityOptions()])
+  const [provinces, cities] = await Promise.all([
+    listProvinceOptions(),
+    listCityOptions(),
+  ])
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Tambah Klien</h1>
-        <p className="text-muted-foreground">Tambah data klien baru ke sistem</p>
+        <p className="text-muted-foreground">
+          Tambah data klien baru ke sistem
+        </p>
       </div>
 
       <div className="max-w-2xl">

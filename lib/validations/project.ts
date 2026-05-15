@@ -119,8 +119,10 @@ export const projectUpdateSchema = z
       })
     }
 
-    const hasBudgetMin = typeof values.budget_min === "string" && values.budget_min.length > 0
-    const hasBudgetMax = typeof values.budget_max === "string" && values.budget_max.length > 0
+    const hasBudgetMin =
+      typeof values.budget_min === "string" && values.budget_min.length > 0
+    const hasBudgetMax =
+      typeof values.budget_max === "string" && values.budget_max.length > 0
 
     if (hasBudgetMin !== hasBudgetMax) {
       ctx.addIssue({

@@ -8,13 +8,19 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
+  const body = (await request.json().catch(() => null)) as Record<
+    string,
+    unknown
+  > | null
   const parsed = projectMilestoneSchema.safeParse(body)
 
   if (!parsed.success) {
     const firstError = parsed.error.issues[0]
     return NextResponse.json(
-      { success: false, error: firstError?.message || "Data milestone tidak valid" },
+      {
+        success: false,
+        error: firstError?.message || "Data milestone tidak valid",
+      },
       { status: 400 }
     )
   }

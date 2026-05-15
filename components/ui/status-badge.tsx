@@ -15,8 +15,7 @@ const statusConfig: Record<string, StatusConfig> = {
   open: {
     label: "Tendering",
     variant: "default",
-    className:
-      "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+    className: "bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
   },
   in_progress: {
     label: "Berjalan",

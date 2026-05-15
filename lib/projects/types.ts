@@ -1,6 +1,9 @@
 import type { Enums } from "@/types/database.types"
 
-import type { ProjectAttachmentMetadata, ProjectFormSection } from "@/lib/validations/project"
+import type {
+  ProjectAttachmentMetadata,
+  ProjectFormSection,
+} from "@/lib/validations/project"
 
 export type ProjectStatus = Enums<"project_status">
 export type MilestoneStatus = Enums<"milestone_status">

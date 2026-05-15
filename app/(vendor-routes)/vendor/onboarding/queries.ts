@@ -198,7 +198,10 @@ async function buildDraftFromVendorData(
       .eq("user_id", userId),
   ])
 
-  const docByType = new Map<string, { file_path: string; document_number: string | null }>()
+  const docByType = new Map<
+    string,
+    { file_path: string; document_number: string | null }
+  >()
   ;(documents ?? []).forEach((d) => {
     if (d?.document_type && d.file_path) {
       docByType.set(d.document_type, {
@@ -233,7 +236,8 @@ async function buildDraftFromVendorData(
   const primaryContact = (contacts ?? []).find((c) => c.sequence === 1)
 
   const companyInfo = {
-    nama_perusahaan: profile?.nama_perusahaan || userData?.nama_perusahaan || "",
+    nama_perusahaan:
+      profile?.nama_perusahaan || userData?.nama_perusahaan || "",
     email: profile?.email_perusahaan || userData?.email || "",
     nama_pic: primaryContact?.nama || userData?.nama_pic || "",
     kontak_pic: primaryContact?.no_hp || userData?.kontak_pic || "",
@@ -304,7 +308,8 @@ async function buildDraftFromVendorData(
         account_holder_name: bankAccount?.account_holder_name || "",
       },
       cost_inclusions: {
-        mobilisasi_demobilisasi: costMap.get("mobilisasi_demobilisasi") || false,
+        mobilisasi_demobilisasi:
+          costMap.get("mobilisasi_demobilisasi") || false,
         penginapan_tukang: costMap.get("penginapan_tukang") || false,
         biaya_pengiriman: costMap.get("biaya_pengiriman") || false,
         biaya_langsir: costMap.get("biaya_langsir") || false,

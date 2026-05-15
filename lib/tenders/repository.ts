@@ -5,7 +5,12 @@ import { createClient } from "@/lib/supabase/server"
 import type { Database, TablesInsert } from "@/types/database.types"
 import type { TenderPublishInput } from "@/lib/validations/tender"
 
-import type { TenderDetail, TenderItem, VendorOpenTender, VendorTenderDetail } from "./types"
+import type {
+  TenderDetail,
+  TenderItem,
+  VendorOpenTender,
+  VendorTenderDetail,
+} from "./types"
 
 async function getCurrentInternalAdminUserId() {
   const supabase = await createClient()
@@ -47,7 +52,10 @@ async function getCurrentVendorUserId() {
   return user.id
 }
 
-function parseOptionalNumber(value: string | null | undefined, fallback: number | null = null) {
+function parseOptionalNumber(
+  value: string | null | undefined,
+  fallback: number | null = null
+) {
   if (!value) return fallback
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : fallback
@@ -59,11 +67,15 @@ function parseOptionalDateTime(value: string | null | undefined) {
   return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString()
 }
 
-function normalizeTenderStatus(status: Database["public"]["Enums"]["tender_status"] | null) {
+function normalizeTenderStatus(
+  status: Database["public"]["Enums"]["tender_status"] | null
+) {
   return status ?? "open"
 }
 
-function isSubmissionDeadlinePassed(submissionDeadlineAt: string | null | undefined) {
+function isSubmissionDeadlinePassed(
+  submissionDeadlineAt: string | null | undefined
+) {
   if (!submissionDeadlineAt) return false
   const deadline = new Date(submissionDeadlineAt)
   if (Number.isNaN(deadline.getTime())) return false
@@ -78,27 +90,32 @@ export async function validateVendorTenderSubmission(tenderId: string) {
   }
 
   const adminClient = createAdminClient()
-  const [{ data: tender, error: tenderError }, { data: existingSubmission, error: submissionError }] =
-    await Promise.all([
-      adminClient
-        .from("tenders")
-        .select("id, project_id, status, submission_deadline_at")
-        .eq("id", tenderId)
-        .maybeSingle(),
-      adminClient
-        .from("tender_submissions")
-        .select("id")
-        .eq("tender_id", tenderId)
-        .eq("vendor_id", vendorUserId)
-        .maybeSingle(),
-    ])
+  const [
+    { data: tender, error: tenderError },
+    { data: existingSubmission, error: submissionError },
+  ] = await Promise.all([
+    adminClient
+      .from("tenders")
+      .select("id, project_id, status, submission_deadline_at")
+      .eq("id", tenderId)
+      .maybeSingle(),
+    adminClient
+      .from("tender_submissions")
+      .select("id")
+      .eq("tender_id", tenderId)
+      .eq("vendor_id", vendorUserId)
+      .maybeSingle(),
+  ])
 
   if (tenderError) {
     return { success: false as const, error: "Gagal membaca tender" }
   }
 
   if (submissionError) {
-    return { success: false as const, error: "Gagal membaca status penawaran vendor" }
+    return {
+      success: false as const,
+      error: "Gagal membaca status penawaran vendor",
+    }
   }
 
   if (!tender) {
@@ -106,15 +123,24 @@ export async function validateVendorTenderSubmission(tenderId: string) {
   }
 
   if (normalizeTenderStatus(tender.status) !== "open") {
-    return { success: false as const, error: "Tender tidak tersedia untuk pengajuan penawaran" }
+    return {
+      success: false as const,
+      error: "Tender tidak tersedia untuk pengajuan penawaran",
+    }
   }
 
   if (isSubmissionDeadlinePassed(tender.submission_deadline_at)) {
-    return { success: false as const, error: "Batas waktu submit tender sudah lewat" }
+    return {
+      success: false as const,
+      error: "Batas waktu submit tender sudah lewat",
+    }
   }
 
   if (existingSubmission) {
-    return { success: false as const, error: "Vendor sudah pernah mengajukan penawaran untuk tender ini" }
+    return {
+      success: false as const,
+      error: "Vendor sudah pernah mengajukan penawaran untuk tender ini",
+    }
   }
 
   return {
@@ -141,7 +167,10 @@ export async function getActiveTenderForProject(projectId: string) {
   return data
 }
 
-export async function publishTenderFromProject(projectId: string, input: TenderPublishInput) {
+export async function publishTenderFromProject(
+  projectId: string,
+  input: TenderPublishInput
+) {
   const adminUserId = await getCurrentInternalAdminUserId()
   if (!adminUserId) {
     return { success: false as const, error: "Unauthorized" }
@@ -163,12 +192,18 @@ export async function publishTenderFromProject(projectId: string, input: TenderP
   }
 
   if (project.status !== "draft") {
-    return { success: false as const, error: "Hanya project draft yang bisa diajukan ke tender" }
+    return {
+      success: false as const,
+      error: "Hanya project draft yang bisa diajukan ke tender",
+    }
   }
 
   const existingTender = await getActiveTenderForProject(projectId)
   if (existingTender) {
-    return { success: false as const, error: "Project sudah punya tender aktif" }
+    return {
+      success: false as const,
+      error: "Project sudah punya tender aktif",
+    }
   }
 
   const tenderPayload: TablesInsert<"tenders"> = {
@@ -193,18 +228,25 @@ export async function publishTenderFromProject(projectId: string, input: TenderP
     return { success: false as const, error: "Gagal membuat tender" }
   }
 
-  const itemPayloads: TablesInsert<"tender_items">[] = input.items.map((item) => ({
-    tender_id: tender.id,
-    name: item.name,
-    quantity: Number(item.quantity),
-    unit: item.unit,
-    description: item.description || null,
-  }))
+  const itemPayloads: TablesInsert<"tender_items">[] = input.items.map(
+    (item) => ({
+      tender_id: tender.id,
+      name: item.name,
+      quantity: Number(item.quantity),
+      unit: item.unit,
+      description: item.description || null,
+    })
+  )
 
-  const { error: itemsError } = await adminClient.from("tender_items").insert(itemPayloads)
+  const { error: itemsError } = await adminClient
+    .from("tender_items")
+    .insert(itemPayloads)
   if (itemsError) {
     console.error("Tender items insert failed:", itemsError)
-    return { success: false as const, error: "Tender dibuat, tapi item pekerjaan gagal disimpan" }
+    return {
+      success: false as const,
+      error: "Tender dibuat, tapi item pekerjaan gagal disimpan",
+    }
   }
 
   const { error: statusError } = await adminClient
@@ -214,23 +256,30 @@ export async function publishTenderFromProject(projectId: string, input: TenderP
 
   if (statusError) {
     console.error("Project tender status update failed:", statusError)
-    return { success: false as const, error: "Tender dibuat, tapi status project gagal diubah" }
+    return {
+      success: false as const,
+      error: "Tender dibuat, tapi status project gagal diubah",
+    }
   }
 
   return { success: true as const, tenderId: tender.id }
 }
 
-export async function getTenderDetail(id: string): Promise<TenderDetail | null> {
+export async function getTenderDetail(
+  id: string
+): Promise<TenderDetail | null> {
   const adminClient = createAdminClient()
-  const [{ data: tender, error: tenderError }, { data: items, error: itemsError }] =
-    await Promise.all([
-      adminClient.from("tenders").select("*").eq("id", id).maybeSingle(),
-      adminClient
-        .from("tender_items")
-        .select("id, tender_id, name, quantity, unit, description, created_at")
-        .eq("tender_id", id)
-        .order("created_at", { ascending: true }),
-    ])
+  const [
+    { data: tender, error: tenderError },
+    { data: items, error: itemsError },
+  ] = await Promise.all([
+    adminClient.from("tenders").select("*").eq("id", id).maybeSingle(),
+    adminClient
+      .from("tender_items")
+      .select("id, tender_id, name, quantity, unit, description, created_at")
+      .eq("tender_id", id)
+      .order("created_at", { ascending: true }),
+  ])
 
   if (tenderError) {
     throw new Error("Gagal membaca detail tender")
@@ -268,17 +317,19 @@ export async function listVendorOpenTenders(): Promise<VendorOpenTender[]> {
 
   if (!user) return []
 
-  const [{ data: tenders, error: tenderError }, { data: submissions, error: submissionError }] =
-    await Promise.all([
-      supabase
-        .from("vendor_open_tenders")
-        .select("*")
-        .order("tender_created_at", { ascending: false }),
-      supabase
-        .from("tender_submissions")
-        .select("tender_id, status")
-        .eq("vendor_id", user.id),
-    ])
+  const [
+    { data: tenders, error: tenderError },
+    { data: submissions, error: submissionError },
+  ] = await Promise.all([
+    supabase
+      .from("vendor_open_tenders")
+      .select("*")
+      .order("tender_created_at", { ascending: false }),
+    supabase
+      .from("tender_submissions")
+      .select("tender_id, status")
+      .eq("vendor_id", user.id),
+  ])
 
   if (tenderError) {
     throw new Error("Gagal memuat daftar tender")
@@ -289,7 +340,10 @@ export async function listVendorOpenTenders(): Promise<VendorOpenTender[]> {
   }
 
   const submissionByTender = new Map(
-    (submissions ?? []).map((submission) => [submission.tender_id, submission.status])
+    (submissions ?? []).map((submission) => [
+      submission.tender_id,
+      submission.status,
+    ])
   )
 
   return ((tenders ?? []) as VendorOpenTender[]).map((tender) => ({
@@ -299,7 +353,9 @@ export async function listVendorOpenTenders(): Promise<VendorOpenTender[]> {
   }))
 }
 
-export async function getVendorOpenTenderDetail(id: string): Promise<VendorTenderDetail | null> {
+export async function getVendorOpenTenderDetail(
+  id: string
+): Promise<VendorTenderDetail | null> {
   const supabase = await createClient()
   const {
     data: { user },
@@ -307,25 +363,30 @@ export async function getVendorOpenTenderDetail(id: string): Promise<VendorTende
 
   if (!user) return null
 
-  const [tenderResult, itemsResult, submissionResult, tenderMetaResult] = await Promise.all([
-    supabase.from("vendor_open_tenders").select("*").eq("tender_id", id).maybeSingle(),
-    supabase
-      .from("tender_items")
-      .select("id, tender_id, name, quantity, unit, description, created_at")
-      .eq("tender_id", id)
-      .order("created_at", { ascending: true }),
-    supabase
-      .from("tender_submissions")
-      .select("status")
-      .eq("tender_id", id)
-      .eq("vendor_id", user.id)
-      .maybeSingle(),
-    supabase
-      .from("tenders")
-      .select("status, submission_deadline_at")
-      .eq("id", id)
-      .maybeSingle(),
-  ])
+  const [tenderResult, itemsResult, submissionResult, tenderMetaResult] =
+    await Promise.all([
+      supabase
+        .from("vendor_open_tenders")
+        .select("*")
+        .eq("tender_id", id)
+        .maybeSingle(),
+      supabase
+        .from("tender_items")
+        .select("id, tender_id, name, quantity, unit, description, created_at")
+        .eq("tender_id", id)
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("tender_submissions")
+        .select("status")
+        .eq("tender_id", id)
+        .eq("vendor_id", user.id)
+        .maybeSingle(),
+      supabase
+        .from("tenders")
+        .select("status, submission_deadline_at")
+        .eq("id", id)
+        .maybeSingle(),
+    ])
 
   if (tenderResult.error) {
     throw new Error("Gagal memuat detail tender")
@@ -347,8 +408,10 @@ export async function getVendorOpenTenderDetail(id: string): Promise<VendorTende
 
   return {
     ...(tenderResult.data as VendorOpenTender),
-    tender_status: tenderMetaResult.data?.status ?? tenderResult.data.tender_status,
-    submission_deadline_at: tenderMetaResult.data?.submission_deadline_at ?? null,
+    tender_status:
+      tenderMetaResult.data?.status ?? tenderResult.data.tender_status,
+    submission_deadline_at:
+      tenderMetaResult.data?.submission_deadline_at ?? null,
     has_submitted: Boolean(submissionResult.data),
     submission_status: submissionResult.data?.status ?? null,
     items: (itemsResult.data ?? []) as TenderItem[],

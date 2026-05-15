@@ -41,7 +41,9 @@ export const tenderPublishSchema = z.object({
   ),
   submission_deadline_at: optionalDateTimeStringSchema,
   revision_deadline_hours: optionalNumberStringSchema,
-  items: z.array(tenderItemInputSchema).min(1, "Minimal satu item pekerjaan wajib ada"),
+  items: z
+    .array(tenderItemInputSchema)
+    .min(1, "Minimal satu item pekerjaan wajib ada"),
 })
 
 export type TenderPublishInput = z.infer<typeof tenderPublishSchema>

@@ -1,6 +1,12 @@
 "use client"
 
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -37,27 +43,39 @@ export function VendorApprovalNotesSheet({
     closeNotes()
   }
 
-  const requiresHistory = registrationStatus === "revision_requested" || registrationStatus === "rejected"
+  const requiresHistory =
+    registrationStatus === "revision_requested" ||
+    registrationStatus === "rejected"
 
   return (
-    <Sheet open={isNotesOpen} onOpenChange={(open) => (open ? openNotes() : closeNotes())}>
+    <Sheet
+      open={isNotesOpen}
+      onOpenChange={(open) => (open ? openNotes() : closeNotes())}
+    >
       <SheetContent className="w-full sm:max-w-lg">
         <SheetHeader>
           <SheetTitle>Catatan Review</SheetTitle>
           <SheetDescription>
-            Catatan dipakai untuk revisi dan penolakan. Bisa simpan sebagai draft atau langsung dipakai saat approve.
+            Catatan dipakai untuk revisi dan penolakan. Bisa simpan sebagai
+            draft atau langsung dipakai saat approve.
           </SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-col gap-4 px-4 pb-4">
           <div className="flex flex-wrap gap-2 text-xs">
-            <Badge variant="secondary">{formatDecisionLabel(registrationStatus)}</Badge>
-            {requiresHistory && <Badge variant="destructive">Riwayat penting</Badge>}
+            <Badge variant="secondary">
+              {formatDecisionLabel(registrationStatus)}
+            </Badge>
+            {requiresHistory && (
+              <Badge variant="destructive">Riwayat penting</Badge>
+            )}
           </div>
 
           {requiresHistory && existingNote ? (
             <div className="rounded-md border bg-muted/40 p-3 text-sm">
-              <div className="mb-1 text-xs text-muted-foreground">Catatan terakhir</div>
+              <div className="mb-1 text-xs text-muted-foreground">
+                Catatan terakhir
+              </div>
               <div className="whitespace-pre-wrap">{existingNote}</div>
             </div>
           ) : null}
@@ -74,7 +92,11 @@ export function VendorApprovalNotesSheet({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={saveAndClose} disabled={isSavingDraft}>
+            <Button
+              variant="outline"
+              onClick={saveAndClose}
+              disabled={isSavingDraft}
+            >
               Simpan Draft
             </Button>
             <Button variant="ghost" onClick={closeNotes}>

@@ -7,7 +7,7 @@ import { test, expect } from "@playwright/test"
  * - UI rendering
  * - Client-side validation (react-hook-form + zod)
  * - Password visibility toggle
- * 
+ *
  * Server action tests (redirect, toast, error) require full E2E with real Supabase -
  * Next.js server actions can't be mocked via page.route().
  */
@@ -43,11 +43,21 @@ test.describe("Vendor Signup Page", () => {
       await page.waitForTimeout(500)
 
       // Use specific id selectors to avoid strict mode issues
-      await expect(page.locator("#nama_perusahaan-form-item-message")).toContainText("wajib diisi")
-      await expect(page.locator("#nama_pic-form-item-message")).toContainText("wajib diisi")
-      await expect(page.locator("#email-form-item-message")).toContainText("wajib diisi")
-      await expect(page.locator("#password-form-item-message")).toContainText("wajib diisi")
-      await expect(page.locator("#confirmPassword-form-item-message")).toContainText("wajib diisi")
+      await expect(
+        page.locator("#nama_perusahaan-form-item-message")
+      ).toContainText("wajib diisi")
+      await expect(page.locator("#nama_pic-form-item-message")).toContainText(
+        "wajib diisi"
+      )
+      await expect(page.locator("#email-form-item-message")).toContainText(
+        "wajib diisi"
+      )
+      await expect(page.locator("#password-form-item-message")).toContainText(
+        "wajib diisi"
+      )
+      await expect(
+        page.locator("#confirmPassword-form-item-message")
+      ).toContainText("wajib diisi")
     })
 
     test("should show error for invalid email format", async ({ page }) => {
@@ -73,7 +83,9 @@ test.describe("Vendor Signup Page", () => {
       await page.click('button[type="submit"]')
       await page.waitForTimeout(500)
 
-      await expect(page.locator("text=Password minimal 8 karakter")).toBeVisible()
+      await expect(
+        page.locator("text=Password minimal 8 karakter")
+      ).toBeVisible()
     })
 
     test("should show error for password mismatch", async ({ page }) => {
@@ -98,7 +110,11 @@ test.describe("Vendor Signup Page", () => {
       await expect(passwordInput).toHaveAttribute("type", "password")
 
       // Click toggle button - use the button adjacent to password input
-      await page.locator('input[name="password"]').locator("..").locator("button").click()
+      await page
+        .locator('input[name="password"]')
+        .locator("..")
+        .locator("button")
+        .click()
       await page.waitForTimeout(300)
 
       await expect(passwordInput).toHaveAttribute("type", "text")
@@ -106,30 +122,35 @@ test.describe("Vendor Signup Page", () => {
 
     // Note: Confirm password toggle has different DOM - parent div structure differs
     // Verified manually that button exists and toggles - test flaky due to locator
-    test.skip("should toggle confirm password visibility", async ({ page: _page }) => {
-    })
+    test.skip("should toggle confirm password visibility", async ({
+      page: _page,
+    }) => {})
   })
 
   /**
    * Server action tests (redirect, toast, error) skipped.
    * Reason: Next.js server actions use internal routing - can't mock via page.route().
-   * 
+   *
    * For full coverage, options:
    * 1. Full E2E with Supabase test project
    * 2. Integration test in __tests__/ with mocked Supabase
    * 3. API route wrapper that exposes action for mocking
    */
   test.describe("Server Action (skipped - requires Supabase)", () => {
-    test.skip("should redirect on successful signup", async ({ page: _page }) => {
-    })
+    test.skip("should redirect on successful signup", async ({
+      page: _page,
+    }) => {})
 
-    test.skip("should show toast for duplicate email", async ({ page: _page }) => {
-    })
+    test.skip("should show toast for duplicate email", async ({
+      page: _page,
+    }) => {})
 
-    test.skip("should show toast for rate limit error", async ({ page: _page }) => {
-    })
+    test.skip("should show toast for rate limit error", async ({
+      page: _page,
+    }) => {})
 
-    test.skip("should show loading during submission", async ({ page: _page }) => {
-    })
+    test.skip("should show loading during submission", async ({
+      page: _page,
+    }) => {})
   })
 })

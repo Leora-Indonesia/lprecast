@@ -43,7 +43,8 @@ export async function PUT(
     province_id: formData.get("province_id") as string,
     city_id: formData.get("city_id") as string,
     notes: (formData.get("notes") as string) || null,
-    verification_status: (formData.get("verification_status") as string) || null,
+    verification_status:
+      (formData.get("verification_status") as string) || null,
     verification_notes: (formData.get("verification_notes") as string) || null,
   }
 

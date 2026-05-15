@@ -8,7 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Save } from "lucide-react"
 import { toast } from "sonner"
 
-import type { ClientAccountSummary, ClientProfileView } from "@/lib/client/types"
+import type {
+  ClientAccountSummary,
+  ClientProfileView,
+} from "@/lib/client/types"
 import { supabase } from "@/lib/supabase/client"
 import {
   clientProjectIntakeSchema,
@@ -109,19 +112,26 @@ export function ClientProjectIntakeForm({
       body: JSON.stringify(values),
     })
 
-    const payload = (await response.json().catch(() => null)) as
-      | { success?: boolean; error?: string; projectId?: string }
-      | null
+    const payload = (await response.json().catch(() => null)) as {
+      success?: boolean
+      error?: string
+      projectId?: string
+    } | null
 
     if (!response.ok || !payload?.success) {
       toast.error("Project client gagal disimpan", {
-        description: payload?.error || "Terjadi kesalahan saat menyimpan project",
+        description:
+          payload?.error || "Terjadi kesalahan saat menyimpan project",
       })
       return
     }
 
     toast.success("Project berhasil diajukan")
-    router.push(payload.projectId ? `/client/projects/${payload.projectId}` : "/client/projects")
+    router.push(
+      payload.projectId
+        ? `/client/projects/${payload.projectId}`
+        : "/client/projects"
+    )
     router.refresh()
   }
 
@@ -138,7 +148,9 @@ export function ClientProjectIntakeForm({
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Perusahaan</p>
-            <p className="font-medium">{profile?.company_name_legal || account.nama_perusahaan || "-"}</p>
+            <p className="font-medium">
+              {profile?.company_name_legal || account.nama_perusahaan || "-"}
+            </p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Email</p>
@@ -183,7 +195,11 @@ export function ClientProjectIntakeForm({
                   <FormItem>
                     <FormLabel>Alamat Lengkap Proyek</FormLabel>
                     <FormControl>
-                      <Textarea {...field} aria-invalid={fieldState.invalid} className="min-h-28" />
+                      <Textarea
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        className="min-h-28"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -261,9 +277,15 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Koordinat Lokasi</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="Opsional: -6.2, 106.8" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Opsional: -6.2, 106.8"
+                        />
                       </FormControl>
-                      <FormDescription>Boleh dikosongkan jika belum ada pin lokasi.</FormDescription>
+                      <FormDescription>
+                        Boleh dikosongkan jika belum ada pin lokasi.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -278,7 +300,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Estimasi Panjang / Luas</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} inputMode="decimal" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          inputMode="decimal"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -291,7 +317,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Satuan</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="m / m2 / unit" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="m / m2 / unit"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -304,7 +334,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Target Tanggal Selesai</FormLabel>
                       <FormControl>
-                        <Input {...field} type="date" aria-invalid={fieldState.invalid} />
+                        <Input
+                          {...field}
+                          type="date"
+                          aria-invalid={fieldState.invalid}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -320,7 +354,12 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Budget Minimum</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} inputMode="numeric" placeholder="Opsional: 200000000" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          inputMode="numeric"
+                          placeholder="Opsional: 200000000"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -333,7 +372,12 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Budget Maksimum</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} inputMode="numeric" placeholder="Opsional: 300000000" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          inputMode="numeric"
+                          placeholder="Opsional: 300000000"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -346,7 +390,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Estimasi Tinggi</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="Opsional: 2.4 m" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Opsional: 2.4 m"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -381,7 +429,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Kondisi Lokasi</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="Tanah rata / miring / rawa" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Tanah rata / miring / rawa"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -394,7 +446,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Akses Kendaraan / Alat</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="Akses truk besar / terbatas" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Akses truk besar / terbatas"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -410,7 +466,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Preferensi Pondasi</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="Opsional: setapak / lajur" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Opsional: setapak / lajur"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -423,7 +483,11 @@ export function ClientProjectIntakeForm({
                     <FormItem>
                       <FormLabel>Kebutuhan Khusus</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="Opsional: motif, schedule khusus, dll" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Opsional: motif, schedule khusus, dll"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -438,7 +502,11 @@ export function ClientProjectIntakeForm({
               <Link href="/client/projects">Batal</Link>
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
+              {form.formState.isSubmitting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Save />
+              )}
               Simpan Project
             </Button>
           </div>

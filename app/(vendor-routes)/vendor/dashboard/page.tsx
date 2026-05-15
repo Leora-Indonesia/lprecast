@@ -181,7 +181,9 @@ export default async function VendorDashboard() {
   const spkIds = activeSPKs?.map((spk) => spk.id) || []
   const { data: latestProgress } = await supabase
     .from("vendor_progress")
-    .select("id, vendor_spk_id, progress_percent, status, tanggal, catatan, rejection_notes")
+    .select(
+      "id, vendor_spk_id, progress_percent, status, tanggal, catatan, rejection_notes"
+    )
     .in("vendor_spk_id", spkIds)
     .order("tanggal", { ascending: false })
 
@@ -191,7 +193,8 @@ export default async function VendorDashboard() {
 
   const registrationStatus = vendorProfile?.registration_status ?? null
   const accountStatus = vendorProfile?.status ?? null
-  const isVendorActive = accountStatus === "active" && registrationStatus === "approved"
+  const isVendorActive =
+    accountStatus === "active" && registrationStatus === "approved"
 
   const completionFromVendorData = calculateVendorProfileCompleteness({
     profile: vendorProfile
@@ -209,8 +212,10 @@ export default async function VendorDashboard() {
   })
 
   const completionFromDraft = calculateOnboardingCompleteness(
-    (onboardingDraft?.draft_data as Partial<OnboardingDraftData> | null | undefined) ??
-      undefined
+    (onboardingDraft?.draft_data as
+      | Partial<OnboardingDraftData>
+      | null
+      | undefined) ?? undefined
   )
   const profileCompletion = Math.max(
     completionFromVendorData,
@@ -220,7 +225,7 @@ export default async function VendorDashboard() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-bold">Ringkasan Vendor</h1>
           <p className="text-sm text-muted-foreground">
@@ -330,9 +335,12 @@ export default async function VendorDashboard() {
             <Card>
               <CardHeader className="py-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-base">
                     Perlu Aksi
-                    <Badge variant="default" className="bg-amber-100 text-amber-700">
+                    <Badge
+                      variant="default"
+                      className="bg-amber-100 text-amber-700"
+                    >
                       {actionItems.length}
                     </Badge>
                   </CardTitle>
@@ -377,8 +385,7 @@ export default async function VendorDashboard() {
                 <CardTitle className="text-base">Proyek Aktif</CardTitle>
                 <Button variant="ghost" size="sm" asChild>
                   <Link href="/vendor/projects">
-                    Semua{" "}
-                    <ArrowRight className="ml-1 h-3 w-3" />
+                    Semua <ArrowRight className="ml-1 h-3 w-3" />
                   </Link>
                 </Button>
               </div>
@@ -389,80 +396,92 @@ export default async function VendorDashboard() {
                   <table className="w-full">
                     <thead className="border-b text-xs text-muted-foreground">
                       <tr>
-                        <th className="text-left py-2 pr-4 font-medium">Proyek</th>
-                        <th className="text-left py-2 pr-4 font-medium">Pekerjaan</th>
-                        <th className="text-left py-2 pr-4 font-medium">
+                        <th className="py-2 pr-4 text-left font-medium">
+                          Proyek
+                        </th>
+                        <th className="py-2 pr-4 text-left font-medium">
+                          Pekerjaan
+                        </th>
+                        <th className="py-2 pr-4 text-left font-medium">
                           Progress
                         </th>
-                        <th className="text-left py-2 pr-4 font-medium">Status</th>
-                        <th className="text-right py-2 font-medium"></th>
+                        <th className="py-2 pr-4 text-left font-medium">
+                          Status
+                        </th>
+                        <th className="py-2 text-right font-medium"></th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {vendorProjects.map((spk: typeof activeSPKs extends (infer T)[] | null ? T : never) => {
-                        const spkProgress = latestProgress?.filter(
-                          (p) => p.vendor_spk_id === spk.id
-                        )[0]
-                        return (
-                          <tr key={spk.id} className="group">
-                            <td className="py-2 pr-4">
-                              <p className="text-sm font-medium">
-                                Proyek #{spk.project_id?.slice(0, 8)}
-                              </p>
-                            </td>
-                            <td className="py-2 pr-4">
-                              <p className="text-sm">{spk.pekerjaan}</p>
-                            </td>
-                            <td className="py-2 pr-4">
-                              <div className="flex items-center gap-2">
-                                <div className="w-20 h-1.5 overflow-hidden rounded-full bg-muted">
-                                  <div
-                                    className="h-full rounded-full bg-green-600"
-                                    style={{
-                                      width: `${spkProgress?.progress_percent || 0}%`,
-                                    }}
-                                  />
+                      {vendorProjects.map(
+                        (
+                          spk: typeof activeSPKs extends (infer T)[] | null
+                            ? T
+                            : never
+                        ) => {
+                          const spkProgress = latestProgress?.filter(
+                            (p) => p.vendor_spk_id === spk.id
+                          )[0]
+                          return (
+                            <tr key={spk.id} className="group">
+                              <td className="py-2 pr-4">
+                                <p className="text-sm font-medium">
+                                  Proyek #{spk.project_id?.slice(0, 8)}
+                                </p>
+                              </td>
+                              <td className="py-2 pr-4">
+                                <p className="text-sm">{spk.pekerjaan}</p>
+                              </td>
+                              <td className="py-2 pr-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+                                    <div
+                                      className="h-full rounded-full bg-green-600"
+                                      style={{
+                                        width: `${spkProgress?.progress_percent || 0}%`,
+                                      }}
+                                    />
+                                  </div>
+                                  <span className="text-xs">
+                                    {spkProgress?.progress_percent || 0}%
+                                  </span>
                                 </div>
-                                <span className="text-xs">
-                                  {spkProgress?.progress_percent || 0}%
-                                </span>
-                              </div>
-                            </td>
-                            <td className="py-2 pr-4">
-                              <Badge
-                                variant={
-                                  spkProgress?.status === "rejected"
-                                    ? "destructive"
-                                    : spkProgress?.status === "approved"
-                                      ? "default"
-                                      : "secondary"
-                                }
-                              >
-                                {spkProgress?.status === "approved"
-                                  ? "Disetujui"
-                                  : spkProgress?.status === "rejected"
-                                    ? "Ditolak"
-                                    : spkProgress?.status === "submitted"
-                                      ? "Menunggu Review"
-                                      : "Belum Upload"}
-                              </Badge>
-                            </td>
-                            <td className="py-2 text-right">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                asChild
-                                className="opacity-0 group-hover:opacity-100"
-                              >
-                                <Link href={`/vendor/projects/${spk.id}`}>
-                                  Detail{" "}
-                                  <ExternalLink className="ml-1 h-3 w-3" />
-                                </Link>
-                              </Button>
-                            </td>
-                          </tr>
-                        )
-                      })}
+                              </td>
+                              <td className="py-2 pr-4">
+                                <Badge
+                                  variant={
+                                    spkProgress?.status === "rejected"
+                                      ? "destructive"
+                                      : spkProgress?.status === "approved"
+                                        ? "default"
+                                        : "secondary"
+                                  }
+                                >
+                                  {spkProgress?.status === "approved"
+                                    ? "Disetujui"
+                                    : spkProgress?.status === "rejected"
+                                      ? "Ditolak"
+                                      : spkProgress?.status === "submitted"
+                                        ? "Menunggu Review"
+                                        : "Belum Upload"}
+                                </Badge>
+                              </td>
+                              <td className="py-2 text-right">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  asChild
+                                  className="opacity-0 group-hover:opacity-100"
+                                >
+                                  <Link href={`/vendor/projects/${spk.id}`}>
+                                    Detail{" "}
+                                    <ExternalLink className="ml-1 h-3 w-3" />
+                                  </Link>
+                                </Button>
+                              </td>
+                            </tr>
+                          )
+                        }
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -486,7 +505,7 @@ export default async function VendorDashboard() {
         <Card>
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <ClipboardList className="h-4 w-4" />
                 Tender
               </CardTitle>
@@ -520,7 +539,7 @@ export default async function VendorDashboard() {
         <Card>
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <ArrowRight className="h-4 w-4" />
                 Penawaran Terbaru
               </CardTitle>
@@ -539,14 +558,14 @@ export default async function VendorDashboard() {
                     <p className="text-sm font-medium">
                       {submission.tenders?.[0]?.title || "Tender"}
                     </p>
-                    <p className="text-xs text-muted-foreground line-clamp-1">
+                    <p className="line-clamp-1 text-xs text-muted-foreground">
                       Status: {submission.status || "-"}
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground py-4 text-center">
+              <p className="py-4 text-center text-sm text-muted-foreground">
                 Belum ada penawaran terbaru
               </p>
             )}

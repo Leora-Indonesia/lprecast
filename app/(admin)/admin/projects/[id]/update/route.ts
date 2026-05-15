@@ -23,7 +23,10 @@ export async function PATCH(
   if (!parsed.success) {
     const firstError = parsed.error.issues[0]
     return NextResponse.json(
-      { success: false, error: firstError?.message || "Data project tidak valid" },
+      {
+        success: false,
+        error: firstError?.message || "Data project tidak valid",
+      },
       { status: 400 }
     )
   }

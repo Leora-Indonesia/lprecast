@@ -44,7 +44,10 @@ function formatProcessLabel(status: string) {
   return status
 }
 
-function getDecisionMeta(status: string, recommendation: "APPROVED" | "CONDITIONAL" | "REJECT") {
+function getDecisionMeta(
+  status: string,
+  recommendation: "APPROVED" | "CONDITIONAL" | "REJECT"
+) {
   if (status === "approved") {
     return {
       label: "Disetujui",
@@ -190,19 +193,31 @@ export function VendorApprovalHeaderCards({
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4 md:border-r md:pr-6">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                <decisionMeta.icon className={`h-5 w-5 ${decisionMeta.className}`} />
+              <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                <decisionMeta.icon
+                  className={`h-5 w-5 ${decisionMeta.className}`}
+                />
                 Status
               </div>
-              <div className="text-xl font-bold leading-tight">{decisionMeta.label}</div>
-              <div className="text-sm text-muted-foreground">Status proses: {formatProcessLabel(registrationStatus)}</div>
-              <div className="text-sm text-muted-foreground">Status akun: {accountStatusLabel}</div>
+              <div className="text-xl leading-tight font-bold">
+                {decisionMeta.label}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Status proses: {formatProcessLabel(registrationStatus)}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Status akun: {accountStatusLabel}
+              </div>
             </div>
 
             <div className="border-t pt-4">
               <div className="mb-3 flex items-center justify-between">
-                <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Legal minimum</div>
-                <div className="text-xs text-muted-foreground">{legalDone}/5 lengkap</div>
+                <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  Legal minimum
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {legalDone}/5 lengkap
+                </div>
               </div>
               <div className="space-y-2">
                 {requiredLegalDocs.map((doc) => {
@@ -210,7 +225,10 @@ export function VendorApprovalHeaderCards({
                   const Icon = missing ? X : Check
 
                   return (
-                    <div key={doc.key} className="flex items-center gap-2 text-sm">
+                    <div
+                      key={doc.key}
+                      className="flex items-center gap-2 text-sm"
+                    >
                       <Icon
                         className={
                           missing
@@ -218,10 +236,22 @@ export function VendorApprovalHeaderCards({
                             : "h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300"
                         }
                       />
-                      <span className={missing ? "text-muted-foreground line-through" : "text-foreground"}>
+                      <span
+                        className={
+                          missing
+                            ? "text-muted-foreground line-through"
+                            : "text-foreground"
+                        }
+                      >
                         {doc.label}
                       </span>
-                      <span className={missing ? "text-destructive" : "text-emerald-700 dark:text-emerald-300"}>
+                      <span
+                        className={
+                          missing
+                            ? "text-destructive"
+                            : "text-emerald-700 dark:text-emerald-300"
+                        }
+                      >
                         {missing ? "Kurang" : "Ada"}
                       </span>
                     </div>
@@ -233,12 +263,16 @@ export function VendorApprovalHeaderCards({
 
           <div className="space-y-4 md:pl-6">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 <scoreMeta.icon className={`h-5 w-5 ${scoreMeta.className}`} />
                 Skor
               </div>
-              <div className="text-xl font-bold leading-tight">{totalScore}/100</div>
-              <div className={`text-sm font-medium ${scoreMeta.className}`}>{scoreMeta.label}</div>
+              <div className="text-xl leading-tight font-bold">
+                {totalScore}/100
+              </div>
+              <div className={`text-sm font-medium ${scoreMeta.className}`}>
+                {scoreMeta.label}
+              </div>
               <div className="text-sm text-muted-foreground">
                 {scoreToApproved === 0
                   ? "Sudah memenuhi ambang Approved."
@@ -252,20 +286,22 @@ export function VendorApprovalHeaderCards({
               <Progress value={totalScore} className="h-2" />
               <div className="space-y-1 text-xs text-muted-foreground">
                 <div>Red flag: Auto Reject.</div>
-                <div>Ambang skor: ≥85 Approved • 70–84 Bersyarat • &lt;70 Reject.</div>
+                <div>
+                  Ambang skor: ≥85 Approved • 70–84 Bersyarat • &lt;70 Reject.
+                </div>
               </div>
             </div>
 
             <div className="border-t pt-4">
-              <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <div className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 <SquareCheck className="h-4 w-4 text-muted-foreground" />
                 Checklist
               </div>
               <div className="text-sm text-muted-foreground">
-                {checklistCheckedCount}/{checklistTotalCount} selesai • sisa {checklistRemainingItems} item
+                {checklistCheckedCount}/{checklistTotalCount} selesai • sisa{" "}
+                {checklistRemainingItems} item
               </div>
             </div>
-
           </div>
         </div>
 
@@ -273,7 +309,9 @@ export function VendorApprovalHeaderCards({
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ringkasan Data Vendor</div>
+            <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              Ringkasan Data Vendor
+            </div>
             <div className="mt-2 space-y-1.5 text-sm leading-none">
               <div className="flex items-baseline gap-1">
                 <span>Dokumen upload</span>
@@ -289,13 +327,19 @@ export function VendorApprovalHeaderCards({
               </div>
               <div className="flex items-baseline gap-1">
                 <span>Rekening bank</span>
-                <span className="text-muted-foreground">: {bankAccountCount}</span>
+                <span className="text-muted-foreground">
+                  : {bankAccountCount}
+                </span>
               </div>
             </div>
           </div>
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status Draft</div>
-            <div className="mt-1 text-sm font-medium">{lastSavedAt ? "Tersimpan" : "Belum"}</div>
+            <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              Status Draft
+            </div>
+            <div className="mt-1 text-sm font-medium">
+              {lastSavedAt ? "Tersimpan" : "Belum"}
+            </div>
             <div className="text-xs text-muted-foreground">
               {lastSavedAt
                 ? `${formatSavedAt(lastSavedAt)}${lastSavedBy ? ` • ${lastSavedBy}` : ""}`
@@ -303,9 +347,13 @@ export function VendorApprovalHeaderCards({
             </div>
           </div>
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Proses Review</div>
+            <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+              Proses Review
+            </div>
             <div className="mt-1 text-sm font-medium">{reviewTrail}</div>
-            <div className="text-xs text-muted-foreground">Keputusan: {decisionMeta.label}</div>
+            <div className="text-xs text-muted-foreground">
+              Keputusan: {decisionMeta.label}
+            </div>
           </div>
         </div>
       </CardContent>

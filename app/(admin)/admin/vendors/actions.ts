@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { Json } from "@/types/database.types"
-import { computeApprovalTier, computeTotalScore, hasRedFlag } from "@/lib/vendor-approval"
+import {
+  computeApprovalTier,
+  computeTotalScore,
+  hasRedFlag,
+} from "@/lib/vendor-approval"
 
 type VendorApprovalDraftRow = {
   vendor_id: string
@@ -35,9 +39,10 @@ function stableStringify(value: unknown): string {
 }
 
 function isDraftChanged(
-  existing:
-    | Pick<VendorApprovalDraftRow, "checked_items" | "red_flags" | "notes" | "score" | "tier">
-    | null,
+  existing: Pick<
+    VendorApprovalDraftRow,
+    "checked_items" | "red_flags" | "notes" | "score" | "tier"
+  > | null,
   next: VendorApprovalDraftPayload
 ) {
   const nextScore = computeTotalScore(next.checkedItems ?? {})
@@ -115,7 +120,9 @@ export async function saveVendorApprovalDraft(
 
   const { data: existing, error: existingError } = await supabase
     .from("vendor_approval_drafts")
-    .select("checked_items, red_flags, notes, score, tier, updated_at, updated_by")
+    .select(
+      "checked_items, red_flags, notes, score, tier, updated_at, updated_by"
+    )
     .eq("vendor_id", vendorId)
     .maybeSingle()
 
@@ -323,17 +330,20 @@ async function createVendorReviewNotification(
     conditional: {
       type: "vendor_approved",
       title: "Pendaftaran Disetujui Bersyarat",
-      message: `Pendaftaran vendor Anda disetujui bersyarat oleh ${params.reviewerName}. ${params.notes ? `Catatan: ${params.notes}` : ""}`.trim(),
+      message:
+        `Pendaftaran vendor Anda disetujui bersyarat oleh ${params.reviewerName}. ${params.notes ? `Catatan: ${params.notes}` : ""}`.trim(),
     },
     revision_requested: {
       type: "vendor_rejected",
       title: "Perlu Revisi",
-      message: `Pendaftaran vendor Anda perlu revisi dari ${params.reviewerName}. ${params.notes ? `Catatan: ${params.notes}` : "Silakan lengkapi data sesuai arahan admin."}`.trim(),
+      message:
+        `Pendaftaran vendor Anda perlu revisi dari ${params.reviewerName}. ${params.notes ? `Catatan: ${params.notes}` : "Silakan lengkapi data sesuai arahan admin."}`.trim(),
     },
     rejected: {
       type: "vendor_rejected",
       title: "Pendaftaran Ditolak",
-      message: `Maaf, pendaftaran vendor Anda ditolak oleh ${params.reviewerName}. ${params.notes ? `Alasan: ${params.notes}` : "Hubungi admin untuk detail."}`.trim(),
+      message:
+        `Maaf, pendaftaran vendor Anda ditolak oleh ${params.reviewerName}. ${params.notes ? `Alasan: ${params.notes}` : "Hubungi admin untuk detail."}`.trim(),
     },
   }
 
@@ -503,7 +513,19 @@ export async function getVendorProfileByUserId(userId: string) {
     return null
   }
 
-  const [userResult, drafts, approvalDraft, documents, contacts, bankAccounts, factoryAddresses, products, deliveryAreas, costInclusions, additionalCosts] = await Promise.all([
+  const [
+    userResult,
+    drafts,
+    approvalDraft,
+    documents,
+    contacts,
+    bankAccounts,
+    factoryAddresses,
+    products,
+    deliveryAreas,
+    costInclusions,
+    additionalCosts,
+  ] = await Promise.all([
     supabase
       .from("users")
       .select("id, email, nama, nama_perusahaan, no_hp")
@@ -537,7 +559,7 @@ export async function getVendorProfileByUserId(userId: string) {
 
   const draftData = drafts.data ? extractDraftData(drafts.data) : null
   const approvalDraftData = approvalDraft.data
-    ? ((approvalDraft.data as unknown) as VendorApprovalDraftRow)
+    ? (approvalDraft.data as unknown as VendorApprovalDraftRow)
     : null
 
   const areas = deliveryAreas.data || []
@@ -736,7 +758,16 @@ export async function getVendorApprovalWorkspaceByUserId(userId: string) {
     return null
   }
 
-  const [userResult, drafts, approvalDraft, documents, contacts, bankAccounts, factoryAddresses, products] = await Promise.all([
+  const [
+    userResult,
+    drafts,
+    approvalDraft,
+    documents,
+    contacts,
+    bankAccounts,
+    factoryAddresses,
+    products,
+  ] = await Promise.all([
     supabase
       .from("users")
       .select("id, email, nama, nama_perusahaan, no_hp")
@@ -765,12 +796,16 @@ export async function getVendorApprovalWorkspaceByUserId(userId: string) {
     supabase.from("vendor_products").select("*").eq("user_id", userId),
   ])
 
-  const reviewerIds = [profile.reviewed_by, approvalDraft.data?.updated_by].filter(
-    (id): id is string => Boolean(id)
-  )
+  const reviewerIds = [
+    profile.reviewed_by,
+    approvalDraft.data?.updated_by,
+  ].filter((id): id is string => Boolean(id))
   const [{ data: reviewers }, { data: draftReviewer }] = await Promise.all([
     reviewerIds.includes(profile.reviewed_by || "")
-      ? supabase.from("users").select("id, nama").in("id", [profile.reviewed_by!])
+      ? supabase
+          .from("users")
+          .select("id, nama")
+          .in("id", [profile.reviewed_by!])
       : Promise.resolve({ data: [] }),
     approvalDraft.data?.updated_by
       ? supabase
@@ -780,11 +815,13 @@ export async function getVendorApprovalWorkspaceByUserId(userId: string) {
       : Promise.resolve({ data: [] }),
   ])
 
-  const reviewerMap = new Map([...(reviewers || []), ...(draftReviewer || [])].map((u) => [u.id, u.nama]))
+  const reviewerMap = new Map(
+    [...(reviewers || []), ...(draftReviewer || [])].map((u) => [u.id, u.nama])
+  )
 
   const approvalDraftData = approvalDraft.data
     ? ({
-        ...((approvalDraft.data as unknown) as VendorApprovalDraftRow),
+        ...(approvalDraft.data as unknown as VendorApprovalDraftRow),
         updated_by_name: approvalDraft.data.updated_by
           ? reviewerMap.get(approvalDraft.data.updated_by) || null
           : null,
@@ -799,7 +836,9 @@ export async function getVendorApprovalWorkspaceByUserId(userId: string) {
       user_email: userResult.data?.email || null,
       user_nama: userResult.data?.nama || null,
       user_no_hp: userResult.data?.no_hp || null,
-      reviewed_by_name: profile.reviewed_by ? reviewerMap.get(profile.reviewed_by) || null : null,
+      reviewed_by_name: profile.reviewed_by
+        ? reviewerMap.get(profile.reviewed_by) || null
+        : null,
     },
     draft_data: draftData,
     approval_draft: approvalDraftData,

@@ -21,14 +21,24 @@ function formatCurrency(amount: number) {
 }
 
 function formatBudgetRange(min: unknown, max: unknown) {
-  const minValue = typeof min === "number" ? min : min != null ? Number(min) : null
-  const maxValue = typeof max === "number" ? max : max != null ? Number(max) : null
+  const minValue =
+    typeof min === "number" ? min : min != null ? Number(min) : null
+  const maxValue =
+    typeof max === "number" ? max : max != null ? Number(max) : null
 
-  if (!Number.isFinite(minValue as number) && !Number.isFinite(maxValue as number)) return "-"
-  if (Number.isFinite(minValue as number) && Number.isFinite(maxValue as number)) {
+  if (
+    !Number.isFinite(minValue as number) &&
+    !Number.isFinite(maxValue as number)
+  )
+    return "-"
+  if (
+    Number.isFinite(minValue as number) &&
+    Number.isFinite(maxValue as number)
+  ) {
     return `${formatCurrency(minValue as number)} - ${formatCurrency(maxValue as number)}`
   }
-  if (Number.isFinite(minValue as number)) return `Mulai ${formatCurrency(minValue as number)}`
+  if (Number.isFinite(minValue as number))
+    return `Mulai ${formatCurrency(minValue as number)}`
   return `Sampai ${formatCurrency(maxValue as number)}`
 }
 
@@ -77,21 +87,28 @@ export default async function ProjectDetail({
             </div>
             <div>
               <p className="text-muted-foreground">Alamat lengkap</p>
-              <p className="font-medium whitespace-pre-wrap">{String(project.site_address_full || "-")}</p>
+              <p className="font-medium whitespace-pre-wrap">
+                {String(project.site_address_full || "-")}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Target tanggal selesai</p>
-              <p className="font-medium">{formatDate(project.target_completion_date)}</p>
+              <p className="font-medium">
+                {formatDate(project.target_completion_date)}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Estimasi volume</p>
               <p className="font-medium">
-                {String(project.estimated_length_or_area || "-")} {String(project.measurement_unit || "")}
+                {String(project.estimated_length_or_area || "-")}{" "}
+                {String(project.measurement_unit || "")}
               </p>
             </div>
             <div>
               <p className="text-muted-foreground">Budget range</p>
-              <p className="font-medium">{formatBudgetRange(project.budget_min, project.budget_max)}</p>
+              <p className="font-medium">
+                {formatBudgetRange(project.budget_min, project.budget_max)}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -103,27 +120,41 @@ export default async function ProjectDetail({
           <CardContent className="space-y-3 text-sm">
             <div>
               <p className="text-muted-foreground">Deskripsi awal</p>
-              <p className="font-medium whitespace-pre-wrap">{String(project.initial_description || project.description || "-")}</p>
+              <p className="font-medium whitespace-pre-wrap">
+                {String(
+                  project.initial_description || project.description || "-"
+                )}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Kondisi lokasi</p>
-              <p className="font-medium">{String(project.site_condition || "-")}</p>
+              <p className="font-medium">
+                {String(project.site_condition || "-")}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Akses kendaraan</p>
-              <p className="font-medium">{String(project.vehicle_access || "-")}</p>
+              <p className="font-medium">
+                {String(project.vehicle_access || "-")}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Estimasi tinggi</p>
-              <p className="font-medium">{String(project.estimated_height || "-")}</p>
+              <p className="font-medium">
+                {String(project.estimated_height || "-")}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Preferensi pondasi</p>
-              <p className="font-medium">{String(project.foundation_preference || "-")}</p>
+              <p className="font-medium">
+                {String(project.foundation_preference || "-")}
+              </p>
             </div>
             <div>
               <p className="text-muted-foreground">Kebutuhan khusus</p>
-              <p className="font-medium whitespace-pre-wrap">{String(project.special_requirements || "-")}</p>
+              <p className="font-medium whitespace-pre-wrap">
+                {String(project.special_requirements || "-")}
+              </p>
             </div>
           </CardContent>
         </Card>

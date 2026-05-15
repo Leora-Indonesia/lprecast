@@ -25,8 +25,8 @@ export function ChecklistWorkspace() {
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-xs text-muted-foreground">
-            Jika salah satu red flag terdeteksi, hasil wajib <strong>REJECT</strong>
-            .
+            Jika salah satu red flag terdeteksi, hasil wajib{" "}
+            <strong>REJECT</strong>.
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             {redFlagChecklist.map((item) => (
@@ -34,13 +34,11 @@ export function ChecklistWorkspace() {
                 <Checkbox
                   id={`redflag-${item.id}`}
                   checked={redFlagFindings[item.id] || false}
-                  onCheckedChange={(c) =>
-                    setRedFlag(item.id, c as boolean)
-                  }
+                  onCheckedChange={(c) => setRedFlag(item.id, c as boolean)}
                 />
                 <Label
                   htmlFor={`redflag-${item.id}`}
-                  className="cursor-pointer text-sm font-normal leading-snug"
+                  className="cursor-pointer text-sm leading-snug font-normal"
                 >
                   {item.label}
                 </Label>
@@ -57,7 +55,7 @@ export function ChecklistWorkspace() {
         </CardContent>
       </Card>
 
-      <Card className="min-h-0 flex flex-1 flex-col overflow-hidden">
+      <Card className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <CardContent className="min-h-0 flex-1 p-0">
           <VendorApprovalChecklistPreview
             checkedItems={checkedItems}

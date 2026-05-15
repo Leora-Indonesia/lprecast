@@ -3,7 +3,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { StatusBadge } from "@/components/ui/status-badge"
-import { getClientById, listProvinceOptions, listCityOptions } from "@/lib/client/repository"
+import {
+  getClientById,
+  listProvinceOptions,
+  listCityOptions,
+} from "@/lib/client/repository"
 import { formatDate } from "@/lib/datetime"
 import { ClientForm } from "@/components/admin/client-form"
 import { ArrowLeft } from "lucide-react"
@@ -68,7 +72,9 @@ export default async function ClientDetailPage({
               <span className="font-medium">{client.client_type || "-"}</span>
 
               <span className="text-muted-foreground">Nama PT (Legal)</span>
-              <span className="font-medium">{client.company_name_legal || "-"}</span>
+              <span className="font-medium">
+                {client.company_name_legal || "-"}
+              </span>
 
               <span className="text-muted-foreground">Status</span>
               <span>
@@ -91,13 +97,19 @@ export default async function ClientDetailPage({
               <span className="font-medium">{client.pic_position || "-"}</span>
 
               <span className="text-muted-foreground">Alamat Kantor</span>
-              <span className="font-medium">{client.office_address || "-"}</span>
+              <span className="font-medium">
+                {client.office_address || "-"}
+              </span>
 
               <span className="text-muted-foreground">Provinsi</span>
-              <span className="font-medium">{provinceMap.get(client.province_id ?? "") || "-"}</span>
+              <span className="font-medium">
+                {provinceMap.get(client.province_id ?? "") || "-"}
+              </span>
 
               <span className="text-muted-foreground">Kota</span>
-              <span className="font-medium">{cityMap.get(client.city_id ?? "") || "-"}</span>
+              <span className="font-medium">
+                {cityMap.get(client.city_id ?? "") || "-"}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -118,12 +130,14 @@ export default async function ClientDetailPage({
           <CardContent className="space-y-4">
             {client.verification_notes && (
               <p className="text-sm whitespace-pre-wrap">
-                <span className="font-medium">Catatan:</span> {client.verification_notes}
+                <span className="font-medium">Catatan:</span>{" "}
+                {client.verification_notes}
               </p>
             )}
             <p className="text-sm text-muted-foreground">
               Dibuat: {formatDate(client.created_at)}
-              {client.updated_at && ` | Diupdate: ${formatDate(client.updated_at)}`}
+              {client.updated_at &&
+                ` | Diupdate: ${formatDate(client.updated_at)}`}
             </p>
           </CardContent>
         </Card>
@@ -136,7 +150,12 @@ export default async function ClientDetailPage({
             client_name: client.client_name ?? "",
             email: client.email ?? "",
             phone: client.phone ?? "",
-            client_type: (client.client_type as "individu" | "developer" | "kontraktor" | "perusahaan") ?? undefined,
+            client_type:
+              (client.client_type as
+                | "individu"
+                | "developer"
+                | "kontraktor"
+                | "perusahaan") ?? undefined,
             company_name_legal: client.company_name_legal,
             pic_name: client.pic_name ?? "",
             pic_position: client.pic_position,

@@ -5,7 +5,11 @@ import { ArrowLeft } from "lucide-react"
 import { ProjectForm } from "@/components/admin/project-form"
 import { ProjectStatusManager } from "@/components/admin/projects/project-status"
 import { Button } from "@/components/ui/button"
-import { getProjectDetail, listCityOptions, listProvinceOptions } from "@/lib/projects/repository"
+import {
+  getProjectDetail,
+  listCityOptions,
+  listProvinceOptions,
+} from "@/lib/projects/repository"
 import { listClients } from "@/lib/client/repository"
 
 export default async function AdminProjectEditPage({
@@ -37,7 +41,8 @@ export default async function AdminProjectEditPage({
         <div>
           <h1 className="text-2xl font-bold">Edit Project</h1>
           <p className="text-muted-foreground">
-            Perbarui data utama project. Status bisa diubah dari halaman ini, sedangkan lampiran dan milestone tetap tampil read-only di detail.
+            Perbarui data utama project. Status bisa diubah dari halaman ini,
+            sedangkan lampiran dan milestone tetap tampil read-only di detail.
           </p>
         </div>
       </div>
@@ -62,12 +67,16 @@ export default async function AdminProjectEditPage({
           site_coordinates: project.site_coordinates ?? "",
           job_type: project.job_type ?? "",
           estimated_length_or_area:
-            project.estimated_length_or_area != null ? String(project.estimated_length_or_area) : "",
+            project.estimated_length_or_area != null
+              ? String(project.estimated_length_or_area)
+              : "",
           measurement_unit: project.measurement_unit ?? "",
           estimated_height: project.estimated_height ?? "",
           target_completion_date: project.target_completion_date ?? "",
-          budget_min: project.budget_min != null ? String(project.budget_min) : "",
-          budget_max: project.budget_max != null ? String(project.budget_max) : "",
+          budget_min:
+            project.budget_min != null ? String(project.budget_min) : "",
+          budget_max:
+            project.budget_max != null ? String(project.budget_max) : "",
           initial_description: project.initial_description ?? "",
           site_condition: project.site_condition ?? "",
           vehicle_access: project.vehicle_access ?? "",

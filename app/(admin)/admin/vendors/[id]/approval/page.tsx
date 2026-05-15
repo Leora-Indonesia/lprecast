@@ -113,17 +113,23 @@ export default async function VendorApprovalWorkspacePage({
   const primaryContact = contacts.find((c) => c.is_primary) || contacts[0]
 
   const availableDocTypes = new Set(documents.map((d) => d.document_type))
-  const requiredLegalDocs = ["ktp", "npwp", "nib", "siup_sbu", "company_profile"]
-  const missingLegalDocs = requiredLegalDocs.filter((t) => !availableDocTypes.has(t))
+  const requiredLegalDocs = [
+    "ktp",
+    "npwp",
+    "nib",
+    "siup_sbu",
+    "company_profile",
+  ]
+  const missingLegalDocs = requiredLegalDocs.filter(
+    (t) => !availableDocTypes.has(t)
+  )
   const reviewNote = profile.rejection_reason || profile.approval_notes || null
   const shouldShowNoteCallout =
-    registrationStatus === "revision_requested" || registrationStatus === "rejected"
+    registrationStatus === "revision_requested" ||
+    registrationStatus === "rejected"
 
   return (
-    <VendorApprovalReviewProvider
-      userId={id}
-      initialDraft={approval_draft}
-    >
+    <VendorApprovalReviewProvider userId={id} initialDraft={approval_draft}>
       <div className="flex min-h-0 flex-col space-y-4">
         <div className="flex shrink-0 items-start gap-4">
           <div className="min-w-0 flex-1">
@@ -132,7 +138,8 @@ export default async function VendorApprovalWorkspacePage({
               <Badge variant="secondary">{companyName}</Badge>
             </h1>
             <p className="text-sm text-muted-foreground">
-              Layar split untuk memudahkan auditor memeriksa bukti saat mengisi checklist.
+              Layar split untuk memudahkan auditor memeriksa bukti saat mengisi
+              checklist.
             </p>
           </div>
 
@@ -141,7 +148,7 @@ export default async function VendorApprovalWorkspacePage({
           </div>
         </div>
 
-        <div className="shrink-0 w-full">
+        <div className="w-full shrink-0">
           <VendorApprovalHeaderCards
             registrationStatus={registrationStatus}
             accountStatusLabel={accountStatusLabel}
@@ -177,7 +184,9 @@ export default async function VendorApprovalWorkspacePage({
                     <TabsTrigger value="documents">Dokumen</TabsTrigger>
                     <TabsTrigger value="operational">Operasional</TabsTrigger>
                     <TabsTrigger value="products">Produk</TabsTrigger>
-                    <TabsTrigger value="contacts">Kontak & Rekening</TabsTrigger>
+                    <TabsTrigger value="contacts">
+                      Kontak & Rekening
+                    </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="summary" className="space-y-4">
@@ -189,15 +198,23 @@ export default async function VendorApprovalWorkspacePage({
                       </CardHeader>
                       <CardContent className="space-y-4 text-xs">
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="text-muted-foreground">Nama Perusahaan</div>
+                          <div className="text-muted-foreground">
+                            Nama Perusahaan
+                          </div>
                           <div className="font-medium">{companyName}</div>
                           <div className="text-muted-foreground">Nama PIC</div>
                           <div className="font-medium">
-                            {primaryContact?.nama || companyInfo?.nama_pic || "-"}
+                            {primaryContact?.nama ||
+                              companyInfo?.nama_pic ||
+                              "-"}
                           </div>
-                          <div className="text-muted-foreground">Kontak PIC</div>
+                          <div className="text-muted-foreground">
+                            Kontak PIC
+                          </div>
                           <div className="font-medium">
-                            {primaryContact?.no_hp || companyInfo?.kontak_pic || "-"}
+                            {primaryContact?.no_hp ||
+                              companyInfo?.kontak_pic ||
+                              "-"}
                           </div>
                           <div className="text-muted-foreground">Email</div>
                           <div className="font-medium">
@@ -220,7 +237,9 @@ export default async function VendorApprovalWorkspacePage({
                           <div className="text-muted-foreground">Kontak</div>
                           <div className="font-medium">{contacts.length}</div>
                           <div className="text-muted-foreground">Rekening</div>
-                          <div className="font-medium">{bank_accounts.length}</div>
+                          <div className="font-medium">
+                            {bank_accounts.length}
+                          </div>
                         </div>
 
                         <div className="rounded-md border bg-muted/30 p-3">
@@ -325,11 +344,15 @@ export default async function VendorApprovalWorkspacePage({
                                 key={factory.id}
                                 className="grid grid-cols-2 gap-4 border-b pb-4 last:border-0 last:pb-0"
                               >
-                                <div className="text-muted-foreground">Alamat</div>
+                                <div className="text-muted-foreground">
+                                  Alamat
+                                </div>
                                 <div className="font-medium">
                                   {factory.address || "-"}
                                 </div>
-                                <div className="text-muted-foreground">Provinsi</div>
+                                <div className="text-muted-foreground">
+                                  Provinsi
+                                </div>
                                 <div className="font-medium">
                                   {factory.province || "-"}
                                 </div>
@@ -339,7 +362,9 @@ export default async function VendorApprovalWorkspacePage({
                                 <div className="font-medium">
                                   {factory.kabupaten || "-"}
                                 </div>
-                                <div className="text-muted-foreground">Kecamatan</div>
+                                <div className="text-muted-foreground">
+                                  Kecamatan
+                                </div>
                                 <div className="font-medium">
                                   {factory.kecamatan || "-"}
                                 </div>

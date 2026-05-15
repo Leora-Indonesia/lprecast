@@ -34,7 +34,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params
-  const body = (await request.json().catch(() => null)) as { path?: string } | null
+  const body = (await request.json().catch(() => null)) as {
+    path?: string
+  } | null
 
   if (!body?.path) {
     return NextResponse.json(

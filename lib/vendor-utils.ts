@@ -103,7 +103,9 @@ export function getProfileStatusLabel(status: VendorProfileStatus): string {
 export function isVendorApproved(
   registrationStatus: VendorRegistrationStatus | null | undefined
 ): boolean {
-  return registrationStatus === "approved" || registrationStatus === "conditional"
+  return (
+    registrationStatus === "approved" || registrationStatus === "conditional"
+  )
 }
 
 export function isVendorActive(

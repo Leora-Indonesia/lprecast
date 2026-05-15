@@ -30,17 +30,20 @@ type StatusTone = {
 
 const statusTone: Record<Status, StatusTone> = {
   Done: {
-    badge: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-300",
+    badge:
+      "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-300",
     panel:
       "border-emerald-200/80 bg-emerald-50/60 dark:border-emerald-900/60 dark:bg-emerald-950/20",
   },
   "In Progress": {
-    badge: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-300",
+    badge:
+      "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/70 dark:bg-amber-950/40 dark:text-amber-300",
     panel:
       "border-amber-200/80 bg-amber-50/60 dark:border-amber-900/60 dark:bg-amber-950/20",
   },
   Planned: {
-    badge: "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300",
+    badge:
+      "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300",
     panel:
       "border-slate-200/80 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-900/50",
   },
@@ -55,12 +58,14 @@ const roleScope = [
   {
     role: "Vendor",
     status: "Done" as Status,
-    summary: "Register, onboarding, dashboard, profile, notifications, tender visibility dasar.",
+    summary:
+      "Register, onboarding, dashboard, profile, notifications, tender visibility dasar.",
   },
   {
     role: "Client",
     status: "In Progress" as Status,
-    summary: "Dashboard dan profile/intake foundation sudah ada, full lane belum selesai.",
+    summary:
+      "Dashboard dan profile/intake foundation sudah ada, full lane belum selesai.",
   },
   {
     role: "SPV",
@@ -93,19 +98,22 @@ const vendorSurfaces = [
   },
   {
     title: "Vendor - Onboarding",
-    detail: "Form kelengkapan data perusahaan, dokumen, kontak, area, dan produk.",
+    detail:
+      "Form kelengkapan data perusahaan, dokumen, kontak, area, dan produk.",
     status: "Done" as Status,
     route: "/vendor/onboarding",
   },
   {
     title: "Vendor - Dashboard",
-    detail: "Ringkasan status akun, onboarding completeness, tender, dan action items.",
+    detail:
+      "Ringkasan status akun, onboarding completeness, tender, dan action items.",
     status: "Done" as Status,
     route: "/vendor/dashboard",
   },
   {
     title: "Vendor - Profile",
-    detail: "Kelola ulang data onboarding dalam surface profile yang konsisten.",
+    detail:
+      "Kelola ulang data onboarding dalam surface profile yang konsisten.",
     status: "Done" as Status,
     route: "/vendor/profile",
   },
@@ -126,7 +134,8 @@ const vendorSurfaces = [
 const adminSurfaces = [
   {
     title: "Admin - Dashboard",
-    detail: "Ringkasan vendor, pending review, notifikasi, dan kontrol registrasi.",
+    detail:
+      "Ringkasan vendor, pending review, notifikasi, dan kontrol registrasi.",
     status: "Done" as Status,
     route: "/admin/dashboard",
   },
@@ -138,7 +147,8 @@ const adminSurfaces = [
   },
   {
     title: "Admin - Vendor Detail",
-    detail: "Overview lengkap profil, dokumen, produk, operasional, dan kontak.",
+    detail:
+      "Overview lengkap profil, dokumen, produk, operasional, dan kontak.",
     status: "Done" as Status,
     route: "/admin/vendors/[id]",
   },
@@ -232,7 +242,9 @@ function Section({
         <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           {title}
         </h2>
-        <p className="text-base leading-7 text-muted-foreground sm:text-lg">{description}</p>
+        <p className="text-base leading-7 text-muted-foreground sm:text-lg">
+          {description}
+        </p>
       </div>
       {children}
     </section>
@@ -240,14 +252,26 @@ function Section({
 }
 
 function StatusPill({ status }: { status: Status }) {
-  return <Badge className={cn("border", statusTone[status].badge)}>{status}</Badge>
+  return (
+    <Badge className={cn("border", statusTone[status].badge)}>{status}</Badge>
+  )
 }
 
-function MetricCard({ title, value, note }: { title: string; value: string; note: string }) {
+function MetricCard({
+  title,
+  value,
+  note,
+}: {
+  title: string
+  value: string
+  note: string
+}) {
   return (
     <Card className="border-border/70 bg-card/70 shadow-none">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-semibold tracking-tight">{value}</div>
@@ -282,7 +306,9 @@ function SurfaceCard({
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="text-sm font-medium">Screenshot pending</div>
-              <div className="mt-1 text-sm text-muted-foreground">Real asset belum disimpan di `public/presentation/`.</div>
+              <div className="mt-1 text-sm text-muted-foreground">
+                Real asset belum disimpan di `public/presentation/`.
+              </div>
             </div>
             <div className="rounded-md border bg-muted px-3 py-1.5 font-mono text-xs text-muted-foreground">
               {route}
@@ -301,7 +327,9 @@ export default function PresentationPage() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3 sm:px-10 lg:px-12">
           <div>
             <div className="text-sm font-semibold">LPrecast Vendor Portal</div>
-            <div className="text-xs text-muted-foreground">Internal showcase. Public route for live demo.</div>
+            <div className="text-xs text-muted-foreground">
+              Internal showcase. Public route for live demo.
+            </div>
           </div>
           <div className="hidden gap-2 lg:flex">
             {[
@@ -333,30 +361,53 @@ export default function PresentationPage() {
           <Card className="border-border/70 bg-gradient-to-br from-card via-card to-muted/40 shadow-none">
             <CardContent className="space-y-6 p-8">
               <div className="flex flex-wrap items-center gap-3">
-                <Badge className="border border-primary/20 bg-primary/10 text-primary">MVP Foundation Delivered</Badge>
+                <Badge className="border border-primary/20 bg-primary/10 text-primary">
+                  MVP Foundation Delivered
+                </Badge>
                 <Badge variant="outline">Internal showcase</Badge>
                 <Badge variant="outline">Print-ready sections</Badge>
               </div>
               <div className="space-y-4">
                 <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-                  Satu halaman presentasi untuk membaca scope produk saat ini tanpa pindah-pindah route.
+                  Satu halaman presentasi untuk membaca scope produk saat ini
+                  tanpa pindah-pindah route.
                 </h1>
                 <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                  Fokus deck ini: vendor onboarding, admin vendor operations, notifications, dashboard foundation, dan client lane awal. Semua status mengikuti repo dan progress tracker.
+                  Fokus deck ini: vendor onboarding, admin vendor operations,
+                  notifications, dashboard foundation, dan client lane awal.
+                  Semua status mengikuti repo dan progress tracker.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 text-sm">
-                <div className="rounded-full border bg-background px-4 py-2">Vendor onboarding live</div>
-                <div className="rounded-full border bg-background px-4 py-2">Admin approval workspace live</div>
-                <div className="rounded-full border bg-background px-4 py-2">Client foundation available</div>
+                <div className="rounded-full border bg-background px-4 py-2">
+                  Vendor onboarding live
+                </div>
+                <div className="rounded-full border bg-background px-4 py-2">
+                  Admin approval workspace live
+                </div>
+                <div className="rounded-full border bg-background px-4 py-2">
+                  Client foundation available
+                </div>
               </div>
             </CardContent>
           </Card>
 
           <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-            <MetricCard title="Showcase focus" value="Vendor + Admin" note="Surface paling matang dan siap demo." />
-            <MetricCard title="Client lane" value="Foundation" note="Dashboard dan profile ada, full journey belum." />
-            <MetricCard title="Project modules" value="Excluded" note="Belum masuk deck karena masih development." />
+            <MetricCard
+              title="Showcase focus"
+              value="Vendor + Admin"
+              note="Surface paling matang dan siap demo."
+            />
+            <MetricCard
+              title="Client lane"
+              value="Foundation"
+              note="Dashboard dan profile ada, full journey belum."
+            />
+            <MetricCard
+              title="Project modules"
+              value="Excluded"
+              note="Belum masuk deck karena masih development."
+            />
           </div>
         </div>
       </Section>
@@ -398,7 +449,9 @@ export default function PresentationPage() {
                 <CardTitle className="text-lg">{item.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm leading-6 text-muted-foreground">{item.body}</p>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {item.body}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -418,12 +471,17 @@ export default function PresentationPage() {
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
               {roleScope.map((item) => (
-                <div key={item.role} className="rounded-2xl border border-border/70 bg-muted/30 p-4">
+                <div
+                  key={item.role}
+                  className="rounded-2xl border border-border/70 bg-muted/30 p-4"
+                >
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div className="text-base font-semibold">{item.role}</div>
                     <StatusPill status={item.status} />
                   </div>
-                  <p className="text-sm leading-6 text-muted-foreground">{item.summary}</p>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {item.summary}
+                  </p>
                 </div>
               ))}
             </CardContent>
@@ -436,15 +494,27 @@ export default function PresentationPage() {
             <CardContent className="space-y-4 text-sm leading-6 text-muted-foreground">
               <div className="rounded-2xl border border-border/70 bg-background p-4">
                 <div className="font-medium text-foreground">Vendor lane</div>
-                <div>Register, onboarding, profile maintenance, notifications, tender visibility dasar.</div>
+                <div>
+                  Register, onboarding, profile maintenance, notifications,
+                  tender visibility dasar.
+                </div>
               </div>
               <div className="rounded-2xl border border-border/70 bg-background p-4">
                 <div className="font-medium text-foreground">Admin lane</div>
-                <div>Review vendor, approval decision, operational visibility, notification handling.</div>
+                <div>
+                  Review vendor, approval decision, operational visibility,
+                  notification handling.
+                </div>
               </div>
               <div className="rounded-2xl border border-border/70 bg-background p-4">
-                <div className="font-medium text-foreground">Client and SPV lane</div>
-                <div>Client foundation sudah ada. SPV verification dan payment governance masih planned, belum dipresentasikan sebagai live capability.</div>
+                <div className="font-medium text-foreground">
+                  Client and SPV lane
+                </div>
+                <div>
+                  Client foundation sudah ada. SPV verification dan payment
+                  governance masih planned, belum dipresentasikan sebagai live
+                  capability.
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -459,7 +529,10 @@ export default function PresentationPage() {
       >
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {capabilities.map(([label, status]) => (
-            <Card key={label} className={cn("border shadow-none", statusTone[status].panel)}>
+            <Card
+              key={label}
+              className={cn("border shadow-none", statusTone[status].panel)}
+            >
               <CardContent className="flex items-start justify-between gap-4 p-5">
                 <div className="space-y-1">
                   <div className="font-medium">{label}</div>
@@ -488,17 +561,28 @@ export default function PresentationPage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="rounded-2xl border bg-background p-5">
                     <div className="font-medium">Vendor - Dashboard</div>
-                    <div className="mt-1 text-sm text-muted-foreground">Ringkasan akun, tender, onboarding completeness, dan action items.</div>
-                    <div className="mt-4"><StatusPill status="Done" /></div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      Ringkasan akun, tender, onboarding completeness, dan
+                      action items.
+                    </div>
+                    <div className="mt-4">
+                      <StatusPill status="Done" />
+                    </div>
                   </div>
                   <div className="rounded-2xl border bg-background p-5">
                     <div className="font-medium">Vendor - Notifications</div>
-                    <div className="mt-1 text-sm text-muted-foreground">Filter kategori dan mark-as-read untuk event operasional dasar.</div>
-                    <div className="mt-4"><StatusPill status="Done" /></div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      Filter kategori dan mark-as-read untuk event operasional
+                      dasar.
+                    </div>
+                    <div className="mt-4">
+                      <StatusPill status="Done" />
+                    </div>
                   </div>
                 </div>
                 <div className="mt-5 rounded-md border bg-background px-3 py-2 font-mono text-xs text-muted-foreground">
-                  Screenshot pending. Candidate assets: `/vendor/dashboard`, `/vendor/notifications`, `/vendor/profile`.
+                  Screenshot pending. Candidate assets: `/vendor/dashboard`,
+                  `/vendor/notifications`, `/vendor/profile`.
                 </div>
               </div>
             </CardContent>
@@ -509,9 +593,27 @@ export default function PresentationPage() {
               <CardTitle>Nilai operasional</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
-              <div className="flex gap-3"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" /><span>Vendor masuk lewat jalur register publik, lalu diarahkan ke onboarding sesuai status.</span></div>
-              <div className="flex gap-3"><CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" /><span>Dashboard memusatkan status akun dan next actions tanpa perlu cek manual ke admin.</span></div>
-              <div className="flex gap-3"><Clock3 className="mt-0.5 h-4 w-4 text-primary" /><span>Tender route sudah muncul sebagai fondasi visibility, tapi belum diposisikan sebagai flow bidding live.</span></div>
+              <div className="flex gap-3">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                <span>
+                  Vendor masuk lewat jalur register publik, lalu diarahkan ke
+                  onboarding sesuai status.
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 text-primary" />
+                <span>
+                  Dashboard memusatkan status akun dan next actions tanpa perlu
+                  cek manual ke admin.
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <Clock3 className="mt-0.5 h-4 w-4 text-primary" />
+                <span>
+                  Tender route sudah muncul sebagai fondasi visibility, tapi
+                  belum diposisikan sebagai flow bidding live.
+                </span>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -540,17 +642,30 @@ export default function PresentationPage() {
                 <div className="grid gap-4">
                   <div className="rounded-2xl border bg-background p-5">
                     <div className="font-medium">Admin - Vendor Detail</div>
-                    <div className="mt-1 text-sm text-muted-foreground">Overview lengkap data vendor dan shortcut ke workspace approval.</div>
-                    <div className="mt-4"><StatusPill status="Done" /></div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      Overview lengkap data vendor dan shortcut ke workspace
+                      approval.
+                    </div>
+                    <div className="mt-4">
+                      <StatusPill status="Done" />
+                    </div>
                   </div>
                   <div className="rounded-2xl border bg-background p-5">
-                    <div className="font-medium">Admin - Approval Workspace</div>
-                    <div className="mt-1 text-sm text-muted-foreground">Split-view audit data, dokumen, produk, kontak, dan checklist review.</div>
-                    <div className="mt-4"><StatusPill status="Done" /></div>
+                    <div className="font-medium">
+                      Admin - Approval Workspace
+                    </div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      Split-view audit data, dokumen, produk, kontak, dan
+                      checklist review.
+                    </div>
+                    <div className="mt-4">
+                      <StatusPill status="Done" />
+                    </div>
                   </div>
                 </div>
                 <div className="mt-5 rounded-md border bg-background px-3 py-2 font-mono text-xs text-muted-foreground">
-                  Screenshot pending. Candidate assets: `/admin/dashboard`, `/admin/vendors`, `/admin/vendors/[id]/approval`.
+                  Screenshot pending. Candidate assets: `/admin/dashboard`,
+                  `/admin/vendors`, `/admin/vendors/[id]/approval`.
                 </div>
               </div>
             </CardContent>
@@ -562,9 +677,25 @@ export default function PresentationPage() {
                 <CardTitle>Admin strengths today</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
-                <div className="flex gap-3"><Building2 className="mt-0.5 h-4 w-4 text-primary" /><span>Vendor review jadi surface paling siap presentasi internal.</span></div>
-                <div className="flex gap-3"><Bell className="mt-0.5 h-4 w-4 text-primary" /><span>Notification inbox bantu triage event vendor secara cepat.</span></div>
-                <div className="flex gap-3"><ArrowRight className="mt-0.5 h-4 w-4 text-primary" /><span>Tender route ada sebagai foundation, tapi belum diklaim live workflow.</span></div>
+                <div className="flex gap-3">
+                  <Building2 className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>
+                    Vendor review jadi surface paling siap presentasi internal.
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <Bell className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>
+                    Notification inbox bantu triage event vendor secara cepat.
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <ArrowRight className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>
+                    Tender route ada sebagai foundation, tapi belum diklaim live
+                    workflow.
+                  </span>
+                </div>
               </CardContent>
             </Card>
             <Card className="border-border/70 shadow-none">
@@ -572,7 +703,9 @@ export default function PresentationPage() {
                 <CardTitle>Why this matters</CardTitle>
               </CardHeader>
               <CardContent className="text-sm leading-6 text-muted-foreground">
-                Approval vendor sering jadi bottleneck awal. Workspace yang lebih rapi menurunkan friksi sebelum masuk ke lane tender, execution, dan payment berikutnya.
+                Approval vendor sering jadi bottleneck awal. Workspace yang
+                lebih rapi menurunkan friksi sebelum masuk ke lane tender,
+                execution, dan payment berikutnya.
               </CardContent>
             </Card>
           </div>
@@ -598,13 +731,16 @@ export default function PresentationPage() {
             </CardHeader>
             <CardContent className="space-y-4 text-sm leading-6 text-muted-foreground">
               <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
-                Dashboard client sudah menampilkan readiness dasar: profil, jumlah pengajuan, dan next action.
+                Dashboard client sudah menampilkan readiness dasar: profil,
+                jumlah pengajuan, dan next action.
               </div>
               <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
-                Profile form client sudah tersedia untuk identitas perusahaan dan PIC.
+                Profile form client sudah tersedia untuk identitas perusahaan
+                dan PIC.
               </div>
               <div className="rounded-2xl border border-border/70 bg-muted/20 p-4">
-                Milestone approval, funding reminder, dan lane finansial belum ditampilkan sebagai live feature.
+                Milestone approval, funding reminder, dan lane finansial belum
+                ditampilkan sebagai live feature.
               </div>
             </CardContent>
           </Card>
@@ -619,8 +755,13 @@ export default function PresentationPage() {
                   </div>
                   <div className="rounded-2xl border bg-background p-5">
                     <div className="font-medium">Client - Dashboard</div>
-                    <div className="mt-1 text-sm text-muted-foreground">Visibility readiness profile dan action untuk lane client awal.</div>
-                    <div className="mt-4"><StatusPill status="Done" /></div>
+                    <div className="mt-1 text-sm text-muted-foreground">
+                      Visibility readiness profile dan action untuk lane client
+                      awal.
+                    </div>
+                    <div className="mt-4">
+                      <StatusPill status="Done" />
+                    </div>
                   </div>
                   <div className="mt-5 rounded-md border bg-background px-3 py-2 font-mono text-xs text-muted-foreground">
                     Screenshot pending. Candidate asset: `/client/dashboard`.
@@ -631,13 +772,21 @@ export default function PresentationPage() {
 
             <div className="grid gap-4 md:grid-cols-3">
               {clientSurfaces.map((item) => (
-                <Card key={item.title} className={cn("border shadow-none", statusTone[item.status].panel)}>
+                <Card
+                  key={item.title}
+                  className={cn(
+                    "border shadow-none",
+                    statusTone[item.status].panel
+                  )}
+                >
                   <CardContent className="space-y-3 p-5">
                     <div className="flex items-center justify-between gap-3">
                       <div className="font-medium">{item.title}</div>
                       <StatusPill status={item.status} />
                     </div>
-                    <p className="text-sm leading-6 text-muted-foreground">{item.detail}</p>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      {item.detail}
+                    </p>
                     <div className="rounded-md border bg-background px-3 py-2 font-mono text-xs text-muted-foreground">
                       {item.route}
                     </div>
@@ -696,7 +845,9 @@ export default function PresentationPage() {
                 <CardTitle className="text-lg">{item.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm leading-6 text-muted-foreground">{item.body}</p>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {item.body}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -718,12 +869,22 @@ export default function PresentationPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
               {doneNow.map((item) => (
-                <div key={item} className="rounded-xl border border-border/70 bg-background/80 p-3">{item}</div>
+                <div
+                  key={item}
+                  className="rounded-xl border border-border/70 bg-background/80 p-3"
+                >
+                  {item}
+                </div>
               ))}
             </CardContent>
           </Card>
 
-          <Card className={cn("border shadow-none", statusTone["In Progress"].panel)}>
+          <Card
+            className={cn(
+              "border shadow-none",
+              statusTone["In Progress"].panel
+            )}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Clock3 className="h-5 w-5 text-amber-600" /> In progress now
@@ -731,7 +892,12 @@ export default function PresentationPage() {
             </CardHeader>
             <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
               {inProgressNow.map((item) => (
-                <div key={item} className="rounded-xl border border-border/70 bg-background/80 p-3">{item}</div>
+                <div
+                  key={item}
+                  className="rounded-xl border border-border/70 bg-background/80 p-3"
+                >
+                  {item}
+                </div>
               ))}
             </CardContent>
           </Card>
@@ -739,12 +905,18 @@ export default function PresentationPage() {
           <Card className={cn("border shadow-none", statusTone.Planned.panel)}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <ArrowRight className="h-5 w-5 text-slate-600" /> Next build focus
+                <ArrowRight className="h-5 w-5 text-slate-600" /> Next build
+                focus
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm leading-6 text-muted-foreground">
               {nextFocus.map((item) => (
-                <div key={item} className="rounded-xl border border-border/70 bg-background/80 p-3">{item}</div>
+                <div
+                  key={item}
+                  className="rounded-xl border border-border/70 bg-background/80 p-3"
+                >
+                  {item}
+                </div>
               ))}
             </CardContent>
           </Card>
@@ -781,7 +953,9 @@ export default function PresentationPage() {
                 <CardTitle className="text-lg">{item.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm leading-6 text-muted-foreground">{item.body}</p>
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {item.body}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -798,16 +972,31 @@ export default function PresentationPage() {
         <Card className="border-border/70 bg-gradient-to-br from-card to-muted/30 shadow-none">
           <CardContent className="grid gap-6 p-8 lg:grid-cols-3">
             <div className="space-y-3">
-              <div className="text-sm font-medium text-muted-foreground">Siap dipakai/demo</div>
-              <div className="text-lg font-semibold">Vendor onboarding, admin vendor ops, notifications, client foundation.</div>
+              <div className="text-sm font-medium text-muted-foreground">
+                Siap dipakai/demo
+              </div>
+              <div className="text-lg font-semibold">
+                Vendor onboarding, admin vendor ops, notifications, client
+                foundation.
+              </div>
             </div>
             <div className="space-y-3">
-              <div className="text-sm font-medium text-muted-foreground">Kenapa penting</div>
-              <div className="text-lg font-semibold">Fondasi role, review, dan governance sudah rapi sebelum lane tender dan payment diperluas.</div>
+              <div className="text-sm font-medium text-muted-foreground">
+                Kenapa penting
+              </div>
+              <div className="text-lg font-semibold">
+                Fondasi role, review, dan governance sudah rapi sebelum lane
+                tender dan payment diperluas.
+              </div>
             </div>
             <div className="space-y-3">
-              <div className="text-sm font-medium text-muted-foreground">Milestone berikutnya</div>
-              <div className="text-lg font-semibold">Matangkan tender flow, progress verification, milestone approval, dan monitoring operasional.</div>
+              <div className="text-sm font-medium text-muted-foreground">
+                Milestone berikutnya
+              </div>
+              <div className="text-lg font-semibold">
+                Matangkan tender flow, progress verification, milestone
+                approval, dan monitoring operasional.
+              </div>
             </div>
           </CardContent>
         </Card>

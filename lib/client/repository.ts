@@ -110,7 +110,8 @@ export async function upsertClientProfile(input: ClientProfileInput) {
   const payload: TablesInsert<"client_profiles"> = {
     user_id: actor.id,
     client_type: input.client_type,
-    company_name_legal: input.company_name_legal || actor.account.nama_perusahaan || null,
+    company_name_legal:
+      input.company_name_legal || actor.account.nama_perusahaan || null,
     pic_name: input.pic_name,
     pic_position: input.pic_position || null,
     office_address: input.office_address,
@@ -179,15 +180,32 @@ export async function createClientProject(input: ClientProjectIntakeInput) {
 
   const admin = createAdminClient()
 
-  const [{ data: province }, { data: city }, { data: clientProfile }] = await Promise.all([
-    admin.from("master_provinces").select("name").eq("id", input.province_id).maybeSingle(),
-    admin.from("master_cities").select("name").eq("id", input.city_id).maybeSingle(),
-    admin.from("client_profiles").select("company_name_legal").eq("user_id", actor.id).maybeSingle(),
-  ])
+  const [{ data: province }, { data: city }, { data: clientProfile }] =
+    await Promise.all([
+      admin
+        .from("master_provinces")
+        .select("name")
+        .eq("id", input.province_id)
+        .maybeSingle(),
+      admin
+        .from("master_cities")
+        .select("name")
+        .eq("id", input.city_id)
+        .maybeSingle(),
+      admin
+        .from("client_profiles")
+        .select("company_name_legal")
+        .eq("user_id", actor.id)
+        .maybeSingle(),
+    ])
 
-  const locationSummary = [city?.name, province?.name].filter(Boolean).join(", ") || input.site_address_full
+  const locationSummary =
+    [city?.name, province?.name].filter(Boolean).join(", ") ||
+    input.site_address_full
   const customerName =
-    clientProfile?.company_name_legal || actor.account.nama_perusahaan || actor.account.nama
+    clientProfile?.company_name_legal ||
+    actor.account.nama_perusahaan ||
+    actor.account.nama
 
   const payload: TablesInsert<"projects"> = {
     name: input.project_title,
@@ -197,7 +215,9 @@ export async function createClientProject(input: ClientProjectIntakeInput) {
     city_id: input.city_id,
     site_coordinates: input.site_coordinates || null,
     job_type: input.job_type,
-    estimated_length_or_area: parseNumericString(input.estimated_length_or_area),
+    estimated_length_or_area: parseNumericString(
+      input.estimated_length_or_area
+    ),
     measurement_unit: input.measurement_unit,
     target_completion_date: input.target_completion_date,
     budget_min: parseOptionalNumericString(input.budget_min),
@@ -231,7 +251,11 @@ export async function createClientProject(input: ClientProjectIntakeInput) {
 
 export { listProvinceOptions, listCityOptions } from "@/lib/projects/repository"
 
-export type { ClientProfileRecord, ClientProfileView, ClientProjectListItem } from "./types"
+export type {
+  ClientProfileRecord,
+  ClientProfileView,
+  ClientProjectListItem,
+} from "./types"
 
 export async function listClientProvinceOptions() {
   const admin = createAdminClient()
@@ -326,7 +350,11 @@ export async function createClient(input: {
     client_name: input.client_name,
     email: input.email,
     phone: input.phone,
-    client_type: input.client_type as "individu" | "developer" | "kontraktor" | "perusahaan",
+    client_type: input.client_type as
+      | "individu"
+      | "developer"
+      | "kontraktor"
+      | "perusahaan",
     company_name_legal: input.company_name_legal || null,
     pic_name: input.pic_name,
     pic_position: input.pic_position || null,

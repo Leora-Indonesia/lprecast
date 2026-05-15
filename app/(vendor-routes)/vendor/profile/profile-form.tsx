@@ -168,7 +168,8 @@ export function VendorProfileForm({
           bank: {
             bank_nama: draftData.operational.bank_account.bank_name,
             bank_nomor: draftData.operational.bank_account.account_number,
-            bank_atas_nama: draftData.operational.bank_account.account_holder_name,
+            bank_atas_nama:
+              draftData.operational.bank_account.account_holder_name,
           },
           factory_address: {
             alamat_detail: draftData.operational.factory_address.address,
@@ -263,7 +264,8 @@ export function VendorProfileForm({
             npwp_path: draftDataRef.current.documents.npwp_path,
             nib_path: draftDataRef.current.documents.nib_path,
             siup_sbu_path: draftDataRef.current.documents.siup_sbu_path,
-            company_profile_path: draftDataRef.current.documents.company_profile_path,
+            company_profile_path:
+              draftDataRef.current.documents.company_profile_path,
           }
         }
 
@@ -289,7 +291,10 @@ export function VendorProfileForm({
           setHasUnsavedChanges(false)
           setLastSaved(new Date())
           if (draftDataRef.current?.documents) {
-            draftDataRef.current = { ...draftDataRef.current, documents: draft.documents }
+            draftDataRef.current = {
+              ...draftDataRef.current,
+              documents: draft.documents,
+            }
           }
           setUploadedDocPaths({ ...draft.documents })
           if (options.isAutoSave) {
@@ -388,7 +393,7 @@ export function VendorProfileForm({
               <span>Menyimpan...</span>
             ) : lastSaved ? (
               <span>
-                Terakhir disimpan: {" "}
+                Terakhir disimpan:{" "}
                 {lastSaved.toLocaleTimeString("id-ID", {
                   hour: "2-digit",
                   minute: "2-digit",

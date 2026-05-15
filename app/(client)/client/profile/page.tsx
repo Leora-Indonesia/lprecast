@@ -1,5 +1,8 @@
 import { ClientProfileForm } from "@/components/client/client-profile-form"
-import { getClientProfileContext, listProvinceOptions } from "@/lib/client/repository"
+import {
+  getClientProfileContext,
+  listProvinceOptions,
+} from "@/lib/client/repository"
 
 export default async function ClientProfilePage() {
   const [context, provinces] = await Promise.all([
@@ -16,7 +19,8 @@ export default async function ClientProfilePage() {
       <div>
         <h1 className="text-2xl font-bold">Profil Client</h1>
         <p className="text-muted-foreground">
-          Lengkapi data perusahaan dan PIC agar tim internal punya identitas client yang lengkap.
+          Lengkapi data perusahaan dan PIC agar tim internal punya identitas
+          client yang lengkap.
         </p>
       </div>
 

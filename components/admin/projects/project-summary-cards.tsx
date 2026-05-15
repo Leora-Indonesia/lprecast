@@ -1,4 +1,10 @@
-import { FolderCheck, FolderClock, FolderKanban, FolderOpen, FolderX } from "lucide-react"
+import {
+  FolderCheck,
+  FolderClock,
+  FolderKanban,
+  FolderOpen,
+  FolderX,
+} from "lucide-react"
 
 import type { ProjectSummary } from "@/lib/projects/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

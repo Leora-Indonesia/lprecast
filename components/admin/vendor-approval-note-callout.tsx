@@ -3,11 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { useVendorApprovalReview } from "@/components/admin/vendor-approval-review-context"
 
-export function VendorApprovalNoteCallout({
-  note,
-}: {
-  note: string | null
-}) {
+export function VendorApprovalNoteCallout({ note }: { note: string | null }) {
   const { openNotes } = useVendorApprovalReview()
 
   return (

@@ -26,7 +26,10 @@ function readTenderFormData(formData: FormData) {
   }
 }
 
-export async function publishProjectTenderAction(projectId: string, formData: FormData) {
+export async function publishProjectTenderAction(
+  projectId: string,
+  formData: FormData
+) {
   const rawData = readTenderFormData(formData)
   const parsed = tenderPublishSchema.safeParse(rawData)
 

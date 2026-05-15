@@ -41,7 +41,7 @@ Mapping cepat:
 
 ---
 
-**Last updated:** April 30, 2026 | Rapikan urutan task future agar mengikuti dependency bisnis, max 2-3 task per hari
+**Last updated:** May 15, 2026 | Landing homepage direfresh mengikuti referensi visual baru; route collision root admin/public diperbaiki dengan pindah redirect ke `/admin`
 ---
 
 ## 0. Foundation
@@ -181,4 +181,6 @@ Admin - Finalisasi project & penutupan (status COMPLETED) | LPrecast | 5. Closin
 
 Task | Project | Phase | Status | Last updated | Notes
 --- | --- | --- | --- | --- | ---
+Landing - Refresh homepage sesuai referensi visual baru | LPrecast | 6. Enhancement | Done | May 15, 2026 | Homepage `app/page.tsx` direbuild mengikuti struktur referensi `docs/reference_file/landing_reference/beranda precaz.png`: hero split, USP strip, preview produk, teaser calculator, technology showcase, stats band, CTA, dan footer marketing. Asset sementara pakai Unsplash. Validasi: `pnpm typecheck`.
+Admin/Public - Fix duplicate root route collision | LPrecast | 6. Enhancement | Done | May 15, 2026 | Hapus `app/(admin)/page.tsx` yang bentrok dengan `app/(public)/page.tsx`, lalu tambah redirect khusus `app/(admin)/admin/page.tsx` untuk rute `/admin` -> `/admin/dashboard`. Validasi: `pnpm build`.
 Tim Dev - Bug fixing, polish UI & dokumentasi sistem | LPrecast | 6. Enhancement | Not started | May 18, 2026 | Rapikan bug kecil, UI akhir, dan sinkronkan dokumentasi setelah flow inti stabil.

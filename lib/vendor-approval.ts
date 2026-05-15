@@ -53,7 +53,10 @@ export const adminChecklist: ChecklistSection[] = [
         label: "Validasi: Foto asli / bukan ambil internet",
         isCritical: true,
       },
-      { id: "val_relevan", label: "Validasi: Proyek relevan (pagar beton / precast)" },
+      {
+        id: "val_relevan",
+        label: "Validasi: Proyek relevan (pagar beton / precast)",
+      },
     ],
   },
   {
@@ -73,7 +76,11 @@ export const adminChecklist: ChecklistSection[] = [
     items: [
       { id: "sop", label: "Bersedia mengikuti SOP LPrecast", isCritical: true },
       { id: "app", label: "Bersedia menggunakan sistem (app)" },
-      { id: "bypass", label: "Bersedia tidak kontak langsung client", isCritical: true },
+      {
+        id: "bypass",
+        label: "Bersedia tidak kontak langsung client",
+        isCritical: true,
+      },
       { id: "escrow", label: "Bersedia sistem escrow" },
     ],
   },
@@ -93,7 +100,11 @@ export const surveyChecklist: ChecklistSection[] = [
     id: "lokasi",
     title: "7. Lokasi & Infrastruktur",
     items: [
-      { id: "lokasi_aktif", label: "Lokasi workshop jelas & aktif", isCritical: true },
+      {
+        id: "lokasi_aktif",
+        label: "Lokasi workshop jelas & aktif",
+        isCritical: true,
+      },
       { id: "akses", label: "Akses kendaraan memadai" },
       { id: "luas", label: "Area kerja cukup luas" },
       { id: "stabil", label: "Tidak berpindah-pindah" },
@@ -189,7 +200,9 @@ export const redFlagChecklist = [
 
 export type RedFlagId = (typeof redFlagChecklist)[number]["id"]
 
-export function hasRedFlag(redFlagFindings: Record<string, boolean> | null | undefined) {
+export function hasRedFlag(
+  redFlagFindings: Record<string, boolean> | null | undefined
+) {
   if (!redFlagFindings) return false
   return Object.values(redFlagFindings).some(Boolean)
 }
@@ -230,7 +243,9 @@ const sectionCategoryMap: Record<string, ScoringCategory> = {
   sikap: "attitude_compliance",
 }
 
-export function computeTotalScore(checkedItems: Record<string, boolean> | null | undefined) {
+export function computeTotalScore(
+  checkedItems: Record<string, boolean> | null | undefined
+) {
   const checked = checkedItems ?? {}
 
   const stats: Record<ScoringCategory, { total: number; checked: number }> = {
@@ -251,19 +266,27 @@ export function computeTotalScore(checkedItems: Record<string, boolean> | null |
     }
   }
 
-  const total = (Object.keys(stats) as ScoringCategory[]).reduce((sum, category) => {
-    const s = stats[category]
-    const ratio = s.total > 0 ? s.checked / s.total : 0
-    return sum + ratio * weights[category]
-  }, 0)
+  const total = (Object.keys(stats) as ScoringCategory[]).reduce(
+    (sum, category) => {
+      const s = stats[category]
+      const ratio = s.total > 0 ? s.checked / s.total : 0
+      return sum + ratio * weights[category]
+    },
+    0
+  )
 
   return Math.round(total)
 }
 
-export function getChecklistMetrics(checkedItems: Record<string, boolean> | null | undefined) {
+export function getChecklistMetrics(
+  checkedItems: Record<string, boolean> | null | undefined
+) {
   const checked = checkedItems ?? {}
   const allSections = [...adminChecklist, ...surveyChecklist]
-  const totalItems = allSections.reduce((sum, section) => sum + section.items.length, 0)
+  const totalItems = allSections.reduce(
+    (sum, section) => sum + section.items.length,
+    0
+  )
   const checkedItemsCount = allSections.reduce((sum, section) => {
     return sum + section.items.filter((item) => checked[item.id]).length
   }, 0)
@@ -272,18 +295,25 @@ export function getChecklistMetrics(checkedItems: Record<string, boolean> | null
     checkedItemsCount,
     totalItems,
     remainingItems: Math.max(totalItems - checkedItemsCount, 0),
-    completionPct: totalItems > 0 ? Math.round((checkedItemsCount / totalItems) * 100) : 0,
+    completionPct:
+      totalItems > 0 ? Math.round((checkedItemsCount / totalItems) * 100) : 0,
   }
 }
 
-export function computeRecommendation(params: { totalScore: number; hasRedFlag: boolean }) {
+export function computeRecommendation(params: {
+  totalScore: number
+  hasRedFlag: boolean
+}) {
   if (params.hasRedFlag) return "REJECT" as const
   if (params.totalScore >= 85) return "APPROVED" as const
   if (params.totalScore >= 70) return "CONDITIONAL" as const
   return "REJECT" as const
 }
 
-export function computeApprovalTier(params: { totalScore: number; hasRedFlag: boolean }) {
+export function computeApprovalTier(params: {
+  totalScore: number
+  hasRedFlag: boolean
+}) {
   if (params.hasRedFlag) return "Auto Reject"
   if (params.totalScore >= 90) return "Tier A"
   if (params.totalScore >= 85) return "Tier B"

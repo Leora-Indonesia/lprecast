@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server"
 
-import {
-  projectCreateSchema,
-} from "@/lib/validations/project"
+import { projectCreateSchema } from "@/lib/validations/project"
 import { addProjectAttachments, createProject } from "@/lib/projects/repository"
 
 function readProjectFormData(formData: FormData) {
@@ -20,10 +18,14 @@ function readProjectFormData(formData: FormData) {
     city_id: String(formData.get("city_id") ?? ""),
     site_coordinates: String(formData.get("site_coordinates") ?? ""),
     job_type: String(formData.get("job_type") ?? ""),
-    estimated_length_or_area: String(formData.get("estimated_length_or_area") ?? ""),
+    estimated_length_or_area: String(
+      formData.get("estimated_length_or_area") ?? ""
+    ),
     measurement_unit: String(formData.get("measurement_unit") ?? ""),
     estimated_height: String(formData.get("estimated_height") ?? ""),
-    target_completion_date: String(formData.get("target_completion_date") ?? ""),
+    target_completion_date: String(
+      formData.get("target_completion_date") ?? ""
+    ),
     budget_min: String(formData.get("budget_min") ?? ""),
     budget_max: String(formData.get("budget_max") ?? ""),
     initial_description: String(formData.get("initial_description") ?? ""),
@@ -65,7 +67,10 @@ export async function POST(request: Request) {
     .filter((value): value is File => value instanceof File && value.size > 0)
 
   if (files.length > 0) {
-    const attachmentResult = await addProjectAttachments(createResult.projectId, files)
+    const attachmentResult = await addProjectAttachments(
+      createResult.projectId,
+      files
+    )
 
     if (!attachmentResult.success) {
       return NextResponse.json(

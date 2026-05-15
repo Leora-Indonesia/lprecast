@@ -23,7 +23,8 @@ export default async function ClientProjects() {
         <div>
           <h1 className="text-2xl font-bold">Project Saya</h1>
           <p className="text-muted-foreground">
-            Ajukan kebutuhan project baru dan pantau status review internal Leora.
+            Ajukan kebutuhan project baru dan pantau status review internal
+            Leora.
           </p>
         </div>
         <Button asChild>
@@ -39,15 +40,21 @@ export default async function ClientProjects() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <CardTitle>{project.name}</CardTitle>
-                    <p className="mt-1 text-sm text-muted-foreground">{project.job_type || "Jenis pekerjaan belum diisi"}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {project.job_type || "Jenis pekerjaan belum diisi"}
+                    </p>
                   </div>
                   <StatusBadge status={project.status || "draft"} />
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">{project.location || "Lokasi belum tersedia"}</p>
+                <p className="text-sm text-muted-foreground">
+                  {project.location || "Lokasi belum tersedia"}
+                </p>
                 <Button variant="outline" asChild>
-                  <Link href={`/client/projects/${project.id}`}>Lihat Detail</Link>
+                  <Link href={`/client/projects/${project.id}`}>
+                    Lihat Detail
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -56,7 +63,8 @@ export default async function ClientProjects() {
       ) : (
         <Card>
           <CardContent className="p-8 text-center text-sm text-muted-foreground">
-            Belum ada project diajukan. Mulai dari kebutuhan project pertama Anda.
+            Belum ada project diajukan. Mulai dari kebutuhan project pertama
+            Anda.
           </CardContent>
         </Card>
       )}

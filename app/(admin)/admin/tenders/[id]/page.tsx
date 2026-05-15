@@ -13,8 +13,12 @@ export const metadata = {
   description: "Lihat detail tender proyek konstruksi",
 }
 
-function formatPeriod(startDate: string | null | undefined, endDate: string | null | undefined) {
-  if (startDate && endDate) return `${formatDate(startDate)} - ${formatDate(endDate)}`
+function formatPeriod(
+  startDate: string | null | undefined,
+  endDate: string | null | undefined
+) {
+  if (startDate && endDate)
+    return `${formatDate(startDate)} - ${formatDate(endDate)}`
   if (startDate) return `Mulai ${formatDate(startDate)}`
   if (endDate) return `Selesai ${formatDate(endDate)}`
   return "-"
@@ -52,11 +56,16 @@ export default async function TenderDetail({
               <h1 className="text-2xl font-bold">{tender.title}</h1>
               <Badge>{tender.status}</Badge>
             </div>
-            <p className="text-muted-foreground">Tender sudah dipublish ke vendor. Menunggu minimal {tender.min_vendors ?? 2} penawaran.</p>
+            <p className="text-muted-foreground">
+              Tender sudah dipublish ke vendor. Menunggu minimal{" "}
+              {tender.min_vendors ?? 2} penawaran.
+            </p>
           </div>
           {tender.project ? (
             <Button variant="outline" asChild>
-              <Link href={`/admin/projects/${tender.project.id}`}>Lihat Project</Link>
+              <Link href={`/admin/projects/${tender.project.id}`}>
+                Lihat Project
+              </Link>
             </Button>
           ) : null}
         </div>
@@ -65,7 +74,9 @@ export default async function TenderDetail({
       <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
         <div className="space-y-6">
           <Card>
-            <CardHeader><CardTitle>Ringkasan Vendor-Facing</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Ringkasan Vendor-Facing</CardTitle>
+            </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Project</p>
@@ -77,35 +88,64 @@ export default async function TenderDetail({
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Periode</p>
-                <p className="font-medium">{formatPeriod(tender.project?.start_date, tender.project?.end_date)}</p>
+                <p className="font-medium">
+                  {formatPeriod(
+                    tender.project?.start_date,
+                    tender.project?.end_date
+                  )}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Deadline revisi</p>
-                <p className="font-medium">{tender.revision_deadline_hours ? `${tender.revision_deadline_hours} jam` : "-"}</p>
+                <p className="font-medium">
+                  {tender.revision_deadline_hours
+                    ? `${tender.revision_deadline_hours} jam`
+                    : "-"}
+                </p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Batas submit tender</p>
-                <p className="font-medium">{formatSubmissionDeadline(tender.submission_deadline_at)}</p>
+                <p className="text-sm text-muted-foreground">
+                  Batas submit tender
+                </p>
+                <p className="font-medium">
+                  {formatSubmissionDeadline(tender.submission_deadline_at)}
+                </p>
               </div>
               <div className="space-y-1 md:col-span-2">
-                <p className="text-sm text-muted-foreground">Deskripsi tender</p>
-                <p className="whitespace-pre-wrap font-medium">{tender.description || "-"}</p>
+                <p className="text-sm text-muted-foreground">
+                  Deskripsi tender
+                </p>
+                <p className="font-medium whitespace-pre-wrap">
+                  {tender.description || "-"}
+                </p>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader><CardTitle className="flex items-center gap-2"><ClipboardList className="h-4 w-4" /> Item Pekerjaan</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ClipboardList className="h-4 w-4" /> Item Pekerjaan
+              </CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4">
               {tender.items.map((item, index) => (
                 <div key={item.id} className="rounded-lg border p-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="font-medium">{index + 1}. {item.name}</p>
-                      <p className="text-sm text-muted-foreground">{item.quantity} {item.unit || "unit"}</p>
+                      <p className="font-medium">
+                        {index + 1}. {item.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.quantity} {item.unit || "unit"}
+                      </p>
                     </div>
                   </div>
-                  {item.description ? <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">{item.description}</p> : null}
+                  {item.description ? (
+                    <p className="mt-3 text-sm whitespace-pre-wrap text-muted-foreground">
+                      {item.description}
+                    </p>
+                  ) : null}
                 </div>
               ))}
             </CardContent>
@@ -114,11 +154,22 @@ export default async function TenderDetail({
 
         <div className="space-y-6">
           <Card>
-            <CardHeader><CardTitle>Status Tender</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Status Tender</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4 text-sm">
-              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Status</span><Badge>{tender.status}</Badge></div>
-              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Minimal vendor</span><span>{tender.min_vendors ?? 2}</span></div>
-              <div className="flex items-center justify-between gap-3"><span className="text-muted-foreground">Dibuat</span><span>{formatDate(tender.created_at)}</span></div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">Status</span>
+                <Badge>{tender.status}</Badge>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">Minimal vendor</span>
+                <span>{tender.min_vendors ?? 2}</span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-muted-foreground">Dibuat</span>
+                <span>{formatDate(tender.created_at)}</span>
+              </div>
               <div className="rounded-lg border bg-muted/20 p-3 text-muted-foreground">
                 Tender tidak auto-close sampai admin memilih vendor yang sesuai.
               </div>

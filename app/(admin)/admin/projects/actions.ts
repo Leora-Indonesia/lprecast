@@ -2,8 +2,15 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { addProjectAttachments, createProject, updateProject } from "@/lib/projects/repository"
-import { projectCreateSchema, projectUpdateSchema } from "@/lib/validations/project"
+import {
+  addProjectAttachments,
+  createProject,
+  updateProject,
+} from "@/lib/projects/repository"
+import {
+  projectCreateSchema,
+  projectUpdateSchema,
+} from "@/lib/validations/project"
 import { revalidatePath } from "next/cache"
 
 async function getAuthenticatedAdmin() {
@@ -46,7 +53,9 @@ function readProjectFormData(formData: FormData) {
     city_id: formData.get("city_id") as string,
     site_coordinates: formData.get("site_coordinates") as string,
     job_type: formData.get("job_type") as string,
-    estimated_length_or_area: formData.get("estimated_length_or_area") as string,
+    estimated_length_or_area: formData.get(
+      "estimated_length_or_area"
+    ) as string,
     measurement_unit: formData.get("measurement_unit") as string,
     estimated_height: formData.get("estimated_height") as string,
     target_completion_date: formData.get("target_completion_date") as string,
@@ -92,7 +101,10 @@ export async function createProjectAction(formData: FormData) {
     const files = readAttachmentFiles(formData)
 
     if (files.length > 0) {
-      const attachmentResult = await addProjectAttachments(result.projectId, files)
+      const attachmentResult = await addProjectAttachments(
+        result.projectId,
+        files
+      )
 
       if (!attachmentResult.success) {
         revalidatePath("/admin/projects")

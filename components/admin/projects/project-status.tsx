@@ -44,13 +44,15 @@ export function ProjectStatusManager({
         body: JSON.stringify({ status: nextStatus }),
       })
 
-      const payload = (await response.json().catch(() => null)) as
-        | { success?: boolean; error?: string }
-        | null
+      const payload = (await response.json().catch(() => null)) as {
+        success?: boolean
+        error?: string
+      } | null
 
       if (!response.ok || !payload?.success) {
         toast.error("Gagal memperbarui status", {
-          description: payload?.error || "Terjadi kesalahan saat mengubah status project",
+          description:
+            payload?.error || "Terjadi kesalahan saat mengubah status project",
         })
         return
       }

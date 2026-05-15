@@ -43,9 +43,11 @@ export function ProjectAttachments({
         body: formData,
       })
 
-      const payload = (await response.json().catch(() => null)) as
-        | { success?: boolean; error?: string; attachments?: ProjectAttachment[] }
-        | null
+      const payload = (await response.json().catch(() => null)) as {
+        success?: boolean
+        error?: string
+        attachments?: ProjectAttachment[]
+      } | null
 
       if (!response.ok || !payload?.success || !payload.attachments) {
         toast.error("Gagal upload lampiran", {
@@ -71,13 +73,16 @@ export function ProjectAttachments({
         body: JSON.stringify({ path }),
       })
 
-      const payload = (await response.json().catch(() => null)) as
-        | { success?: boolean; error?: string; attachments?: ProjectAttachment[] }
-        | null
+      const payload = (await response.json().catch(() => null)) as {
+        success?: boolean
+        error?: string
+        attachments?: ProjectAttachment[]
+      } | null
 
       if (!response.ok || !payload?.success || !payload.attachments) {
         toast.error("Gagal menghapus lampiran", {
-          description: payload?.error || "Terjadi kesalahan saat menghapus lampiran",
+          description:
+            payload?.error || "Terjadi kesalahan saat menghapus lampiran",
         })
         return
       }
@@ -105,14 +110,24 @@ export function ProjectAttachments({
           {files.length > 0 ? (
             <div className="space-y-2 text-sm">
               {files.map((file) => (
-                <div key={`${file.name}-${file.size}`} className="flex items-center justify-between gap-3">
+                <div
+                  key={`${file.name}-${file.size}`}
+                  className="flex items-center justify-between gap-3"
+                >
                   <span className="truncate">{file.name}</span>
-                  <span className="shrink-0 text-muted-foreground">{formatFileSize(file.size)}</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {formatFileSize(file.size)}
+                  </span>
                 </div>
               ))}
             </div>
           ) : null}
-          <Button type="button" size="sm" onClick={uploadAttachments} disabled={isPending || files.length === 0}>
+          <Button
+            type="button"
+            size="sm"
+            onClick={uploadAttachments}
+            disabled={isPending || files.length === 0}
+          >
             {isPending ? <Loader2 className="animate-spin" /> : <Upload />}
             Upload Lampiran
           </Button>
@@ -135,7 +150,11 @@ export function ProjectAttachments({
               </div>
               <div className="flex gap-2">
                 <Button type="button" size="sm" variant="outline" asChild>
-                  <a href={attachment.download_url ?? "#"} target="_blank" rel="noreferrer">
+                  <a
+                    href={attachment.download_url ?? "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <Download /> Download
                   </a>
                 </Button>

@@ -8,7 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Save } from "lucide-react"
 import { toast } from "sonner"
 
-import type { ClientAccountSummary, ClientProfileView } from "@/lib/client/types"
+import type {
+  ClientAccountSummary,
+  ClientProfileView,
+} from "@/lib/client/types"
 import { supabase } from "@/lib/supabase/client"
 import {
   clientProfileSchema,
@@ -50,7 +53,9 @@ export function ClientProfileForm({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(clientProfileSchema) as any,
     defaultValues: {
-      client_type: (initialProfile?.client_type as ClientProfileInput["client_type"]) || "perusahaan",
+      client_type:
+        (initialProfile?.client_type as ClientProfileInput["client_type"]) ||
+        "perusahaan",
       company_name_legal:
         initialProfile?.company_name_legal || account.nama_perusahaan || "",
       pic_name: initialProfile?.pic_name || account.nama,
@@ -99,13 +104,15 @@ export function ClientProfileForm({
       body: JSON.stringify(values),
     })
 
-    const payload = (await response.json().catch(() => null)) as
-      | { success?: boolean; error?: string }
-      | null
+    const payload = (await response.json().catch(() => null)) as {
+      success?: boolean
+      error?: string
+    } | null
 
     if (!response.ok || !payload?.success) {
       toast.error("Profil client gagal disimpan", {
-        description: payload?.error || "Terjadi kesalahan saat menyimpan profil client",
+        description:
+          payload?.error || "Terjadi kesalahan saat menyimpan profil client",
       })
       return
     }
@@ -179,7 +186,9 @@ export function ClientProfileForm({
                       <FormControl>
                         <Input {...field} aria-invalid={fieldState.invalid} />
                       </FormControl>
-                      <FormDescription>Boleh kosong untuk client individu.</FormDescription>
+                      <FormDescription>
+                        Boleh kosong untuk client individu.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -208,7 +217,11 @@ export function ClientProfileForm({
                     <FormItem>
                       <FormLabel>Jabatan PIC</FormLabel>
                       <FormControl>
-                        <Input {...field} aria-invalid={fieldState.invalid} placeholder="Contoh: Project Owner" />
+                        <Input
+                          {...field}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Contoh: Project Owner"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -291,7 +304,11 @@ export function ClientProfileForm({
               <Link href="/client/dashboard">Kembali</Link>
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? <Loader2 className="animate-spin" /> : <Save />}
+              {form.formState.isSubmitting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Save />
+              )}
               Simpan Profil
             </Button>
           </div>

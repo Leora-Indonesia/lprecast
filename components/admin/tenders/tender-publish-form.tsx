@@ -61,30 +61,55 @@ function formatDateTimeLocal(value: string | null | undefined) {
 
 export function TenderPublishForm({ project }: { project: ProjectDetail }) {
   const router = useRouter()
-  const [items, setItems] = useState<TenderItemDraft[]>(() => [createItemDraft(project)])
+  const [items, setItems] = useState<TenderItemDraft[]>(() => [
+    createItemDraft(project),
+  ])
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const safeDescription = useMemo(
-    () => project.initial_description || project.description || project.special_requirements || "",
-    [project.description, project.initial_description, project.special_requirements]
+    () =>
+      project.initial_description ||
+      project.description ||
+      project.special_requirements ||
+      "",
+    [
+      project.description,
+      project.initial_description,
+      project.special_requirements,
+    ]
   )
 
-  function updateItem(id: string, key: keyof Omit<TenderItemDraft, "id">, value: string) {
+  function updateItem(
+    id: string,
+    key: keyof Omit<TenderItemDraft, "id">,
+    value: string
+  ) {
     setItems((currentItems) =>
-      currentItems.map((item) => (item.id === id ? { ...item, [key]: value } : item))
+      currentItems.map((item) =>
+        item.id === id ? { ...item, [key]: value } : item
+      )
     )
   }
 
   function addItem() {
     setItems((currentItems) => [
       ...currentItems,
-      { id: crypto.randomUUID(), name: "", quantity: "", unit: "", description: "" },
+      {
+        id: crypto.randomUUID(),
+        name: "",
+        quantity: "",
+        unit: "",
+        description: "",
+      },
     ])
   }
 
   function duplicateItem(item: TenderItemDraft) {
-    setItems((currentItems) => [...currentItems, { ...item, id: crypto.randomUUID() }])
+    setItems((currentItems) => [
+      ...currentItems,
+      { ...item, id: crypto.randomUUID() },
+    ])
   }
 
   function removeItem(id: string) {
@@ -143,12 +168,15 @@ export function TenderPublishForm({ project }: { project: ProjectDetail }) {
                   <p className="font-medium">{formatPeriod(project)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Status setelah publish</p>
+                  <p className="text-muted-foreground">
+                    Status setelah publish
+                  </p>
                   <Badge variant="secondary">Tendering</Badge>
                 </div>
               </div>
               <div className="rounded-lg border bg-muted/20 p-4 text-muted-foreground">
-                Data client, kontak, alamat lengkap, budget internal, dan catatan internal tidak tampil ke vendor.
+                Data client, kontak, alamat lengkap, budget internal, dan
+                catatan internal tidak tampil ke vendor.
               </div>
             </CardContent>
           </Card>
@@ -165,38 +193,90 @@ export function TenderPublishForm({ project }: { project: ProjectDetail }) {
               ) : null}
 
               <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">Judul Tender</label>
-                <Input id="title" name="title" defaultValue={project.name} required />
+                <label htmlFor="title" className="text-sm font-medium">
+                  Judul Tender
+                </label>
+                <Input
+                  id="title"
+                  name="title"
+                  defaultValue={project.name}
+                  required
+                />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="description" className="text-sm font-medium">Deskripsi Tender</label>
-                <Textarea id="description" name="description" defaultValue={safeDescription} className="min-h-32" />
-                <p className="text-xs text-muted-foreground">Tulis versi aman untuk vendor. Jangan masukkan data client sensitif.</p>
+                <label htmlFor="description" className="text-sm font-medium">
+                  Deskripsi Tender
+                </label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  defaultValue={safeDescription}
+                  className="min-h-32"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Tulis versi aman untuk vendor. Jangan masukkan data client
+                  sensitif.
+                </p>
               </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label htmlFor="min_vendors" className="text-sm font-medium">Minimal Vendor Submit</label>
-                    <Input id="min_vendors" name="min_vendors" inputMode="numeric" defaultValue="2" />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="submission_deadline_at" className="text-sm font-medium">Batas Submit Tender</label>
-                    <Input id="submission_deadline_at" name="submission_deadline_at" type="datetime-local" defaultValue={formatDateTimeLocal(project.start_date)} />
-                    <p className="text-xs text-muted-foreground">Opsional. Jika diisi, vendor tidak bisa submit setelah waktu ini.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="revision_deadline_hours" className="text-sm font-medium">Deadline Revisi (jam)</label>
-                    <Input id="revision_deadline_hours" name="revision_deadline_hours" inputMode="numeric" placeholder="Opsional" />
-                  </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="min_vendors" className="text-sm font-medium">
+                    Minimal Vendor Submit
+                  </label>
+                  <Input
+                    id="min_vendors"
+                    name="min_vendors"
+                    inputMode="numeric"
+                    defaultValue="2"
+                  />
                 </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="submission_deadline_at"
+                    className="text-sm font-medium"
+                  >
+                    Batas Submit Tender
+                  </label>
+                  <Input
+                    id="submission_deadline_at"
+                    name="submission_deadline_at"
+                    type="datetime-local"
+                    defaultValue={formatDateTimeLocal(project.start_date)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Opsional. Jika diisi, vendor tidak bisa submit setelah waktu
+                    ini.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="revision_deadline_hours"
+                    className="text-sm font-medium"
+                  >
+                    Deadline Revisi (jam)
+                  </label>
+                  <Input
+                    id="revision_deadline_hours"
+                    name="revision_deadline_hours"
+                    inputMode="numeric"
+                    placeholder="Opsional"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between gap-4">
               <CardTitle>3. Item Pekerjaan Tender</CardTitle>
-              <Button type="button" variant="outline" size="sm" onClick={addItem}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addItem}
+              >
                 <Plus className="h-4 w-4" /> Tambah Item
               </Button>
             </CardHeader>
@@ -206,11 +286,27 @@ export function TenderPublishForm({ project }: { project: ProjectDetail }) {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-medium">Item {index + 1}</p>
-                      <p className="text-xs text-muted-foreground">Nama, quantity, unit, dan spesifikasi singkat.</p>
+                      <p className="text-xs text-muted-foreground">
+                        Nama, quantity, unit, dan spesifikasi singkat.
+                      </p>
                     </div>
                     <div className="flex gap-2">
-                      <Button type="button" variant="ghost" size="sm" onClick={() => duplicateItem(item)}>Duplicate</Button>
-                      <Button type="button" variant="ghost" size="icon-sm" onClick={() => removeItem(item.id)} disabled={items.length === 1} aria-label="Hapus item">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => duplicateItem(item)}
+                      >
+                        Duplicate
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={() => removeItem(item.id)}
+                        disabled={items.length === 1}
+                        aria-label="Hapus item"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -219,21 +315,53 @@ export function TenderPublishForm({ project }: { project: ProjectDetail }) {
                   <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_140px_140px]">
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Nama Item</label>
-                      <Input name="item_name" value={item.name} onChange={(event) => updateItem(item.id, "name", event.target.value)} required />
+                      <Input
+                        name="item_name"
+                        value={item.name}
+                        onChange={(event) =>
+                          updateItem(item.id, "name", event.target.value)
+                        }
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Quantity</label>
-                      <Input name="item_quantity" value={item.quantity} onChange={(event) => updateItem(item.id, "quantity", event.target.value)} inputMode="decimal" required />
+                      <Input
+                        name="item_quantity"
+                        value={item.quantity}
+                        onChange={(event) =>
+                          updateItem(item.id, "quantity", event.target.value)
+                        }
+                        inputMode="decimal"
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Unit</label>
-                      <Input name="item_unit" value={item.unit} onChange={(event) => updateItem(item.id, "unit", event.target.value)} placeholder="m / m2 / unit" required />
+                      <Input
+                        name="item_unit"
+                        value={item.unit}
+                        onChange={(event) =>
+                          updateItem(item.id, "unit", event.target.value)
+                        }
+                        placeholder="m / m2 / unit"
+                        required
+                      />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Deskripsi / Spesifikasi</label>
-                    <Textarea name="item_description" value={item.description} onChange={(event) => updateItem(item.id, "description", event.target.value)} className="min-h-24" />
+                    <label className="text-sm font-medium">
+                      Deskripsi / Spesifikasi
+                    </label>
+                    <Textarea
+                      name="item_description"
+                      value={item.description}
+                      onChange={(event) =>
+                        updateItem(item.id, "description", event.target.value)
+                      }
+                      className="min-h-24"
+                    />
                   </div>
                 </div>
               ))}
@@ -263,9 +391,16 @@ export function TenderPublishForm({ project }: { project: ProjectDetail }) {
               <div className="space-y-2">
                 <p className="font-medium">Item pekerjaan</p>
                 {items.map((item) => (
-                  <div key={item.id} className="rounded-lg border bg-muted/20 p-3">
-                    <p className="font-medium">{item.name || "Item belum diisi"}</p>
-                    <p className="text-muted-foreground">{item.quantity || "-"} {item.unit || "unit"}</p>
+                  <div
+                    key={item.id}
+                    className="rounded-lg border bg-muted/20 p-3"
+                  >
+                    <p className="font-medium">
+                      {item.name || "Item belum diisi"}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {item.quantity || "-"} {item.unit || "unit"}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -273,19 +408,29 @@ export function TenderPublishForm({ project }: { project: ProjectDetail }) {
               <div className="space-y-2">
                 <p className="font-medium">Lampiran project</p>
                 <p className="text-muted-foreground">
-                  {project.attachments.length} file tersedia dari lampiran project. Kelola file dari detail project.
+                  {project.attachments.length} file tersedia dari lampiran
+                  project. Kelola file dari detail project.
                 </p>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>Publish</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Publish</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4 text-sm text-muted-foreground">
-              <p>Setelah publish, tender langsung berstatus open dan project masuk status Tendering.</p>
+              <p>
+                Setelah publish, tender langsung berstatus open dan project
+                masuk status Tendering.
+              </p>
               <div className="flex flex-col gap-3">
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? <Loader2 className="animate-spin" /> : <Send />}
+                  {isSubmitting ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <Send />
+                  )}
                   Publish ke Vendor
                 </Button>
                 <Button type="button" variant="outline" asChild>

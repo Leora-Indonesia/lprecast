@@ -55,9 +55,8 @@ type VendorApprovalReviewContextValue = {
   closeNotes: () => void
 }
 
-const VendorApprovalReviewContext = createContext<VendorApprovalReviewContextValue | null>(
-  null
-)
+const VendorApprovalReviewContext =
+  createContext<VendorApprovalReviewContextValue | null>(null)
 
 export function VendorApprovalReviewProvider({
   userId,
@@ -73,9 +72,9 @@ export function VendorApprovalReviewProvider({
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(
     () => initialDraft?.checked_items ?? {}
   )
-  const [redFlagFindings, setRedFlagFindings] = useState<Record<string, boolean>>(
-    () => initialDraft?.red_flags ?? {}
-  )
+  const [redFlagFindings, setRedFlagFindings] = useState<
+    Record<string, boolean>
+  >(() => initialDraft?.red_flags ?? {})
   const [notes, setNotes] = useState(() => initialDraft?.notes ?? "")
   const [isSavingDraft, setIsSavingDraft] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -92,7 +91,10 @@ export function VendorApprovalReviewProvider({
     [redFlagFindings]
   )
 
-  const totalScore = useMemo(() => computeTotalScore(checkedItems), [checkedItems])
+  const totalScore = useMemo(
+    () => computeTotalScore(checkedItems),
+    [checkedItems]
+  )
   const recommendation = useMemo(
     () => computeRecommendation({ totalScore, hasRedFlag }),
     [totalScore, hasRedFlag]
@@ -162,7 +164,10 @@ export function VendorApprovalReviewProvider({
       return
     }
 
-    if ((action === "reject" || action === "revision_requested") && !trimmedNotes) {
+    if (
+      (action === "reject" || action === "revision_requested") &&
+      !trimmedNotes
+    ) {
       setIsNotesOpen(true)
       toast.error("Catatan wajib diisi untuk revisi/penolakan")
       return

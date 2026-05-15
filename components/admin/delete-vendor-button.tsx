@@ -3,16 +3,32 @@
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 
 interface DeleteVendorButtonProps {
   userId: string
   companyName: string
-  deleteAction: (userId: string) => Promise<{ success: boolean; error?: string }>
+  deleteAction: (
+    userId: string
+  ) => Promise<{ success: boolean; error?: string }>
 }
 
-export function DeleteVendorButton({ userId, companyName, deleteAction }: DeleteVendorButtonProps) {
+export function DeleteVendorButton({
+  userId,
+  companyName,
+  deleteAction,
+}: DeleteVendorButtonProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -44,7 +60,9 @@ export function DeleteVendorButton({ userId, companyName, deleteAction }: Delete
             Apakah Anda yakin ingin menghapus vendor{" "}
             <span className="font-semibold">{companyName}</span>?
             <br />
-            <span className="text-destructive">Tindakan ini tidak dapat dibatalkan.</span>
+            <span className="text-destructive">
+              Tindakan ini tidak dapat dibatalkan.
+            </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         {error && (

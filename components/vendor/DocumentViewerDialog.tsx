@@ -39,8 +39,14 @@ export function DocumentViewerDialog({
   const fileType = document.mime_type?.toLowerCase() || ""
   const lowerFileUrl = fileUrl.toLowerCase()
   const lowerFileName = fileName.toLowerCase()
-  const isPdf = fileType.includes("pdf") || lowerFileUrl.endsWith(".pdf") || lowerFileName.endsWith(".pdf")
-  const isImage = fileType.startsWith("image/") || /\.(png|jpe?g|webp|gif|svg)$/i.test(lowerFileUrl) || /\.(png|jpe?g|webp|gif|svg)$/i.test(lowerFileName)
+  const isPdf =
+    fileType.includes("pdf") ||
+    lowerFileUrl.endsWith(".pdf") ||
+    lowerFileName.endsWith(".pdf")
+  const isImage =
+    fileType.startsWith("image/") ||
+    /\.(png|jpe?g|webp|gif|svg)$/i.test(lowerFileUrl) ||
+    /\.(png|jpe?g|webp|gif|svg)$/i.test(lowerFileName)
 
   return (
     <Dialog>
@@ -54,9 +60,7 @@ export function DocumentViewerDialog({
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-4xl">
         <DialogHeader>
-          <DialogTitle className="truncate pr-8">
-            {fileName}
-          </DialogTitle>
+          <DialogTitle className="truncate pr-8">{fileName}</DialogTitle>
         </DialogHeader>
         <div className="flex-1 overflow-hidden rounded-md border bg-muted">
           {isPdf ? (

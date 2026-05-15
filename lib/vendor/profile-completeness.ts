@@ -16,7 +16,10 @@ export function calculateVendorProfileCompleteness(input: {
   profile: Pick<VendorProfileRow, "nama_perusahaan" | "email_perusahaan"> | null
   contacts: Pick<VendorContactRow, "nama" | "no_hp" | "jabatan">[] | null
   documents:
-    | Pick<VendorDocumentRow, "document_type" | "document_number" | "file_path">[]
+    | Pick<
+        VendorDocumentRow,
+        "document_type" | "document_number" | "file_path"
+      >[]
     | null
   factoryAddress: Pick<
     VendorFactoryAddressRow,

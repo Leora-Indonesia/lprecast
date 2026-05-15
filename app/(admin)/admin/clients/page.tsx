@@ -9,7 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { listClients, listProvinceOptions, listCityOptions } from "@/lib/client/repository"
+import {
+  listClients,
+  listProvinceOptions,
+  listCityOptions,
+} from "@/lib/client/repository"
 import { formatDate } from "@/lib/datetime"
 import { Users, Plus } from "lucide-react"
 
@@ -52,7 +56,11 @@ export default async function ClientsPage({
       </div>
 
       <div className="flex gap-2">
-        <Button variant={!verificationStatus ? "default" : "outline"} size="sm" asChild>
+        <Button
+          variant={!verificationStatus ? "default" : "outline"}
+          size="sm"
+          asChild
+        >
           <Link href="/admin/clients">Semua</Link>
         </Button>
         <Button
@@ -124,12 +132,16 @@ export default async function ClientsPage({
                       .join(", ") || "-"}
                   </TableCell>
                   <TableCell>
-                    <StatusBadge status={client.verification_status ?? "pending"} />
+                    <StatusBadge
+                      status={client.verification_status ?? "pending"}
+                    />
                   </TableCell>
                   <TableCell>{formatDate(client.created_at)}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/clients/${client.id}`}>Lihat Detail</Link>
+                      <Link href={`/admin/clients/${client.id}`}>
+                        Lihat Detail
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -139,9 +151,7 @@ export default async function ClientsPage({
         </div>
       )}
 
-      <div className="text-sm text-muted-foreground">
-        Total: {total} klien
-      </div>
+      <div className="text-sm text-muted-foreground">Total: {total} klien</div>
     </div>
   )
 }

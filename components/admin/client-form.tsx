@@ -4,7 +4,10 @@ import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { adminClientProfileSchema, type AdminClientProfileInput } from "@/lib/validations/client"
+import {
+  adminClientProfileSchema,
+  type AdminClientProfileInput,
+} from "@/lib/validations/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -15,7 +18,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { clientTypeOptions } from "@/lib/validations/client"
 
 type ClientType = "individu" | "developer" | "kontraktor" | "perusahaan"
@@ -62,9 +72,13 @@ export function ClientForm({
 }: ClientFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [selectedProvinceId, setSelectedProvinceId] = useState(defaultValues?.province_id ?? "")
+  const [selectedProvinceId, setSelectedProvinceId] = useState(
+    defaultValues?.province_id ?? ""
+  )
 
-  const filteredCities = cities.filter((c) => c.province_id === selectedProvinceId)
+  const filteredCities = cities.filter(
+    (c) => c.province_id === selectedProvinceId
+  )
 
   const form = useForm({
     resolver: zodResolver(adminClientProfileSchema),
@@ -151,7 +165,11 @@ export function ClientForm({
               <FormItem>
                 <FormLabel>Email *</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="email@client.com" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="email@client.com"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -178,7 +196,10 @@ export function ClientForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tipe Client *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih tipe client" />
@@ -332,14 +353,17 @@ export function ClientForm({
         />
 
         {isDetail && (
-          <div className="grid gap-4 md:grid-cols-2 rounded-lg border p-4">
+          <div className="grid gap-4 rounded-lg border p-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="verification_status"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status Verifikasi</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Pilih status" />
@@ -383,7 +407,11 @@ export function ClientForm({
             Batal
           </Button>
           <Button type="submit" disabled={isPending}>
-            {isPending ? "Menyimpan..." : clientId ? "Update Client" : "Simpan Client"}
+            {isPending
+              ? "Menyimpan..."
+              : clientId
+                ? "Update Client"
+                : "Simpan Client"}
           </Button>
         </div>
       </form>

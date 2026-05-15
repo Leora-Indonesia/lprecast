@@ -45,7 +45,8 @@ export default async function AdminProjectTenderCreatePage({
         <div>
           <h1 className="text-2xl font-bold">Ajukan Project ke Tender</h1>
           <p className="text-muted-foreground">
-            Review data aman vendor, lengkapi metadata tender, lalu publish langsung ke vendor.
+            Review data aman vendor, lengkapi metadata tender, lalu publish
+            langsung ke vendor.
           </p>
         </div>
       </div>
